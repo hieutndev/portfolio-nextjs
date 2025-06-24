@@ -1,21 +1,74 @@
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Cairo+Play:wght@200..1000&family=Playwrite+VN:wght@100..400&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+	background-color: #ffffff;
+	font-family: "Be Vietnam Pro", serif;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+	background: #fff;
+}
+
+.no-select {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.scrollable-content {
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.scrollable-content::-webkit-scrollbar,
+.ql-editor::-webkit-scrollbar {
+	display: none;
+}
+
+.font-playwrite-vn {
+	font-family: "Playwrite VN", serif;
+	font-optical-sizing: auto;
+}
+
+.font-cairo-play {
+	font-family: "Cairo Play", serif;
+	font-optical-sizing: auto;
+	font-variation-settings: "slnt" 0;
+}
+
+@layer base {
+	.quill {
+		@apply shadow-xl;
+	}
+	.ql-toolbar {
+		@apply rounded-ss-2xl;
+		@apply rounded-se-2xl;
+		@apply !border-b;
+		@apply !border-b-dark/25;
+	}
+
+	.ql-container {
+		@apply rounded-es-2xl;
+		@apply rounded-ee-2xl;
+		@apply !text-base;
+	}
+
+	.ql-toolbar,
+	.ql-container {
+		background-color: #ffffff;
+	}
+
+	.ql-align-center {
+		text-align: center;
+	}
 }
