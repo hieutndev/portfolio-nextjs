@@ -19,7 +19,14 @@ const ClientHeader = () => {
 
 	const router = useRouter();
 
-	const { getCookie, hasCookie } = useReactiveCookiesNext();
+	const { deleteCookie, hasCookie } = useReactiveCookiesNext();
+
+	const handleSignOut = () => {
+		deleteCookie("access_token");
+		deleteCookie("refresh_token");
+		deleteCookie("role");
+		router.push(ROUTE_PATH.AUTH.SIGN_IN);
+	};
 
 	const headerConfig = [
 		{
@@ -86,7 +93,7 @@ const ClientHeader = () => {
 						isIconOnly
 						onPress={() =>
 							router.push(
-								hasCookie("refresh_token") ? ROUTE_PATH.ADMIN.ACCOUNT.INDEX : ROUTE_PATH.AUTH.LOGIN
+								hasCookie("refresh_token") ? ROUTE_PATH.ADMIN.ACCOUNT.INDEX : ROUTE_PATH.AUTH.SIGN_IN
 							)
 						}
 					>
@@ -98,7 +105,7 @@ const ClientHeader = () => {
 							variant={"light"}
 							color={"danger"}
 							isIconOnly
-							onPress={() => router.push(ROUTE_PATH.AUTH.SIGN_OUT)}
+							onPress={handleSignOut}
 						>
 							{ICON_CONFIG.LOG_OUT}
 						</Button>
@@ -131,7 +138,9 @@ const ClientHeader = () => {
 							onPress={() => {
 								setIsOpenMiniHeader(false);
 								router.push(
-									hasCookie("refresh_token") ? ROUTE_PATH.ADMIN.ACCOUNT.INDEX : ROUTE_PATH.AUTH.LOGIN
+									hasCookie("refresh_token")
+										? ROUTE_PATH.ADMIN.ACCOUNT.INDEX
+										: ROUTE_PATH.AUTH.SIGN_IN
 								);
 							}}
 						>
@@ -143,7 +152,7 @@ const ClientHeader = () => {
 								variant={"light"}
 								color={"danger"}
 								isIconOnly
-								onPress={() => router.push(ROUTE_PATH.AUTH.SIGN_OUT)}
+								onPress={handleSignOut}
 							>
 								{ICON_CONFIG.LOG_OUT}
 							</Button>

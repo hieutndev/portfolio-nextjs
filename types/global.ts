@@ -1,3 +1,4 @@
+import { TMessageCode } from "@/configs/response-message";
 import { ErrorObject } from "ajv";
 
 export type TSizeBase =
@@ -69,7 +70,7 @@ export const ListColors: TColor[] = [
 
 export interface IAPIResponse<TResponse = any, TError = any> {
   status: "success" | "failure" | "error";
-  message: string;
+  message: TMessageCode;
   results?: TResponse;
   errors?: TError;
   validateErrors?: ErrorObject[];

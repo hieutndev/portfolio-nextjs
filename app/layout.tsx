@@ -3,7 +3,7 @@ import "./globals.css";
 import { Providers } from "@/components/providers/providers";
 import clsx from "clsx";
 import { SITE_CONFIG } from "@/configs/site-config";
-import AppLayout from "@/components/layouts/layout";
+import AppLayout from "@/components/layouts/app-layout";
 
 export const metadata: Metadata = {
 	title: SITE_CONFIG.NAME,
