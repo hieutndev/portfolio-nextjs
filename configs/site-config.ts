@@ -1,37 +1,54 @@
 // import SYS_ICONS from "@/configs/icons";
 
+import ICON_CONFIG from "./icons";
+
 export const SITE_CONFIG = {
     NAME: "hieutndev's",
     DESCRIPTION: "Tran Ngoc Hieu's Portfolio",
     LOGO: {
         ONLY_ICON_WHITE: "/1x1w.png",
         ONLY_ICON_BLACK: "/1x1b.png",
-        FULL_WHITE: "logow_w.png",
-        FULL_BLACK: "logow_b.png",
+        FULL_WHITE: "/logow_w.png",
+        FULL_BLACK: "/logow_b.png",
     },
     FAVICON: "/portfolio_fav.ico",
-    // SIDEBAR_ITEMS: [
-    //     {
-    //         label: "Overview",
-    //         href: "/overview",
-    //         icon: SYS_ICONS.OVERVIEW.LG
-    //     },
-    //     {
-    //         label: "Transactions",
-    //         href: "/transactions",
-    //         icon: SYS_ICONS.TRANSACTIONS.LG
-    //     },
-    //     {
-    //         label: "Forecasts",
-    //         href: "/forecasts",
-    //         icon: SYS_ICONS.FORECAST.XL
-    //     },
-    //     {
-    //         label: "Settings",
-    //         href: "/settings",
-    //         icon: SYS_ICONS.SETTING.LG
-    //     }
-    // ],
+    ADMIN_SIDEBAR_ITEMS: [
+        {
+            label: "Dashboard",
+            href: "/admin/dashboard",
+            icon: ICON_CONFIG.DASHBOARD
+        },
+        {
+            label: "Accounts",
+            href: "/admin/users",
+            icon: ICON_CONFIG.ACCOUNT
+        },
+        {
+            label: "Education",
+            href: "/admin/educations",
+            icon: ICON_CONFIG.EDUCATION
+        },
+        {
+            label: "Certification",
+            href: "/admin/certifications",
+            icon: ICON_CONFIG.CERTIFICATION
+        },
+        {
+            label: "Employment",
+            href: "/admin/employments",
+            icon: ICON_CONFIG.EMPLOYMENT
+        },
+        {
+            label: "Projects",
+            href: "/admin/projects",
+            icon: ICON_CONFIG.PROJECT
+        },
+        {
+            label: "Apps",
+            href: "/admin/apps",
+            icon: ICON_CONFIG.APP
+        }
+    ],
     nonAuthUrls: ["/sign-in", "/sign-up", "/forgot-password"],
 };
 
