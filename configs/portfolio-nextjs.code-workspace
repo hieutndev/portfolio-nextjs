@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../portfolio-v4"
+		},
+		{
+			"path": "../../hieutn-server"
+		}
+	],
+	"settings": {}
+}

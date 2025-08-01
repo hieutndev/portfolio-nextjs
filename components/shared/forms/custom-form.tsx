@@ -37,7 +37,11 @@ export default function CustomForm({
 	children,
 }: CustomFormProps) {
 	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === "Enter" && !event.shiftKey) {
+		if (
+			event.key === "Enter" &&
+			!event.shiftKey &&
+			!(event.target instanceof HTMLElement && event.target.classList.contains("ql-editor"))
+		) {
 			event.preventDefault();
 			onSubmit?.();
 		}
