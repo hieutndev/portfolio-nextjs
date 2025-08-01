@@ -7,10 +7,10 @@ const ROUTE_PATH = {
             INDEX: "/admin/accounts",
         },
         EDUCATION: {
-            INDEX: "/admin/education",
-            NEW: "/admin/education/new",
-            DETAILS: (educationId: string | number) => `/admin/education/${educationId}`,
-            UPDATE: (educationId: string | number) => `/admin/education/${educationId}/update`,
+            INDEX: "/admin/educations",
+            NEW: "/admin/educations/create",
+            DETAILS: (educationId: string | number) => `/admin/educations/${educationId}`,
+            UPDATE: (educationId: string | number) => `/admin/educations/${educationId}/edit`,
         },
         CERTIFICATION: {
             INDEX: "/admin/certification",
@@ -18,9 +18,9 @@ const ROUTE_PATH = {
             DETAILS: (certId: string | number) => `/admin/certification/${certId}`,
         },
         EMPLOYMENT: {
-            INDEX: "/admin/employment",
-            NEW: "/admin/employment/new",
-            DETAILS: (employmentId: string | number) => `/admin/employment/${employmentId}`,
+            INDEX: "/admin/employments",
+            NEW: "/admin/employments/new",
+            DETAILS: (employmentId: string | number) => `/admin/employments/${employmentId}`,
         },
         PROJECT: {
             INDEX: "/admin/projects",

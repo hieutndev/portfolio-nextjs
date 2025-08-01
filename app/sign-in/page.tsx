@@ -9,7 +9,7 @@ import { useFetch } from "@/hooks/useFetch";
 import { IAPIResponse } from "@/types/global";
 import { addToast, Button, Divider, Input } from "@heroui/react";
 import { useReactiveCookiesNext } from "cookies-next";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useEffect, useState } from "react";
 import clsx from "clsx";
@@ -21,6 +21,18 @@ import { TSignIn, TSignInResponse } from "@/types/auth";
 
 export default function SignInPage() {
 	const router = useRouter();
+
+	const searchParams = useSearchParams();
+	
+	useEffect(() => {
+		if (searchParams.get("message") === "EXPIRED_REFRESH_TOKEN") {
+			addToast({
+				title: "Error",
+				description: "Your session has expired. Please sign in again.",
+				color: "danger",
+			});
+		}
+	}, [searchParams]);
 
 	const { setCookie } = useReactiveCookiesNext();
 
