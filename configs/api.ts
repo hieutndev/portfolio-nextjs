@@ -52,9 +52,13 @@ const API_ROUTE = {
     GET_ONE: (appId: string | number) => `/apps/${appId}`,
     NEW: "/apps",
     UPDATE_INFO: (appId: string | number) => `/apps/${appId}`,
-    UPDATE_DISPLAY: (appId: string | number) => `/apps/${appId}/display-status`,
+    UPDATE_DISPLAY: `/apps/display-status`,
     DELETE: (appId: string | number) => `/apps/${appId}`,
   },
+  S3: {
+    UPLOAD_IMAGE: "/s3",
+    GET_IMAGE: (key: string)=> `/s3?key=${key}`
+  }
 };
 
 export default API_ROUTE;

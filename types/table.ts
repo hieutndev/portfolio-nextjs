@@ -1,0 +1,1 @@
+export type TTableAction = "view" | "edit" | "softdel" | "recover" | "forcedel"

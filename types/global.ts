@@ -83,3 +83,7 @@ export interface IDataTable<T> {
   }[];
   rows: T[];
 }
+
+export type TContentType = "application/json" | "multipart/form-data";
+
+export type TDataAction = 'softDelete' | 'recover' | 'permanentDelete' |'create' | 'update' | 'block' | 'unblock' | null

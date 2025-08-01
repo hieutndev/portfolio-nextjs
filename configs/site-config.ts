@@ -20,7 +20,7 @@ export const SITE_CONFIG = {
         },
         {
             label: "Accounts",
-            href: "/admin/users",
+            href: "/admin/accounts",
             icon: ICON_CONFIG.ACCOUNT
         },
         {
@@ -44,8 +44,8 @@ export const SITE_CONFIG = {
             icon: ICON_CONFIG.PROJECT
         },
         {
-            label: "Apps",
-            href: "/admin/apps",
+            label: "Applications",
+            href: "/admin/applications",
             icon: ICON_CONFIG.APP
         }
     ],
