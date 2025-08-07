@@ -25,6 +25,8 @@ import {
 import { useRouter } from "next/navigation";
 import { list } from "postcss";
 import { useState, useEffect } from "react";
+import SearchInput from "@/components/shared/search/search-input";
+import CustomPagination from "@/components/shared/custom-pagination/custom-pagination";
 
 export default function ProjectManagement() {
 	const listColumns = [
@@ -54,6 +56,13 @@ export default function ProjectManagement() {
 	const [listProjects, setListProjects] = useState<TProjectResponse[]>([]);
 	const [selectedId, setSelectedId] = useState<TProject["id"] | null>(null);
 
+	// Search and pagination state
+	const [searchTerm, setSearchTerm] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
+	const [totalItems, setTotalItems] = useState(0);
+	const [totalPages, setTotalPages] = useState(0);
+
 	/* HANDLE FETCH PROJECT */
 
 	const {
@@ -61,10 +70,17 @@ export default function ProjectManagement() {
 		error: fetchProjectError,
 		loading: fetchingProject,
 		fetch: fetchProject,
-	} = useFetch<IAPIResponse<TProjectResponse[]>>(API_ROUTE.PROJECT.GET_ALL);
+	} = useFetch<IAPIResponse<TProjectResponse[]>>(API_ROUTE.PROJECT.GET_ALL, {
+		search: searchTerm,
+		page: currentPage,
+		limit: itemsPerPage,
+	});
+	// Handle fetch projects result
 	useEffect(() => {
 		if (fetchProjectResult) {
 			setListProjects(fetchProjectResult.results ?? []);
+			setTotalItems((fetchProjectResult as any).metadata?.totalCount || 0);
+			setTotalPages((fetchProjectResult as any).metadata?.totalPages || 0);
 		}
 
 		if (fetchProjectError) {
@@ -79,6 +95,11 @@ export default function ProjectManagement() {
 			}
 		}
 	}, [fetchProjectResult, fetchProjectError]);
+
+	// Fetch projects when search or pagination changes
+	useEffect(() => {
+		fetchProject();
+	}, [searchTerm, currentPage, itemsPerPage]);
 
 	/* HANDLE DELETE PROJECT */
 
@@ -109,6 +130,23 @@ export default function ProjectManagement() {
 			}
 		}
 	}, [deleteProjectResult, deleteProjectError]);
+
+	// Search and pagination handlers
+	const handleSearch = (search: string) => {
+		if (search || searchTerm !== search) {
+			setSearchTerm(search);
+			setCurrentPage(1); // Reset to first page when searching
+		}
+	};
+
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
+	};
+
+	const handleItemsPerPageChange = (items: number) => {
+		setItemsPerPage(items);
+		setCurrentPage(1); // Reset to first page when changing items per page
+	};
 
 	/* HANDLE TABLE ACTION */
 
@@ -143,22 +181,43 @@ export default function ProjectManagement() {
 
 	return (
 		<div className={"flex flex-col gap-4"}>
-			<Button
-				startContent={ICON_CONFIG.NEW}
-				onPress={() => router.push(ROUTE_PATH.ADMIN.PROJECT.NEW)}
-				className={"w-max"}
-				isDisabled={fetchingProject}
-				color={"primary"}
+			<div className="flex items-center justify-between gap-4">
+				<Button
+					startContent={ICON_CONFIG.NEW}
+					onPress={() => router.push(ROUTE_PATH.ADMIN.PROJECT.NEW)}
+					className={"w-max"}
+					isDisabled={fetchingProject}
+					color={"primary"}
+				>
+					Create new project
+				</Button>
+				<div className="w-80">
+					<SearchInput
+						placeholder="Search projects by name or group..."
+						onSearch={handleSearch}
+						value={searchTerm}
+					/>
+				</div>
+			</div>
+			<Table
+				aria-label={"Projects"}
+				classNames={{
+					wrapper: "h-[60vh]",
+				}}
+				isHeaderSticky
 			>
-				Creat new project
-			</Button>
-			<Table aria-label={"Projects"}>
 				<TableHeader>
-					{listColumns.map((column) => (
-						<TableColumn key={column.key} align={["action"].includes(column.key) ? "center" : "start"}>{column.title}</TableColumn>
+					{listColumns.map((column, index) => (
+						<TableColumn
+							key={column.key || index}
+							align={["action"].includes(column.key) ? "center" : "start"}
+						>
+							{column.title}
+						</TableColumn>
 					))}
 				</TableHeader>
-				<TableBody items={listProjects}
+				<TableBody
+					items={listProjects}
 					isLoading={fetchingProject}
 					loadingContent={<Spinner>Fetching projects...</Spinner>}
 					emptyContent={<p className={"text-center"}>"No projects found"</p>}
@@ -168,7 +227,10 @@ export default function ProjectManagement() {
 							<TableCell>{project.id}</TableCell>
 							<TableCell>{project.project_shortname}</TableCell>
 							<TableCell>{project.group_title}</TableCell>
-							<TableCell>{formatDate(project.start_date, "onlyDate")} - {formatDate(project.end_date, "onlyDate")}</TableCell>
+							<TableCell>
+								{formatDate(project.start_date, "onlyDate")} -{" "}
+								{formatDate(project.end_date, "onlyDate")}
+							</TableCell>
 							<TableCell>
 								<TableCellAction
 									buttonSize={"sm"}
@@ -183,6 +245,16 @@ export default function ProjectManagement() {
 					)}
 				</TableBody>
 			</Table>
+
+			{/* Pagination */}
+			<CustomPagination
+				currentPage={currentPage}
+				totalPages={totalPages}
+				totalItems={totalItems}
+				itemsPerPage={itemsPerPage}
+				onPageChange={handlePageChange}
+				onItemsPerPageChange={handleItemsPerPageChange}
+			/>
 		</div>
 	);
 }

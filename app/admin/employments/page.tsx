@@ -37,6 +37,8 @@ import {
 import { useRouter } from "next/navigation";
 import TableCellAction from "@/components/shared/tables/table-cell-action";
 import EmploymentFormComponent from "@/components/pages/employments/employment-form";
+import SearchInput from "@/components/shared/search/search-input";
+import CustomPagination from "@/components/shared/custom-pagination/custom-pagination";
 
 export default function EmploymentManagementPage() {
 	const router = useRouter();
@@ -44,21 +46,34 @@ export default function EmploymentManagementPage() {
 	const [selectedEmployment, setSelectedEmployment] = useState<TEmployment | null>(null);
 	const [action, setAction] = useState<TDataAction>(null);
 
+	// Search and pagination state
+	const [searchTerm, setSearchTerm] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
+	const [totalItems, setTotalItems] = useState(0);
+	const [totalPages, setTotalPages] = useState(0);
+
 	/* HANDLE FETCH EMPLOYMENT HISTORY */
 	const {
 		data: fetchEmploymentResult,
 		error: fetchEmploymentError,
 		loading: fetchingEmployment,
 		fetch: fetchEmployment,
-	} = useFetch<IAPIResponse<TEmployment[]>>(API_ROUTE.EMPLOYMENT.GET_ALL);
+	} = useFetch<IAPIResponse<TEmployment[]>>(
+		API_ROUTE.EMPLOYMENT.GET_ALL,
+		{
+			search: searchTerm,
+			page: currentPage,
+			limit: itemsPerPage,
+		}
+	);
 
-	useEffect(() => {
-		fetchEmployment();
-	}, []);
-
+	// Handle fetch employment result
 	useEffect(() => {
 		if (fetchEmploymentResult && fetchEmploymentResult.results) {
 			setListEmploymentHistory(fetchEmploymentResult.results);
+			setTotalItems(fetchEmploymentResult.metadata?.totalCount || 0);
+			setTotalPages(fetchEmploymentResult.metadata?.totalPages || 0);
 		}
 
 		if (fetchEmploymentError) {
@@ -72,6 +87,11 @@ export default function EmploymentManagementPage() {
 			}
 		}
 	}, [fetchEmploymentResult, fetchEmploymentError]);
+
+	// Fetch employment when search or pagination changes
+	useEffect(() => {
+		fetchEmployment();
+	}, [searchTerm, currentPage, itemsPerPage]);
 
 	/* HANDLE SOFT DELETE */
 
@@ -175,6 +195,23 @@ export default function EmploymentManagementPage() {
 		}
 	}, [deleteResult, deleteError]);
 
+	// Search and pagination handlers
+	const handleSearch = (search: string) => {
+		if (search || searchTerm !== search) {
+			setSearchTerm(search);
+			setCurrentPage(1); // Reset to first page when searching
+		}
+	};
+
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
+	};
+
+	const handleItemsPerPageChange = (items: number) => {
+		setItemsPerPage(items);
+		setCurrentPage(1); // Reset to first page when changing items per page
+	};
+
 	const mapAction = async (employment: TEmployment | null, action: TDataAction) => {
 		setSelectedEmployment(employment);
 		setAction(action);
@@ -254,21 +291,31 @@ export default function EmploymentManagementPage() {
 				breadcrumbs={["Admin", "Employment History"]}
 			/>
 			<div className={"flex flex-col gap-4"}>
-				<div className={"flex items-center gap-4"}>
-					<Button
-						color="primary"
-						variant="solid"
-						startContent={ICON_CONFIG.NEW}
-						onPress={() => mapAction(null, "create")}
-					>
-						Add New Employment
-					</Button>
+				<div className="flex items-center justify-between gap-4">
+					<div className="flex items-center gap-4">
+						<Button
+							color="primary"
+							variant="solid"
+							startContent={ICON_CONFIG.NEW}
+							onPress={() => mapAction(null, "create")}
+						>
+							Add New Employment
+						</Button>
+					</div>
+					<div className="w-80">
+						<SearchInput
+							placeholder="Search employments by title or organization..."
+							onSearch={handleSearch}
+							value={searchTerm}
+						/>
+					</div>
 				</div>
 				<Table
 					aria-label="Employment history table"
 					classNames={{
-						wrapper: "min-h-[400px]",
+						wrapper: "h-[60vh]",
 					}}
+					isHeaderSticky
 				>
 					<TableHeader columns={columns}>
 						{(column) => (
@@ -319,6 +366,16 @@ export default function EmploymentManagementPage() {
 						)}
 					</TableBody>
 				</Table>
+
+				{/* Pagination */}
+				<CustomPagination
+					currentPage={currentPage}
+					totalPages={totalPages}
+					totalItems={totalItems}
+					itemsPerPage={itemsPerPage}
+					onPageChange={handlePageChange}
+					onItemsPerPageChange={handleItemsPerPageChange}
+				/>
 			</div>
 			<Modal
 				isOpen={isOpen}

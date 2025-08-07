@@ -29,6 +29,7 @@ import {
 	ModalBody,
 	ModalFooter,
 	useDisclosure,
+	Image,
 } from "@heroui/react";
 import clsx from "clsx";
 import { ComponentType, useEffect, useMemo, useRef, useState } from "react";
@@ -38,7 +39,7 @@ import { DateValue, parseDate } from "@internationalized/date";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import "@writergate/quill-image-uploader-nextjs/dist/quill.imageUploader.min.css";
-import Image from "next/image";
+import { sliceText } from "@/utils/string";
 
 // TypeScript interface for ReactQuill props
 interface ReactQuillProps {
@@ -105,7 +106,11 @@ export default function ProjectFormComponent({ mode, defaultValues, projectId }:
 
 	// Modal state for image management
 	const { isOpen: isImageModalOpen, onOpen: onImageModalOpen, onClose: onImageModalClose } = useDisclosure();
-	const [selectedImage, setSelectedImage] = useState<{ url: string; name: string; type: 'thumbnail' | 'image' } | null>(null);
+	const [selectedImage, setSelectedImage] = useState<{
+		url: string;
+		name: string;
+		type: "thumbnail" | "image";
+	} | null>(null);
 
 	/* HANDLE FETCH PROJECT GROUPS */
 	const {
@@ -322,7 +327,7 @@ export default function ProjectFormComponent({ mode, defaultValues, projectId }:
 	};
 
 	// Modal handlers
-	const handleOpenImageModal = (url: string, name: string, type: 'thumbnail' | 'image') => {
+	const handleOpenImageModal = (url: string, name: string, type: "thumbnail" | "image") => {
 		setSelectedImage({ url, name, type });
 		onImageModalOpen();
 	};
@@ -448,32 +453,16 @@ export default function ProjectFormComponent({ mode, defaultValues, projectId }:
 	const isLoading = submitting || (mode === "edit" && fetchingProjectDetail);
 
 	return (
-		<Container
-			orientation={"vertical"}
-			className={"gap-4"}
-		>
-			<AdminHeader
-				title={mode === "create" ? "Create New Project" : "Edit Project Information"}
-				backButton={{
-					color: "default",
-					size: "lg",
-					variant: "solid",
-					startContent: ICON_CONFIG.BACK,
-					text: "Back",
-					href: ROUTE_PATH.ADMIN.PROJECT.INDEX,
-				}}
-				breadcrumbs={["Projects", mode === "create" ? "Create New" : "Edit"]}
-			/>
-			<div className={"w-full border border-default-200 bg-white rounded-2xl shadow-lg p-4 flex flex-col gap-4"}>
-				<CustomForm
-					formId={`${mode}ProjectForm`}
-					className={"w-full flex flex-col gap-4"}
-					isLoading={isLoading}
-					onSubmit={handleSubmit}
-				>
-					<h2 className={"text-2xl font-semibold"}>Project Information</h2>
-					<Divider />
-					<div className={"grid grid-cols-3 gap-x-4 gap-y-8"}>
+		<div className={"w-full border border-default-200 bg-white rounded-2xl shadow-lg p-4 flex flex-col gap-4"}>
+			<CustomForm
+				formId={`${mode}ProjectForm`}
+				className={"w-full flex flex-col gap-4"}
+				isLoading={isLoading}
+				onSubmit={handleSubmit}
+			>
+				<div className={"w-full flex flex-col gap-2"}>
+					<h3 className={"text-xl font-semibold"}>Project Information</h3>
+					<div className={"w-full grid grid-cols-3 gap-4"}>
 						<Input
 							label={"Full Project Name"}
 							labelPlacement={"outside"}
@@ -481,7 +470,7 @@ export default function ProjectFormComponent({ mode, defaultValues, projectId }:
 							value={projectDetails.project_fullname}
 							name={"project_fullname"}
 							placeholder={"Enter project name..."}
-							size={"lg"}
+							variant={"bordered"}
 							isRequired
 							onValueChange={(value) =>
 								setProjectDetails((prev) => ({ ...prev, project_fullname: value }))
@@ -490,7 +479,7 @@ export default function ProjectFormComponent({ mode, defaultValues, projectId }:
 						<Input
 							label={"Short Project Name"}
 							type={"text"}
-							size={"lg"}
+							variant={"bordered"}
 							value={projectDetails.project_shortname}
 							name={"project_shortname"}
 							labelPlacement={"outside"}
@@ -504,7 +493,7 @@ export default function ProjectFormComponent({ mode, defaultValues, projectId }:
 							placeholder={"Select project group"}
 							selectedKeys={projectDetails.group_id ? [projectDetails.group_id.toString()] : []}
 							items={listProjectGroups}
-							size={"lg"}
+							variant={"bordered"}
 							isLoading={fetchingProjectGroups}
 							onSelectionChange={(keys) => {
 								const selectedKey = Array.from(keys)[0] as string;
@@ -524,6 +513,7 @@ export default function ProjectFormComponent({ mode, defaultValues, projectId }:
 								name={"short_description"}
 								placeholder={mode === "create" ? "Enter a brief description of your project..." : ""}
 								isRequired
+								variant={"bordered"}
 								onValueChange={(e) =>
 									setProjectDetails((prev) => ({
 										...prev,
@@ -537,7 +527,8 @@ export default function ProjectFormComponent({ mode, defaultValues, projectId }:
 							labelPlacement={"outside"}
 							value={datePicked}
 							onChange={setDatePicked}
-							aria-label={mode === "create" ? "Project duration" : "Start date"}
+							aria-label={"Project duration"}
+							variant={"bordered"}
 							isRequired
 						/>
 						<Input
@@ -547,6 +538,7 @@ export default function ProjectFormComponent({ mode, defaultValues, projectId }:
 							type={"text"}
 							value={projectDetails.github_link || ""}
 							name={"github_link"}
+							variant={"bordered"}
 							onValueChange={(e) =>
 								setProjectDetails((prev) => ({
 									...prev,
@@ -560,6 +552,7 @@ export default function ProjectFormComponent({ mode, defaultValues, projectId }:
 							placeholder={"Enter Demo link"}
 							type={"text"}
 							value={projectDetails.demo_link || ""}
+							variant={"bordered"}
 							name={"demo_link"}
 							onValueChange={(e) =>
 								setProjectDetails((prev) => ({
@@ -575,7 +568,8 @@ export default function ProjectFormComponent({ mode, defaultValues, projectId }:
 								labelPlacement={"outside"}
 								placeholder={"Select thumbnail for project"}
 								name={"project_thumbnail"}
-								accept="image/*"
+								accept={"image/*"}
+								variant={"bordered"}
 								onChange={(e) => {
 									setProjectDetails((prev) => ({
 										...prev,
@@ -593,7 +587,8 @@ export default function ProjectFormComponent({ mode, defaultValues, projectId }:
 									mode === "create" ? "Select images for project" : "Select thumbnail for project"
 								}
 								multiple={true}
-								accept="image/*"
+								accept={"image/*"}
+								variant={"bordered"}
 								onChange={(e) => {
 									setProjectDetails((prev) => ({
 										...prev,
@@ -603,129 +598,156 @@ export default function ProjectFormComponent({ mode, defaultValues, projectId }:
 								}}
 							/>
 						</div>
-						<div className={"col-span-3 w-full"}>
-							<p className={"text-sm text-foreground pb-1.5 block"}>Article Content</p>
-							<ReactQuill
-								forwardedRef={reactQuillRef}
-								value={convertText}
-								onChange={setConvertText}
-								modules={customModules}
-								formats={formats}
-								theme="snow"
-								placeholder={
-									mode === "create"
-										? "Write your project article here..."
-										: "Write your blog post here..."
-								}
-							/>
-						</div>
 					</div>
-				</CustomForm>
-				{mode === "edit" && (currentThumbnail || listCurrentImages.length > 0) && (
-					<div className={"w-full shadow-xl rounded-2xl p-4 bg-white"}>
-						<h3 className={"text-lg font-semibold mb-4"}>Current Project Images</h3>
-						<div className={"w-full grid grid-cols-6 gap-4"}>
-							{/* Current Thumbnail */}
-							{currentThumbnail && (
-								<div className={"relative group cursor-pointer"}>
-									<div 
-										className={"relative border-2 rounded-xl overflow-hidden border-success-300 hover:border-success-500 transition-colors"}
-										onClick={() => handleOpenImageModal(currentThumbnail, "Project Thumbnail", "thumbnail")}
-									>
-										<div className={"absolute top-1 right-1 z-10"}>
-											<Chip color={"success"} size="sm" variant="solid">Thumbnail</Chip>
-										</div>
-										<Image
-											src={currentThumbnail}
-											alt={"Project Thumbnail"}
-											className={"object-cover aspect-square w-full h-32 group-hover:scale-105 transition-transform"}
-											height={128}
-											width={128}
-										/>
-									</div>
-									<p className={"text-xs text-center mt-1 text-foreground-600"}>Current Thumbnail</p>
-								</div>
-							)}
-							
-							{/* Current Images */}
-							{listCurrentImages.map((image, index) => (
-								<div key={index} className={"relative group cursor-pointer"}>
-									<div 
-										className={clsx("relative border-2 rounded-xl overflow-hidden transition-colors", {
-											"border-danger-300 hover:border-danger-500": listRemoveImages.includes(image.image_name),
-											"border-default-200 hover:border-default-400": !listRemoveImages.includes(image.image_name),
-										})}
-										onClick={() => handleOpenImageModal(image.image_url, image.image_name, "image")}
-									>
-										<Image
-											src={image.image_url}
-											alt={image.image_name}
-											className={"object-cover aspect-square w-full h-32 group-hover:scale-105 transition-transform"}
-											height={128}
-											width={128}
-										/>
-										<div
-											className={"absolute top-1 right-1 z-10"}
-											onClick={(e) => e.stopPropagation()}
-										>
-											<Button
-												color={"danger"}
-												size={"sm"}
-												className={"opacity-80 hover:opacity-100"}
-												isIconOnly
-												variant="solid"
-												onPress={() => handleAddRemoveImage(image.image_name)}
-											>
-												{ICON_CONFIG.SOFT_DELETE}
-											</Button>
-										</div>
-										{listRemoveImages.includes(image.image_name) && (
-											<div className={"absolute inset-0 bg-danger-200/50 flex items-center justify-center"}>
-												<Chip color={"danger"} size="sm" variant="solid">Will Remove</Chip>
-											</div>
-										)}
-									</div>
-									<p className={"text-xs text-center mt-1 text-foreground-600 truncate"}>
-										{image.image_name}
-									</p>
-								</div>
-							))}
-						</div>
-						
-						{/* Instructions */}
-						<div className={"mt-4 p-3 bg-default-50 rounded-lg"}>
-							<p className={"text-sm text-foreground-600"}>
-								💡 <strong>Click any image</strong> to view it in full size. Use the <span className={"text-danger-600"}>delete button</span> to mark images for removal.
-							</p>
-						</div>
-					</div>
-				)}
-			</div>
+				</div>
 
-			{/* Image Modal */}
-			<Modal 
-				isOpen={isImageModalOpen} 
+				{mode === "edit" && (currentThumbnail || listCurrentImages.length > 0) && (
+					<>
+						<Divider />
+						<div className={"w-full flex flex-col gap-2"}>
+							<h3 className={"text-lg font-semibold"}>Project Images</h3>
+							<div className={"w-full flex flex-row flex-wrap gap-4"}>
+								{/* Current Thumbnail */}
+								{currentThumbnail && (
+									<div className={"relative group cursor-pointer col-span-3"}>
+										<div
+											className={
+												"bg-transparent relative border-2 rounded-xl overflow-hidden border-success-300 hover:border-success-500 transition-colors"
+											}
+											onClick={() =>
+												handleOpenImageModal(currentThumbnail, "Project Thumbnail", "thumbnail")
+											}
+										>
+											<div className={"absolute top-1 right-1 z-[20]"}>
+												<Chip
+													color={"success"}
+													size="sm"
+													variant="solid"
+												>
+													Thumbnail
+												</Chip>
+											</div>
+											<Image
+												src={currentThumbnail}
+												alt={"Project Thumbnail"}
+												className={
+													"object-cover w-max group-hover:scale-105 transition-transform"
+												}
+												height={156}
+												isZoomed={false}
+												shadow={"sm"}
+												isBlurred
+											/>
+										</div>
+										<p className={"text-xs text-center mt-1 text-foreground-600"}>
+											Current Thumbnail
+										</p>
+									</div>
+								)}
+
+								{/* Current Images */}
+								{listCurrentImages.map((image, index) => (
+									<div
+										key={index}
+										className={"relative group cursor-pointer"}
+									>
+										<div
+											className={clsx(
+												"relative border-2 rounded-xl overflow-hidden transition-colors w-max",
+												{
+													"border-danger-300 hover:border-danger-500":
+														listRemoveImages.includes(image.image_name),
+													"border-default-200 hover:border-default-400":
+														!listRemoveImages.includes(image.image_name),
+												}
+											)}
+											onClick={() =>
+												handleOpenImageModal(image.image_url, image.image_name, "image")
+											}
+										>
+											<Image
+												src={image.image_url}
+												alt={image.image_name}
+												className={
+													"object-cover w-max group-hover:scale-105 transition-transform"
+												}
+												height={156}
+												isZoomed={false}
+												shadow={"sm"}
+												isBlurred
+											/>
+											<div
+												className={"absolute top-1 right-1 z-10"}
+												onClick={(e) => e.stopPropagation()}
+											>
+												<Button
+													color={"danger"}
+													size={"sm"}
+													className={"opacity-80 hover:opacity-100"}
+													isIconOnly
+													variant="solid"
+													onPress={() => handleAddRemoveImage(image.image_name)}
+												>
+													{ICON_CONFIG.SOFT_DELETE}
+												</Button>
+											</div>
+											{listRemoveImages.includes(image.image_name) && (
+												<div
+													className={
+														"absolute inset-0 bg-danger-200/50 flex items-center justify-center"
+													}
+												>
+													<Chip
+														color={"danger"}
+														size="sm"
+														variant="solid"
+													>
+														Will Remove
+													</Chip>
+												</div>
+											)}
+										</div>
+										<p className={"text-xs text-center mt-1 text-foreground-600 truncate"}>
+											Photo {index + 1}
+										</p>
+									</div>
+								))}
+							</div>
+						</div>
+					</>
+				)}
+				<Divider />
+				<div className={"w-full flex flex-col gap-2"}>
+					<h3 className={"text-lg font-semibold"}>Project Article</h3>
+					<div>
+						<p className={"text-sm text-foreground pb-1.5 block"}>Article Content</p>
+						<ReactQuill
+							forwardedRef={reactQuillRef}
+							value={convertText}
+							onChange={setConvertText}
+							modules={customModules}
+							formats={formats}
+							theme={"snow"}
+							placeholder={"Write your project article here..."}
+						/>
+					</div>
+				</div>
+			</CustomForm>
+
+			<Modal
+				isOpen={isImageModalOpen}
 				onClose={handleCloseImageModal}
-				size="3xl"
-				classNames={{
-					body: "py-6",
-					backdrop: "bg-black/80",
-					base: "bg-white border-none",
-					header: "border-b-[1px] border-default-200",
-					footer: "border-t-[1px] border-default-200",
-				}}
+				size="5xl"
+				hideCloseButton
 			>
 				<ModalContent>
 					{(onClose) => (
 						<>
 							<ModalHeader className="flex flex-col gap-1">
 								<div className={"flex items-center gap-2"}>
-									{selectedImage?.type === 'thumbnail' && (
-										<Chip color={"success"} size="sm" variant="solid">Thumbnail</Chip>
-									)}
-									<h4 className={"text-lg font-semibold"}>
-										{selectedImage?.name || "Project Image"}
-									</h4>
+									<h3 className={"text-xl font-semibold"}>
+										{"Photo of " + projectDetails.project_shortname}
+									</h3>
 								</div>
 							</ModalHeader>
 							<ModalBody>
@@ -734,33 +756,21 @@ export default function ProjectFormComponent({ mode, defaultValues, projectId }:
 										<Image
 											src={selectedImage.url}
 											alt={selectedImage.name}
-											className={"object-contain max-h-96 w-auto rounded-lg"}
-											height={400}
-											width={600}
+											className={"object-contain"}
+											height={512}
+											shadow={"sm"}
+											isBlurred
 										/>
 									</div>
 								)}
 							</ModalBody>
 							<ModalFooter>
-								<div className={"flex justify-between items-center w-full"}>
-									<div className={"flex items-center gap-2"}>
-										{selectedImage?.type === 'image' && (
-											<Button
-												color={listRemoveImages.includes(selectedImage.name) ? "success" : "danger"}
-												variant="bordered"
-												size="sm"
-												startContent={ICON_CONFIG.SOFT_DELETE}
-												onPress={() => {
-													if (selectedImage) {
-														handleAddRemoveImage(selectedImage.name);
-													}
-												}}
-											>
-												{listRemoveImages.includes(selectedImage.name) ? "Restore Image" : "Mark for Removal"}
-											</Button>
-										)}
-									</div>
-									<Button color="primary" onPress={onClose}>
+								<div className={"flex justify-end items-center w-full"}>
+									<Button
+										color={"danger"}
+										onPress={onClose}
+										variant={"flat"}
+									>
 										Close
 									</Button>
 								</div>
@@ -769,6 +779,6 @@ export default function ProjectFormComponent({ mode, defaultValues, projectId }:
 					)}
 				</ModalContent>
 			</Modal>
-		</Container>
+		</div>
 	);
 }

@@ -30,12 +30,21 @@ import { TCertification } from "@/types/certification";
 import TableCellAction from "@/components/shared/tables/table-cell-action";
 import { formatDate } from "@/utils/date";
 import { MAP_MESSAGE } from "@/configs/response-message";
+import SearchInput from "@/components/shared/search/search-input";
+import CustomPagination from "@/components/shared/custom-pagination/custom-pagination";
 
 export default function CertificationListPage() {
 	const [modalMode, setModalMode] = useState<"create" | "update">("create");
 	const [selectedCert, setSelectedCert] = useState<any>(null);
 	const [action, setAction] = useState<TDataAction>(null);
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+	// Search and pagination state
+	const [searchTerm, setSearchTerm] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
+	const [totalItems, setTotalItems] = useState(0);
+	const [totalPages, setTotalPages] = useState(0);
 	const router = useRouter();
 
 	/* Fetch all certifications */
@@ -45,7 +54,27 @@ export default function CertificationListPage() {
 		loading: fetchingCerts,
 		error: fetchCertsError,
 		fetch: fetchCerts,
-	} = useFetch<IAPIResponse<TCertification[]>>(API_ROUTE.CERTIFICATION.GET_ALL);
+	} = useFetch<IAPIResponse<TCertification[]>>(
+		API_ROUTE.CERTIFICATION.GET_ALL,
+		{
+			search: searchTerm,
+			page: currentPage,
+			limit: itemsPerPage,
+		}
+	);
+
+	// Handle fetch certifications result
+	useEffect(() => {
+		if (fetchCertsResult) {
+			setTotalItems(fetchCertsResult.metadata?.totalCount || 0);
+			setTotalPages(fetchCertsResult.metadata?.totalPages || 0);
+		}
+	}, [fetchCertsResult]);
+
+	// Fetch certifications when search or pagination changes
+	useEffect(() => {
+		fetchCerts();
+	}, [searchTerm, currentPage, itemsPerPage]);
 
 	useEffect(() => {
 		if (fetchCertsError) {
@@ -155,6 +184,23 @@ export default function CertificationListPage() {
 		setAction(null);
 	};
 
+	// Search and pagination handlers
+	const handleSearch = (search: string) => {
+		if (search || searchTerm !== search) {
+			setSearchTerm(search);
+			setCurrentPage(1); // Reset to first page when searching
+		}
+	};
+
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
+	};
+
+	const handleItemsPerPageChange = (items: number) => {
+		setItemsPerPage(items);
+		setCurrentPage(1); // Reset to first page when changing items per page
+	};
+
 	const handleModalSuccess = () => {
 		onOpenChange();
 		fetchCerts();
@@ -169,19 +215,31 @@ export default function CertificationListPage() {
 		>
 			<AdminHeader title="Certification Management" breadcrumbs={["Admin", "Certification Management"]}/>
 			<div className={"flex flex-col gap-4"}>
-				<div className={"flex items-center gap-4"}>
-					<Button
-						color="primary"
-						variant="solid"
-						startContent={ICON_CONFIG.NEW}
-						onPress={() => mapAction(null, "create")}
-					>
-						Add New Employment
-					</Button>
+				<div className="flex items-center justify-between gap-4">
+					<div className="flex items-center gap-4">
+						<Button
+							color="primary"
+							variant="solid"
+							startContent={ICON_CONFIG.NEW}
+							onPress={() => mapAction(null, "create")}
+						>
+							Add New Certification
+						</Button>
+					</div>
+					<div className="w-80">
+						<SearchInput
+							placeholder="Search certifications by title or issuer..."
+							onSearch={handleSearch}
+							value={searchTerm}
+						/>
+					</div>
 				</div>
 				<Table
 					aria-label="Certification List"
-					className="min-w-full"
+					classNames={{
+						wrapper: "h-[60vh]",
+					}}
+					isHeaderSticky
 				>
 					<TableHeader>
 						<TableColumn>ID</TableColumn>
@@ -213,6 +271,16 @@ export default function CertificationListPage() {
 						)}
 					</TableBody>
 				</Table>
+
+				{/* Pagination */}
+				<CustomPagination
+					currentPage={currentPage}
+					totalPages={totalPages}
+					totalItems={totalItems}
+					itemsPerPage={itemsPerPage}
+					onPageChange={handlePageChange}
+					onItemsPerPageChange={handleItemsPerPageChange}
+				/>
 			</div>
 			<Modal
 				isOpen={isOpen}

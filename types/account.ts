@@ -13,6 +13,7 @@ export type TNewAccount = {
   username: string;
   password: string;
   role: number;
+  from_admin?: number
 };
 
 export type TUpdateAccount = {

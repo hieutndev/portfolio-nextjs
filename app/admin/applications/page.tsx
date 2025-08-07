@@ -31,6 +31,8 @@ import TableCellAction from "@/components/shared/tables/table-cell-action";
 import { formatDate } from "@/utils/date";
 import { MAP_MESSAGE } from "@/configs/response-message";
 import Image from "next/image";
+import SearchInput from "@/components/shared/search/search-input";
+import CustomPagination from "@/components/shared/custom-pagination/custom-pagination";
 
 export default function ApplicationManagementPage() {
 	const [modalMode, setModalMode] = useState<"create" | "update">("create");
@@ -38,13 +40,27 @@ export default function ApplicationManagementPage() {
 	const [action, setAction] = useState<TDataAction>(null);
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
+	// Search and pagination state
+	const [searchTerm, setSearchTerm] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
+	const [totalItems, setTotalItems] = useState(0);
+	const [totalPages, setTotalPages] = useState(0);
+
 	/* Fetch all applications */
 	const {
 		data: fetchApplicationsResult,
 		loading: fetchingApplications,
 		error: fetchApplicationsError,
 		fetch: fetchApplications,
-	} = useFetch<IAPIResponse<TApp[]>>(API_ROUTE.APP.GET_ALL);
+	} = useFetch<IAPIResponse<TApp[]>>(
+		API_ROUTE.APP.GET_ALL,
+		{
+			search: searchTerm,
+			page: currentPage,
+			limit: itemsPerPage,
+		}
+	);
 
 	useEffect(() => {
 		fetchApplications();
@@ -61,6 +77,22 @@ export default function ApplicationManagementPage() {
 		skip: true,
 	});
 
+	// Handle fetch applications result
+	useEffect(() => {
+		if (fetchApplicationsResult) {
+			setTotalItems(fetchApplicationsResult.metadata?.totalCount || 0);
+			setTotalPages(fetchApplicationsResult.metadata?.totalPages || 0);
+		}
+		if (fetchApplicationsError) {
+			addToast({ title: "Error", description: "Failed to fetch applications", color: "danger" });
+		}
+	}, [fetchApplicationsResult, fetchApplicationsError]);
+
+	// Fetch applications when search or pagination changes
+	useEffect(() => {
+		fetchApplications();
+	}, [searchTerm, currentPage, itemsPerPage]);
+
 	useEffect(() => {
 		if (deleteResult) {
 			addToast({
@@ -76,6 +108,23 @@ export default function ApplicationManagementPage() {
 			addToast({ title: "Error", description: parsedError.message, color: "danger" });
 		}
 	}, [deleteResult, deleteError]);
+
+	// Search and pagination handlers
+	const handleSearch = (search: string) => {
+		if (search || searchTerm !== search) {
+			setSearchTerm(search);
+			setCurrentPage(1); // Reset to first page when searching
+		}
+	};
+
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
+	};
+
+	const handleItemsPerPageChange = (items: number) => {
+		setItemsPerPage(items);
+		setCurrentPage(1); // Reset to first page when changing items per page
+	};
 
 	const resetAction = () => {
 		setAction(null);
@@ -151,19 +200,31 @@ export default function ApplicationManagementPage() {
 				breadcrumbs={["Admin", "Application Management"]}
 			/>
 			<div className={"flex flex-col gap-4"}>
-				<div className={"flex items-center gap-4"}>
-					<Button
-						color="primary"
-						variant="solid"
-						startContent={ICON_CONFIG.NEW}
-						onPress={() => mapAction(null, "create")}
-					>
-						Add New Application
-					</Button>
+				<div className="flex items-center justify-between gap-4">
+					<div className="flex items-center gap-4">
+						<Button
+							color="primary"
+							variant="solid"
+							startContent={ICON_CONFIG.NEW}
+							onPress={() => mapAction(null, "create")}
+						>
+							Add New Application
+						</Button>
+					</div>
+					<div className="w-80">
+						<SearchInput
+							placeholder="Search applications by name..."
+							onSearch={handleSearch}
+							value={searchTerm}
+						/>
+					</div>
 				</div>
 				<Table
 					aria-label="Application List"
-					className="min-w-full"
+					classNames={{
+						wrapper: "h-[60vh]",
+					}}
+					isHeaderSticky
 				>
 					<TableHeader>
 						<TableColumn>App Name</TableColumn>
@@ -210,6 +271,16 @@ export default function ApplicationManagementPage() {
 						)}
 					</TableBody>
 				</Table>
+
+				{/* Pagination */}
+				<CustomPagination
+					currentPage={currentPage}
+					totalPages={totalPages}
+					totalItems={totalItems}
+					itemsPerPage={itemsPerPage}
+					onPageChange={handlePageChange}
+					onItemsPerPageChange={handleItemsPerPageChange}
+				/>
 			</div>
 
 			{/* Modal for Create/Edit */}

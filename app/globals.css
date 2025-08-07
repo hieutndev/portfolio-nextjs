@@ -30,6 +30,10 @@ body {
 	overflow-x: hidden;
 }
 
+.ql-editor {
+	min-height: 25vh;
+}
+
 .scrollable-content::-webkit-scrollbar,
 .ql-editor::-webkit-scrollbar {
 	display: none;

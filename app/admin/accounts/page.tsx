@@ -30,12 +30,21 @@ import { title } from "process";
 import { MAP_MESSAGE } from "@/configs/response-message";
 import Container from "@/components/shared/container/container";
 import AdminHeader from "../../../components/shared/partials/admin-header";
+import SearchInput from "@/components/shared/search/search-input";
+import CustomPagination from "@/components/shared/custom-pagination/custom-pagination";
 
 export default function AccountManagementPage() {
 	const [accounts, setAccounts] = useState<TAccount[]>([]);
 	const [selectedAccount, setSelectedAccount] = useState<TAccount | null>(null);
 	const [action, setAction] = useState<TDataAction>(null);
 	const [mode, setMode] = useState<"create" | "update">("create");
+
+	// Search and pagination state
+	const [searchTerm, setSearchTerm] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
+	const [totalItems, setTotalItems] = useState(0);
+	const [totalPages, setTotalPages] = useState(0);
 
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -44,9 +53,17 @@ export default function AccountManagementPage() {
 		loading: fetchingAccounts,
 		error: fetchAccountsError,
 		fetch: fetchAccounts,
-	} = useFetch<IAPIResponse<TAccount[]>>(API_ROUTE.ACCOUNT.GET_ALL, {
-		method: "GET",
-	});
+	} = useFetch<IAPIResponse<TAccount[]>>(
+		API_ROUTE.ACCOUNT.GET_ALL,
+		{
+			search: searchTerm,
+			page: currentPage,
+			limit: itemsPerPage,
+		},
+		{
+			method: "GET",
+		}
+	);
 
 	const {
 		data: updateStatusResult,
@@ -57,6 +74,20 @@ export default function AccountManagementPage() {
 		method: "PATCH",
 		skip: true,
 	});
+
+	// Handle fetch accounts result
+	useEffect(() => {
+		if (fetchAccountsResult) {
+			setAccounts(fetchAccountsResult.results || []);
+			setTotalItems(fetchAccountsResult.metadata?.totalCount || 0);
+			setTotalPages(fetchAccountsResult.metadata?.totalPages || 0);
+		}
+	}, [fetchAccountsResult]);
+
+	// Fetch accounts when search or pagination changes
+	useEffect(() => {
+		fetchAccounts();
+	}, [searchTerm, currentPage, itemsPerPage]);
 
 	useEffect(() => {
 		if (updateStatusResult) {
@@ -107,20 +138,37 @@ export default function AccountManagementPage() {
 		resetAction();
 	};
 
+	useEffect(() => {
+		if (!isOpen) {
+			resetAction();
+		}
+	}, [isOpen]);
+
 	const resetAction = () => {
 		setSelectedAccount(null);
 		setAction(null);
 		fetchAccounts();
 	};
 
-	useEffect(() => {
-		if (fetchAccountsResult?.results) {
-			setAccounts(fetchAccountsResult.results);
+	// Search and pagination handlers
+	const handleSearch = (search: string) => {
+		// console.log("🚀 ~ handleSearch ~ search:", search)
+		if (search || searchTerm !== search) {
+			setSearchTerm(search);
+			setCurrentPage(1); // Reset to first page when searching
 		}
-	}, [fetchAccountsResult]);
+	};
+
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
+	};
+
+	const handleItemsPerPageChange = (items: number) => {
+		setItemsPerPage(items);
+		setCurrentPage(1); // Reset to first page when changing items per page
+	};
 
 	const columns = [
-		{ key: "user_id", label: "User ID" },
 		{ key: "username", label: "Username" },
 		{ key: "email", label: "Email" },
 		{ key: "role", label: "Role" },
@@ -141,26 +189,36 @@ export default function AccountManagementPage() {
 			/>
 
 			<div className={"flex flex-col gap-4"}>
-				<div className={"flex items-center gap-4"}>
-					<Button
-						color="primary"
-						startContent={ICON_CONFIG.NEW}
-						onPress={() => mapAction(null, "create")}
-					>
-						Create Account
-					</Button>
+				<div className="flex items-center justify-between gap-4">
+					<div className="flex items-center gap-4">
+						<Button
+							color="primary"
+							startContent={ICON_CONFIG.NEW}
+							onPress={() => mapAction(null, "create")}
+						>
+							Create Account
+						</Button>
+					</div>
+					<div className="w-80">
+						<SearchInput
+							placeholder="Search by username or email..."
+							onSearch={handleSearch}
+							value={searchTerm}
+						/>
+					</div>
 				</div>
 				<Table
 					aria-label="Accounts table"
 					classNames={{
-						wrapper: "min-h-[222px]",
+						wrapper: "h-[60vh]",
 					}}
+					isHeaderSticky
 				>
 					<TableHeader columns={columns}>
 						{(column) => (
 							<TableColumn
 								key={column.key}
-								align={column.key === "action" ? "center" : "start"}
+								align={["action", "status", "role", "created_at"].includes(column.key) ? "center" : "start"}
 							>
 								{column.label}
 							</TableColumn>
@@ -174,7 +232,6 @@ export default function AccountManagementPage() {
 					>
 						{(account) => (
 							<TableRow key={account.user_id}>
-								<TableCell>{account.user_id}</TableCell>
 								<TableCell>{account.username}</TableCell>
 								<TableCell>{account.email}</TableCell>
 								<TableCell>
@@ -186,7 +243,7 @@ export default function AccountManagementPage() {
 										{account.role === 0 ? "User" : "Admin"}
 									</Chip>
 								</TableCell>
-								<TableCell>{formatDate(account.created_at, "onlyDate")}</TableCell>
+								<TableCell>{formatDate(account.created_at, "fullDate")}</TableCell>
 								<TableCell>
 									<Chip
 										size="sm"
@@ -225,6 +282,16 @@ export default function AccountManagementPage() {
 						)}
 					</TableBody>
 				</Table>
+
+				{/* Pagination */}
+				<CustomPagination
+					currentPage={currentPage}
+					totalPages={totalPages}
+					totalItems={totalItems}
+					itemsPerPage={itemsPerPage}
+					onPageChange={handlePageChange}
+					onItemsPerPageChange={handleItemsPerPageChange}
+				/>
 			</div>
 
 			<Modal

@@ -11,6 +11,7 @@ import {
 	FaFloppyDisk,
 	FaGraduationCap,
 	FaLockOpen,
+	FaMagnifyingGlass,
 	FaPlus,
 	FaPowerOff,
 	FaUserGroup,
@@ -21,6 +22,12 @@ import { MdDelete, MdDeleteForever, MdEdit } from "react-icons/md";
 import { BsShieldLockFill } from "react-icons/bs";
 import { IoGrid } from "react-icons/io5";
 import { PiCertificateFill } from "react-icons/pi";
+import {
+	HiChevronDoubleLeft,
+	HiChevronDoubleRight,
+	HiChevronLeft,
+	HiChevronRight
+} from "react-icons/hi2";
 
 const ICON_CONFIG = {
 	MENU: <FaBars />,
@@ -50,6 +57,12 @@ const ICON_CONFIG = {
 	EMPLOYMENT: <FaBuilding />,
 	PROJECT: <FaFileCode />,
 	APP: <FaFileCode />,
+	// Search and Pagination Icons
+	SEARCH: <FaMagnifyingGlass />,
+	PAGINATION_FIRST: <HiChevronDoubleLeft />,
+	PAGINATION_PREVIOUS: <HiChevronLeft />,
+	PAGINATION_NEXT: <HiChevronRight />,
+	PAGINATION_LAST: <HiChevronDoubleRight />,
 };
 
 export default ICON_CONFIG;

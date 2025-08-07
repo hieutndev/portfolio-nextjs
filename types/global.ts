@@ -72,6 +72,7 @@ export interface IAPIResponse<TResponse = any, TError = any> {
   status: "success" | "failure" | "error";
   message: TMessageCode;
   results?: TResponse;
+  metadata?: any;
   errors?: TError;
   validateErrors?: ErrorObject[];
 }

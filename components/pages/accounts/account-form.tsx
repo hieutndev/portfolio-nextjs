@@ -19,6 +19,7 @@ export default function AccountForm({onSuccess }: AccountFormProps) {
 		username: "",
 		password: "",
 		role: 0,
+		from_admin: 1,
 	});
 
 	const {

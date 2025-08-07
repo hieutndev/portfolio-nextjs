@@ -51,6 +51,7 @@ export default function Sidebar() {
 
 	useEffect(() => {
 		if (fetchProjectGroupsResult) {
+			console.log("🚀 ~ Sidebar ~ fetchProjectGroupsResult:", fetchProjectGroupsResult)
 			setListProjectGroups(fetchProjectGroupsResult?.results ?? []);
 		}
 

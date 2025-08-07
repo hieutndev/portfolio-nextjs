@@ -31,6 +31,8 @@ import { TEducation } from "@/types/education";
 import TableCellAction from "@/components/shared/tables/table-cell-action";
 import { formatDate } from "@/utils/date";
 import { MAP_MESSAGE } from "@/configs/response-message";
+import SearchInput from "@/components/shared/search/search-input";
+import CustomPagination from "@/components/shared/custom-pagination/custom-pagination";
 
 export default function EducationManagementPage() {
 	const [modalMode, setModalMode] = useState<"create" | "edit">("create");
@@ -39,17 +41,37 @@ export default function EducationManagementPage() {
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
 	const router = useRouter();
 
+	// Search and pagination state
+	const [searchTerm, setSearchTerm] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
+	const [totalItems, setTotalItems] = useState(0);
+	const [totalPages, setTotalPages] = useState(0);
+
 	/* Fetch all educations */
 	const {
 		data: fetchEducationsResult,
 		loading: fetchingEducations,
 		error: fetchEducationsError,
 		fetch: fetchEducations,
-	} = useFetch<IAPIResponse<TEducation[]>>(API_ROUTE.EDUCATION.GET_ALL);
+	} = useFetch<IAPIResponse<TEducation[]>>(API_ROUTE.EDUCATION.GET_ALL, {
+		search: searchTerm,
+		page: currentPage,
+		limit: itemsPerPage,
+	});
 
+	// Handle fetch educations result
+	useEffect(() => {
+		if (fetchEducationsResult) {
+			setTotalItems(fetchEducationsResult.metadata?.totalCount || 0);
+			setTotalPages(fetchEducationsResult.metadata?.totalPages || 0);
+		}
+	}, [fetchEducationsResult]);
+
+	// Fetch educations when search or pagination changes
 	useEffect(() => {
 		fetchEducations();
-	}, []);
+	}, [searchTerm, currentPage, itemsPerPage]);
 
 	/* Soft Delete */
 	const {
@@ -125,6 +147,22 @@ export default function EducationManagementPage() {
 		setSelectedEducation(null);
 	};
 
+	// Search and pagination handlers
+	const handleSearch = (search: string) => {
+		if (search || searchTerm !== search) {
+			setSearchTerm(search);
+			setCurrentPage(1); // Reset to first page when searching
+		}
+	};
+
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
+	};
+
+	const handleItemsPerPageChange = (items: number) => {
+		setItemsPerPage(items);
+		setCurrentPage(1); // Reset to first page when changing items per page
+	};
 
 	const mapAction = (education: TEducation | null, actionType: TDataAction) => {
 		setAction(actionType);
@@ -132,7 +170,6 @@ export default function EducationManagementPage() {
 	};
 
 	useEffect(() => {
-		
 		if (selectedEducation || action === "create" || action === "update") {
 			switch (action) {
 				case "create":
@@ -158,7 +195,6 @@ export default function EducationManagementPage() {
 				resetAction();
 			}
 		}
-
 	}, [action, selectedEducation]);
 
 	return (
@@ -173,19 +209,31 @@ export default function EducationManagementPage() {
 			/>
 
 			<div className={"flex flex-col gap-4"}>
-				<div className="flex items-center gap-4">
-					<Button
-						color="primary"
-						variant="solid"
-						startContent={ICON_CONFIG.NEW}
-						onPress={() => mapAction(null, "create")}
-					>
-						Add New Education
-					</Button>
+				<div className="flex items-center justify-between gap-4">
+					<div className="flex items-center gap-4">
+						<Button
+							color="primary"
+							variant="solid"
+							startContent={ICON_CONFIG.NEW}
+							onPress={() => mapAction(null, "create")}
+						>
+							Add New Education
+						</Button>
+					</div>
+					<div className="w-80">
+						<SearchInput
+							placeholder="Search educations by title or organization..."
+							onSearch={handleSearch}
+							value={searchTerm}
+						/>
+					</div>
 				</div>
 				<Table
 					aria-label="Education List"
-					className="min-w-full"
+					classNames={{
+						wrapper: "h-[60vh]",
+					}}
+					isHeaderSticky
 				>
 					<TableHeader>
 						<TableColumn>ID</TableColumn>
@@ -236,6 +284,16 @@ export default function EducationManagementPage() {
 						)}
 					</TableBody>
 				</Table>
+
+				{/* Pagination */}
+				<CustomPagination
+					currentPage={currentPage}
+					totalPages={totalPages}
+					totalItems={totalItems}
+					itemsPerPage={itemsPerPage}
+					onPageChange={handlePageChange}
+					onItemsPerPageChange={handleItemsPerPageChange}
+				/>
 			</div>
 
 			{/* Modal for Create/Edit */}
@@ -250,7 +308,9 @@ export default function EducationManagementPage() {
 					{(onClose) => (
 						<>
 							<ModalHeader>
-								<h3 className={"text-xl font-semibold"}>{modalMode === "create" ? "Add New Education" : "Edit Education"}</h3>
+								<h3 className={"text-xl font-semibold"}>
+									{modalMode === "create" ? "Add New Education" : "Edit Education"}
+								</h3>
 							</ModalHeader>
 							<ModalBody className="mb-4">
 								<EducationForm
