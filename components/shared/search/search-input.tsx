@@ -47,6 +47,7 @@ export default function SearchInput({
 			className={className}
 			isClearable
 			onClear={() => setSearchTerm("")}
+			variant={"bordered"}
 		/>
 	);
 }

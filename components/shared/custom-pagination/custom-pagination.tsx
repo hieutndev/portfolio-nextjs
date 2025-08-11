@@ -43,7 +43,8 @@ export default function CustomPagination({
 					<div className="flex items-center gap-2 border-l pl-4 border-default-200">
 						<span className="text-tiny text-default-500">Show:</span>
 						<Select
-							size="sm"
+							size={"sm"}
+							radius={"lg"}
 							selectedKeys={[itemsPerPage.toString()]}
 							onSelectionChange={(keys) => {
 								const selectedValue = Array.from(keys)[0] as string;

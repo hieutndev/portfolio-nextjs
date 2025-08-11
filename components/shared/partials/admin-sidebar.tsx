@@ -20,7 +20,8 @@ export default function AdminSidebar() {
 					alt={"logo"}
 					width={1200}
 					height={1200}
-					className={"w-full h-max object-contain"}
+					className={"w-full h-max object-contain cursor-pointer"}
+					onClick={() => router.push("/")}
 				/>
 			</div>
 			<Divider />
