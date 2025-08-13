@@ -43,7 +43,7 @@ export default function ProjectManagement() {
 			title: "Group",
 		},
 		{
-			key: null,
+			key: '',
 			title: "Project Duration",
 		},
 		{

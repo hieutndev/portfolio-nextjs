@@ -1,5 +1,5 @@
 export type TProject = {
-  id: string | number;
+  id: number;
   project_fullname: string;
   project_shortname: string;
   start_date: string;
@@ -16,12 +16,12 @@ export type TProject = {
 
 export type TProjectResponse = TProject &
   Pick<TProjectGroup, "group_title"> & {
-    group_id: string | number | null;
+    group_id: TProjectGroup['group_id'] | null;
     project_images: TProjectImage[];
   };
 
 export type TProjectGroup = {
-  group_id: string | number;
+  group_id: number;
   group_title: string;
   created_at: string;
   updated_at: string;
@@ -29,8 +29,8 @@ export type TProjectGroup = {
 };
 
 export type TProjectImage = {
-  image_id: string;
-  project_id: string;
+  image_id: number;
+  project_id: TProject['id'];
   image_name: string;
   image_url: string;
 };
