@@ -51,10 +51,24 @@ const Editor = dynamic(() => import('./mdx-editor-initialized'), {
   ),
 })
 
-// Forward ref editor component
-const ForwardRefEditor = forwardRef<MDXEditorMethods, MDXEditorProps>((props, ref) => (
-  <Editor {...props} editorRef={ref} />
-))
+// Forward ref editor component with ready state handling
+const ForwardRefEditor = forwardRef<MDXEditorMethods, MDXEditorProps & {
+  onEditorReady?: () => void;
+  imageUploadHandler?: (file: File) => Promise<string>;
+}>((props, ref) => {
+  const { onEditorReady, imageUploadHandler, ...editorProps } = props;
+
+  useEffect(() => {
+    // Mark editor as ready after a short delay to ensure it's fully mounted
+    const timer = setTimeout(() => {
+      onEditorReady?.();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [onEditorReady]);
+
+  return <Editor {...editorProps} editorRef={ref} imageUploadHandler={imageUploadHandler} />;
+})
 
 ForwardRefEditor.displayName = 'ForwardRefEditor'
 
@@ -104,6 +118,34 @@ Feel free to contribute to this project by submitting pull requests or reporting
 
 *Last updated: ${new Date().toLocaleDateString()}*`
 
+// Function to sanitize markdown content to prevent parsing errors
+const sanitizeMarkdown = (content: string): string => {
+	if (!content) return '';
+	
+	try {
+		// Fix common markdown parsing issues
+		let sanitized = content;
+		
+		// Fix code blocks without language specification
+		sanitized = sanitized.replace(/```(\s*\n)/g, '```txt$1');
+		
+		// Fix malformed code blocks
+		sanitized = sanitized.replace(/```(\w*)\s*\n([\s\S]*?)```/g, (match, lang, code) => {
+			const cleanLang = lang || 'txt';
+			return `\`\`\`${cleanLang}\n${code}\`\`\``;
+		});
+		
+		// Remove any problematic characters that might cause parsing issues
+		sanitized = sanitized.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '');
+		
+		return sanitized;
+	} catch (error) {
+		console.error('Error sanitizing markdown:', error);
+		// Return a safe fallback
+		return '# Content Error\n\nThere was an issue loading the content. Please edit in source mode to fix any formatting issues.';
+	}
+};
+
 interface ProjectFormMarkDownProps {
 	mode: "create" | "edit";
 	defaultValues?: TProjectResponse;
@@ -115,6 +157,8 @@ export default function ProjectFormMarkDownComponent({ mode, defaultValues, proj
 	const mdxEditorRef = useRef<MDXEditorMethods>(null);
 	const [initArticle, setInitArticle] = useState("");
 	const [convertText, setConvertText] = useState<string>("");
+	const [isEditorReady, setIsEditorReady] = useState(false);
+	const [pendingContent, setPendingContent] = useState<string>("");
 	const [projectDetails, setProjectDetails] = useState<TNewProject | TUpdateProject>({
 		project_fullname: "",
 		project_shortname: "",
@@ -179,7 +223,7 @@ export default function ProjectFormMarkDownComponent({ mode, defaultValues, proj
 		loading: fetchingProjectDetail,
 		fetch: fetchProjectDetail,
 	} = useFetch<IAPIResponse<TProjectResponse>>(
-		mode === "edit" && projectId ? API_ROUTE.PROJECT.GET_ONE(projectId) : "",
+		mode === "edit" && projectId ? API_ROUTE.PROJECT.GET_ONE(parseInt(projectId)) : "",
 		{
 			skip: mode === "create" || !projectId,
 		}
@@ -194,6 +238,7 @@ export default function ProjectFormMarkDownComponent({ mode, defaultValues, proj
 	useEffect(() => {
 		if (mode === "edit" && fetchProjectDetailResult && fetchProjectDetailResult.results) {
 			const projectData = fetchProjectDetailResult.results;
+			console.log('Raw API response:', fetchProjectDetailResult);
 			setProjectDetails({
 				...projectData,
 				start_date: formatDate(projectData.start_date, "onlyDateReverse"),
@@ -203,8 +248,17 @@ export default function ProjectFormMarkDownComponent({ mode, defaultValues, proj
 			});
 			setCurrentThumbnail(projectData.project_thumbnail);
 			setListCurrentImages(projectData.project_images);
-			setConvertText(projectData.article_body);
-			setInitArticle(projectData.article_body);
+
+			// Store the content and set it when editor is ready
+			const articleContent = sanitizeMarkdown(projectData.article_body || "");
+			console.log('Project data loaded:', { articleContent, isEditorReady, mode });
+			setPendingContent(articleContent);
+			setInitArticle(articleContent);
+
+			// If editor is already ready, set content immediately
+			if (isEditorReady) {
+				setConvertText(articleContent);
+			}
 
 			// Set the date picker with the actual project dates
 			setDatePicked({
@@ -218,12 +272,20 @@ export default function ProjectFormMarkDownComponent({ mode, defaultValues, proj
 				project_thumbnail: null,
 				project_images: null,
 			});
-			setConvertText(defaultValues.article_body || getSampleMarkdown());
+			const content = sanitizeMarkdown(defaultValues.article_body || getSampleMarkdown());
+			setPendingContent(content);
+			if (isEditorReady) {
+				setConvertText(content);
+			}
 		} else if (mode === "create") {
 			// For completely new projects, use sample markdown
-			setConvertText(getSampleMarkdown());
+			const content = sanitizeMarkdown(getSampleMarkdown());
+			setPendingContent(content);
+			if (isEditorReady) {
+				setConvertText(content);
+			}
 		}
-	}, [mode, fetchProjectDetailResult, defaultValues]);
+	}, [mode, fetchProjectDetailResult, defaultValues, isEditorReady]);
 
 	/* HANDLE SUBMIT */
 	const [formData, setFormData] = useState<FormData | null>(null);
@@ -233,7 +295,7 @@ export default function ProjectFormMarkDownComponent({ mode, defaultValues, proj
 		error: submitError,
 		loading: submitting,
 		fetch: submitForm,
-	} = useFetch(mode === "create" ? API_ROUTE.PROJECT.NEW : API_ROUTE.PROJECT.UPDATE_PROJECT(projectId!), {
+	} = useFetch(mode === "create" ? API_ROUTE.PROJECT.NEW : API_ROUTE.PROJECT.UPDATE_PROJECT(parseInt(projectId!)), {
 		method: mode === "create" ? "POST" : "PATCH",
 		skip: true,
 	});
@@ -370,6 +432,136 @@ export default function ProjectFormMarkDownComponent({ mode, defaultValues, proj
 		onImageModalClose();
 	};
 
+	// Handle editor ready state and set pending content
+	useEffect(() => {
+		if (isEditorReady && pendingContent) {
+			console.log('Setting editor content:', { pendingContent, convertText, isEditorReady });
+			try {
+				const sanitizedContent = sanitizeMarkdown(pendingContent);
+				setConvertText(sanitizedContent);
+				setPendingContent(""); // Clear pending content after setting
+			} catch (error) {
+				console.error('Error setting editor content:', error);
+				// Fallback to empty content if there's an error
+				setConvertText("");
+				setPendingContent("");
+			}
+		}
+	}, [isEditorReady, pendingContent]);
+
+	// Fallback: Force set content after a delay if editor is loaded but content is still empty
+	useEffect(() => {
+		if (mode === "edit" && isEditorReady && !convertText && initArticle) {
+			console.log('Fallback: Setting content from initArticle:', initArticle);
+			const timer = setTimeout(() => {
+				try {
+					const sanitizedContent = sanitizeMarkdown(initArticle);
+					setConvertText(sanitizedContent);
+				} catch (error) {
+					console.error('Error in fallback content setting:', error);
+					setConvertText("");
+				}
+			}, 500);
+			return () => clearTimeout(timer);
+		}
+	}, [mode, isEditorReady, convertText, initArticle]);
+
+	// Image upload functionality for MDX Editor
+	const {
+		data: uploadImageResult,
+		error: uploadImageError,
+		loading: uploadingImage,
+		fetch: uploadImage,
+	} = useFetch(API_ROUTE.S3.UPLOAD_IMAGE, {
+		method: "POST",
+		skip: true,
+		options: {
+			removeContentType: true,
+		},
+	});
+
+	const uploadImageResultRef = useRef(uploadImageResult);
+	const uploadImageErrorRef = useRef(uploadImageError);
+
+	useEffect(() => {
+		if (uploadImageResult) {
+			uploadImageResultRef.current = uploadImageResult;
+		}
+
+		if (uploadImageError) {
+			uploadImageErrorRef.current = uploadImageError;
+		}
+	}, [uploadImageResult, uploadImageError]);
+
+	const handleUploadImage = async (file: File): Promise<string> => {
+		try {
+			// Show upload toast
+			addToast({
+				title: "Uploading Image",
+				description: `Uploading ${file.name}...`,
+				color: "primary",
+			});
+
+			const formData = new FormData();
+			formData.append("image", file);
+			await uploadImage({ body: formData });
+
+			return new Promise<string>((resolve, reject) => {
+				let retry = 20;
+				const checkResult = () => {
+					const result = uploadImageResultRef.current;
+					const error = uploadImageErrorRef.current;
+
+					console.log("Image upload result:", result);
+					console.log("Image upload error:", error);
+
+					if (!error && result && result.results && result.results.imageKey) {
+						const imageUrl = process.env.NEXT_PUBLIC_BASE_API_URL + API_ROUTE.S3.GET_IMAGE(result.results.imageKey);
+
+						// Show success toast
+						addToast({
+							title: "Image Uploaded",
+							description: "Image uploaded successfully!",
+							color: "success",
+						});
+
+						resolve(imageUrl);
+					} else if (error) {
+						// Show error toast
+						addToast({
+							title: "Upload Failed",
+							description: "Failed to upload image. Please try again.",
+							color: "danger",
+						});
+						reject(error);
+					} else if (retry > 0) {
+						retry--;
+						setTimeout(checkResult, 250);
+					} else {
+						// Show timeout error toast
+						addToast({
+							title: "Upload Timeout",
+							description: "Image upload timed out. Please try again.",
+							color: "danger",
+						});
+						reject(new Error("Image upload timed out."));
+					}
+				};
+				checkResult();
+			}).finally(() => {
+				uploadImageResultRef.current = null;
+			});
+		} catch (error) {
+			// Show general error toast
+			addToast({
+				title: "Upload Error",
+				description: "An error occurred while uploading the image.",
+				color: "danger",
+			});
+			throw error;
+		}
+	};
+
 	useEffect(() => {
 		setProjectDetails((prev) => ({ ...prev, article_body: convertText }));
 	}, [convertText]);
@@ -383,6 +575,8 @@ export default function ProjectFormMarkDownComponent({ mode, defaultValues, proj
 				className={"w-full flex flex-col gap-4"}
 				isLoading={isLoading}
 				onSubmit={handleSubmit}
+				useEnterKey={false}
+				useCtrlSKey={true}
 			>
 				<div className={"w-full flex flex-col gap-2"}>
 					<h3 className={"text-xl font-semibold"}>Project Information</h3>
@@ -647,15 +841,20 @@ export default function ProjectFormMarkDownComponent({ mode, defaultValues, proj
 						<label className="text-sm text-foreground pb-1.5 block">Article Content</label>
 						<div className="border border-default-200 rounded-lg overflow-hidden bg-white shadow-sm">
 							<ForwardRefEditor
+								key={`mdx-editor-${mode}-${projectId || 'new'}-${convertText ? 'with-content' : 'empty'}`}
 								ref={mdxEditorRef}
 								markdown={convertText}
 								onChange={setConvertText}
 								placeholder="Write your project article here using Markdown..."
 								className="min-h-[400px] w-full"
+								onEditorReady={() => setIsEditorReady(true)}
+								imageUploadHandler={handleUploadImage}
 							/>
 						</div>
 						<p className="text-xs text-gray-500 mt-1">
 							Use Markdown syntax to format your content. You can switch to source mode to see the raw markdown.
+							<br />
+							<strong>Image Upload:</strong> Click the image icon in the toolbar or drag & drop images directly into the editor. Images will be automatically uploaded to S3.
 						</p>
 					</div>
 				</div>

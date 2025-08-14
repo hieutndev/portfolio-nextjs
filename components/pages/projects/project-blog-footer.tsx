@@ -1,6 +1,9 @@
+"use client";
+
 import { TProject } from "@/types/project";
 import { Button } from "@heroui/react";
 import Container from "@/components/shared/container/container";
+import ICON_CONFIG from "@/configs/icons";
 
 interface ProjectBlogFooterProps {
   project: TProject;
@@ -18,8 +21,9 @@ export default function ProjectBlogFooter({ project }: ProjectBlogFooterProps) {
                         rel="noopener noreferrer"
                         variant="bordered"
                         className="w-full sm:w-auto"
+                        startContent={ICON_CONFIG.GITHUB}
                     >
-                        View on GitHub
+                        Open on Github
                     </Button>
                 )}
                 {project.demo_link && (
@@ -30,22 +34,12 @@ export default function ProjectBlogFooter({ project }: ProjectBlogFooterProps) {
                         rel="noopener noreferrer"
                         color="primary"
                         className="w-full sm:w-auto"
+                        startContent={ICON_CONFIG.LIVE_DEMO}
                     >
                         Live Demo
                     </Button>
                 )}
             </div>
-            {(project.start_date || project.end_date) && (
-                <div className="text-sm text-gray-600 text-center mt-4">
-                    {project.start_date && (
-                        <span>Started: {new Date(project.start_date).toLocaleDateString()}</span>
-                    )}
-                    {project.start_date && project.end_date && <span> • </span>}
-                    {project.end_date && (
-                        <span>Completed: {new Date(project.end_date).toLocaleDateString()}</span>
-                    )}
-                </div>
-            )}
         </Container>
     );
 }

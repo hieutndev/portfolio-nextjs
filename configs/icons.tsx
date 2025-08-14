@@ -17,8 +17,10 @@ import {
 	FaUserGroup,
 	FaUserShield,
 	FaXmark,
+	FaGithub
 } from "react-icons/fa6";
 import { MdDelete, MdDeleteForever, MdEdit } from "react-icons/md";
+import { LuGlobe } from "react-icons/lu";
 import { BsShieldLockFill } from "react-icons/bs";
 import { IoGrid } from "react-icons/io5";
 import { PiCertificateFill } from "react-icons/pi";
@@ -63,6 +65,8 @@ const ICON_CONFIG = {
 	PAGINATION_PREVIOUS: <HiChevronLeft />,
 	PAGINATION_NEXT: <HiChevronRight />,
 	PAGINATION_LAST: <HiChevronDoubleRight />,
+	GITHUB: <FaGithub />,
+	LIVE_DEMO: <LuGlobe />,
 };
 
 export default ICON_CONFIG;
