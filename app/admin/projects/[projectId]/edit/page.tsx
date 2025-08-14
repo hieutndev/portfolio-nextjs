@@ -1,8 +1,8 @@
-import ProjectFormComponent from "@/components/pages/projects/project-form";
 import AdminHeader from "@/components/shared/partials/admin-header";
 import ICON_CONFIG from "@/configs/icons";
 import ROUTE_PATH from "@/configs/route-path";
 import Container from "@/components/shared/container/container";
+import ProjectFormMarkDownComponent from "@/components/pages/projects/project-form-markdown";
 
 
 interface EditProjectPageProps {
@@ -30,7 +30,7 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
 				breadcrumbs={["Projects", "Update Project Details"]}
 			/>
 
-			<ProjectFormComponent
+			<ProjectFormMarkDownComponent
 				mode="edit"
 				projectId={projectId}
 			/>

@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Cairo+Play:wght@200..1000&family=Playwrite+VN:wght@100..400&display=swap");
+@import 'highlight.js/styles/github.css';
 
 @tailwind base;
 @tailwind components;
@@ -74,5 +75,261 @@ body {
 
 	.ql-align-center {
 		text-align: center;
+	}
+
+	/* MDXEditor Styles */
+	.mdxeditor {
+		@apply font-sans;
+	}
+
+	.mdxeditor-toolbar {
+		@apply border-b border-gray-200 bg-gray-50 p-2;
+	}
+
+	.mdxeditor-rich-text-editor {
+		@apply p-4 min-h-[400px] focus:outline-none;
+	}
+
+	/* Prose styles for MDXEditor content */
+	.mdxeditor .prose {
+		@apply max-w-none;
+	}
+
+	.mdxeditor .prose h1 {
+		@apply text-3xl font-bold text-gray-900 mt-6 mb-4 leading-tight;
+	}
+
+	.mdxeditor .prose h2 {
+		@apply text-2xl font-semibold text-gray-900 mt-5 mb-3 leading-tight;
+	}
+
+	.mdxeditor .prose h3 {
+		@apply text-xl font-semibold text-gray-900 mt-4 mb-3 leading-tight;
+	}
+
+	.mdxeditor .prose h4 {
+		@apply text-lg font-medium text-gray-900 mt-4 mb-2 leading-tight;
+	}
+
+	.mdxeditor .prose h5 {
+		@apply text-base font-medium text-gray-900 mt-3 mb-2 leading-tight;
+	}
+
+	.mdxeditor .prose h6 {
+		@apply text-sm font-medium text-gray-900 mt-3 mb-2 leading-tight;
+	}
+
+	.mdxeditor .prose p {
+		@apply text-gray-700 leading-relaxed mb-4;
+	}
+
+	.mdxeditor .prose strong {
+		@apply font-semibold text-gray-900;
+	}
+
+	.mdxeditor .prose em {
+		@apply italic;
+	}
+
+	.mdxeditor .prose ul {
+		@apply list-disc pl-6 mb-4 space-y-1;
+	}
+
+	.mdxeditor .prose ol {
+		@apply list-decimal pl-6 mb-4 space-y-1;
+	}
+
+	.mdxeditor .prose li {
+		@apply text-gray-700 leading-relaxed;
+	}
+
+	.mdxeditor .prose blockquote {
+		@apply border-l-4 border-blue-500 pl-4 py-2 my-4 bg-blue-50 italic text-gray-700;
+	}
+
+	.mdxeditor .prose code {
+		@apply bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded text-sm font-mono;
+	}
+
+	.mdxeditor .prose pre {
+		@apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4;
+	}
+
+	.mdxeditor .prose pre code {
+		@apply bg-transparent text-gray-100 p-0;
+	}
+
+	.mdxeditor .prose a {
+		@apply text-blue-600 hover:text-blue-800 underline;
+	}
+
+	.mdxeditor .prose table {
+		@apply w-full border-collapse border border-gray-300 mb-4;
+	}
+
+	.mdxeditor .prose th {
+		@apply border border-gray-300 bg-gray-100 px-4 py-2 text-left font-semibold;
+	}
+
+	.mdxeditor .prose td {
+		@apply border border-gray-300 px-4 py-2;
+	}
+
+	.mdxeditor .prose hr {
+		@apply border-t border-gray-300 my-6;
+	}
+
+	.mdxeditor .prose img {
+		@apply max-w-full h-auto rounded-lg shadow-sm;
+	}
+
+	/* MDXEditor specific component styles */
+	.mdxeditor [data-toolbar] {
+		@apply border-b border-gray-200 bg-gray-50 p-2 flex items-center gap-1 flex-wrap;
+	}
+
+	.mdxeditor [data-toolbar] button {
+		@apply px-2 py-1 rounded hover:bg-gray-200 transition-colors text-sm;
+	}
+
+	.mdxeditor [data-toolbar] button[data-active="true"] {
+		@apply bg-blue-100 text-blue-700;
+	}
+
+	.mdxeditor [data-toolbar] select {
+		@apply px-2 py-1 rounded border border-gray-300 text-sm;
+	}
+
+	.mdxeditor [data-toolbar] [data-separator] {
+		@apply w-px h-6 bg-gray-300 mx-1;
+	}
+
+	/* Content editable area */
+	.mdxeditor [contenteditable="true"] {
+		@apply focus:outline-none p-4 min-h-[400px];
+	}
+
+	/* Placeholder text */
+	.mdxeditor [contenteditable="true"]:empty:before {
+		content: attr(data-placeholder);
+		@apply text-gray-400 pointer-events-none;
+	}
+
+	/* Source mode styles */
+	.mdxeditor .cm-editor {
+		@apply border-0 text-sm;
+	}
+
+	.mdxeditor .cm-focused {
+		@apply outline-none;
+	}
+
+	/* Dialog styles for MDXEditor */
+	.mdxeditor [role="dialog"] {
+		@apply bg-white border border-gray-300 rounded-lg shadow-lg p-4;
+	}
+
+	/* Link dialog */
+	.mdxeditor [data-link-dialog] input {
+		@apply border border-gray-300 rounded px-3 py-2 w-full mb-2;
+	}
+
+	.mdxeditor [data-link-dialog] button {
+		@apply px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mr-2;
+	}
+
+	/* Table styles in editor */
+	.mdxeditor table {
+		@apply border-collapse w-full mb-4;
+	}
+
+	.mdxeditor table th,
+	.mdxeditor table td {
+		@apply border border-gray-300 px-3 py-2 text-left;
+	}
+
+	.mdxeditor table th {
+		@apply bg-gray-100 font-semibold;
+	}
+
+	/* Code mirror theme adjustments */
+	.mdxeditor .cm-theme-light {
+		@apply bg-white;
+	}
+
+	.mdxeditor .cm-content {
+		@apply p-4 min-h-[400px];
+	}
+
+	/* Enhanced typography for better readability */
+	.mdxeditor .prose {
+		@apply text-gray-800 leading-relaxed;
+		font-size: 16px;
+		line-height: 1.7;
+	}
+
+	/* Better spacing for nested lists */
+	.mdxeditor .prose ul ul,
+	.mdxeditor .prose ol ol,
+	.mdxeditor .prose ul ol,
+	.mdxeditor .prose ol ul {
+		@apply mt-2 mb-2;
+	}
+
+	/* Code syntax highlighting improvements */
+	.mdxeditor .prose pre {
+		@apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4 border;
+		font-family: 'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+	}
+
+	.mdxeditor .prose code {
+		@apply bg-gray-100 text-red-600 px-1.5 py-0.5 rounded text-sm;
+		font-family: 'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+	}
+
+	/* Better blockquote styling */
+	.mdxeditor .prose blockquote {
+		@apply border-l-4 border-blue-500 pl-6 py-3 my-6 bg-blue-50 italic text-gray-700 rounded-r-lg;
+	}
+
+	.mdxeditor .prose blockquote p {
+		@apply mb-0;
+	}
+
+	/* Link hover effects */
+	.mdxeditor .prose a {
+		@apply text-blue-600 hover:text-blue-800 underline decoration-2 underline-offset-2 transition-colors;
+	}
+
+	/* Table improvements */
+	.mdxeditor .prose table {
+		@apply w-full border-collapse border border-gray-300 mb-6 rounded-lg overflow-hidden shadow-sm;
+	}
+
+	.mdxeditor .prose th {
+		@apply border border-gray-300 bg-gray-100 px-4 py-3 text-left font-semibold text-gray-900;
+	}
+
+	.mdxeditor .prose td {
+		@apply border border-gray-300 px-4 py-3 text-gray-700;
+	}
+
+	.mdxeditor .prose tbody tr:nth-child(even) {
+		@apply bg-gray-50;
+	}
+
+	/* Image styling */
+	.mdxeditor .prose img {
+		@apply max-w-full h-auto rounded-lg shadow-md my-6 border border-gray-200;
+	}
+
+	/* Horizontal rule styling */
+	.mdxeditor .prose hr {
+		@apply border-t-2 border-gray-300 my-8;
+	}
+
+	/* Focus states for better accessibility */
+	.mdxeditor [contenteditable="true"]:focus {
+		@apply outline-none ring-2 ring-blue-500 ring-opacity-50;
 	}
 }

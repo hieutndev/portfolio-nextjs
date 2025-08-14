@@ -43,12 +43,12 @@ export function getLastUpdatedTime(isoString: string): string {
     const diffInDays = Math.floor(diffInHours / 24);
 
     if (diffInDays > 0) {
-        return `${diffInDays} day(s) ago`;
+        return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
     } else if (diffInHours > 0) {
-        return `${diffInHours} hour(s) ago`;
+        return `${diffInHours} hour${diffInHours > 1 ? "s" : ""} ago`;
     } else if (diffInMinutes > 0) {
-        return `${diffInMinutes} minute(s) ago`;
+        return `${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""} ago`;
     } else {
-        return `${diffInSeconds} second(s) ago`;
+        return `${diffInSeconds} second${diffInSeconds > 1 ? "s" : ""} ago`;
     }
 }

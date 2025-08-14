@@ -1,14 +1,11 @@
-import ProjectFormComponent from "@/components/pages/projects/project-form";
+
 import AdminHeader from "@/components/shared/partials/admin-header";
 import ICON_CONFIG from "@/configs/icons";
 import ROUTE_PATH from "@/configs/route-path";
 import Container from "@/components/shared/container/container";
+import ProjectFormMarkDownComponent from "@/components/pages/projects/project-form-markdown";
 
-interface NewProjectPageProps {
-	mode: "create" | "edit";
-}
-
-export default function NewProjectPage({ mode }: NewProjectPageProps) {
+export default function NewProjectPage() {
 	return (
 		<Container
 			orientation={"vertical"}
@@ -26,7 +23,7 @@ export default function NewProjectPage({ mode }: NewProjectPageProps) {
 				}}
 				breadcrumbs={["Projects", "Create new Project"]}
 			/>
-			<ProjectFormComponent mode="create" />
+			<ProjectFormMarkDownComponent mode="create" />
 		</Container>
 	);
 }

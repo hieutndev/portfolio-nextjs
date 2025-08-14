@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import { heroui } from "@heroui/react";
+
 export default {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,21 +11,24 @@ export default {
   theme: {
   },
   darkMode: "class",
-  plugins: [heroui({
-    themes: {
-      light: {
-        colors: {
-          warning: {
-            foreground: "#f2f1ef",
-          },
-          danger: {
-            foreground: "#f2f1ef",
-          },
-          success: {
-            foreground: "#f2f1ef",
-          },
+  plugins: [
+    require('@tailwindcss/typography'),
+    heroui({
+      themes: {
+        light: {
+          colors: {
+            warning: {
+              foreground: "#f2f1ef",
+            },
+            danger: {
+              foreground: "#f2f1ef",
+            },
+            success: {
+              foreground: "#f2f1ef",
+            },
+          }
         }
       }
-    }
-  })],
+    })
+  ],
 } satisfies Config;
