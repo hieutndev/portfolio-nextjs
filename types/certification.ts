@@ -1,5 +1,5 @@
 export type TCertification = {
-  id: string;
+  id: number;
   title: string;
   issued_by: string;
   issued_date: string;
