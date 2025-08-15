@@ -4,7 +4,7 @@ import { TProject } from "@/types/project";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import Container from "@/components/shared/container/container";
-import { formatDate } from "@/utils/date";
+import { formatDate, getDiffTime } from "@/utils/date";
 
 interface ProjectBlogContentProps {
   project: TProject;
@@ -24,9 +24,10 @@ export default function ProjectBlogContent({
         <h2>Project Durations:</h2>
         {(project.start_date || project.end_date) && (
           <p>
-            {project.start_date && <span>From <span className="font-bold text-primary">{formatDate(project.start_date, "onlyDate")}</span> </span>}
+            - <strong>{getDiffTime(project.start_date, project.end_date).days} days </strong>
+            {project.start_date && <span>from <strong>{formatDate(project.start_date, "onlyDate")}</strong> </span>}
             {project.end_date && (
-              <span>to <span className="font-bold text-primary">{formatDate(project.end_date, "onlyDate")}</span>.</span>
+              <span>to <strong>{formatDate(project.end_date, "onlyDate")}</strong>.</span>
             )}
           </p>
         )}

@@ -50,8 +50,12 @@ export default function CustomPagination({
 								const selectedValue = Array.from(keys)[0] as string;
 								onItemsPerPageChange(parseInt(selectedValue));
 							}}
-							className="w-20"
-							variant={"bordered"}
+							className={"w-16"}
+							classNames={{
+								listboxWrapper: "min-w-max",
+								popoverContent: "p-0 rounded-lg"
+							}}
+							variant={"underlined"}
 						>
 							{itemsPerPageOptions.map((option) => (
 								<SelectItem key={option.toString()}>

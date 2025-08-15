@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import ICON_CONFIG from "@/configs/icons";
 import useScroll from "../../../hooks/useScroll";
 import ROUTE_PATH from "@/configs/route-path";
-import { Button } from "@heroui/react";
+import { Button, Image } from "@heroui/react";
 import { SITE_CONFIG } from "@/configs/site-config";
 import useScreenSize from "@/hooks/useScreenSize";
 import { BREAK_POINT } from "@/configs/break-point";
@@ -62,9 +62,11 @@ const ClientHeader = () => {
 					className={"lg:max-w-80 max-w-40"}
 					onClick={() => router.push(ROUTE_PATH.CLIENT.INDEX)}
 				>
-					<img
+					<Image
 						src={SITE_CONFIG.LOGO.FULL_BLACK}
-						alt=""
+						radius={"none"}
+						className={"cursor-pointer"}
+
 					/>
 				</div>
 

@@ -16,7 +16,7 @@ export default function ProjectBlogHeader({ project }: ProjectBlogHeaderProps) {
       <div className={"flex flex-col gap-4"}>
         <h1
           className={
-            "w-full text-wrap text-left text-primary text-6xl font-black leading-tight tracking-tight"
+            "w-full text-wrap text-left text-6xl font-black leading-tight tracking-tight"
           }>
           {project.project_fullname}
         </h1>

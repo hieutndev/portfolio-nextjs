@@ -52,3 +52,25 @@ export function getLastUpdatedTime(isoString: string): string {
         return `${diffInSeconds} second${diffInSeconds > 1 ? "s" : ""} ago`;
     }
 }
+
+export function getDiffTime(startTime: string, endTime: string): {
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+} {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+
+    const diffInSeconds = Math.floor((end.getTime() - start.getTime()) / 1000);
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    return {
+        days: diffInDays,
+        hours: diffInHours % 24,
+        minutes: diffInMinutes % 60,
+        seconds: diffInSeconds % 60,
+    }
+}
