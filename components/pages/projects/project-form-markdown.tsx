@@ -1,0 +1,910 @@
+"use client";
+
+import type { ForwardedRef } from 'react'
+import dynamic from 'next/dynamic'
+import { forwardRef, useRef } from "react"
+import { type MDXEditorMethods, type MDXEditorProps} from '@mdxeditor/editor'
+
+import CustomForm from "@/components/shared/forms/custom-form";
+import API_ROUTE from "@/configs/api";
+import ICON_CONFIG from "@/configs/icons";
+import { MAP_MESSAGE } from "@/configs/response-message";
+import ROUTE_PATH from "@/configs/route-path";
+import { useFetch } from "@/hooks/useFetch";
+import { IAPIResponse } from "@/types/global";
+import { TProjectGroup, TProjectImage, TProjectResponse, TNewProject, TUpdateProject } from "@/types/project";
+import { formatDate } from "@/utils/date";
+import {
+	addToast,
+	Button,
+	Chip,
+	DateRangePicker,
+	Divider,
+	Input,
+	RangeValue,
+	Select,
+	SelectItem,
+	Textarea,
+	Modal,
+	ModalContent,
+	ModalHeader,
+	ModalBody,
+	ModalFooter,
+	useDisclosure,
+	Image,
+} from "@heroui/react";
+import clsx from "clsx";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+import { DateValue, parseDate } from "@internationalized/date";
+import moment from "moment";
+import { sliceText } from "@/utils/string";
+
+// Dynamic import for MDXEditor with SSR disabled
+const Editor = dynamic(() => import('./mdx-editor-initialized'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[400px] border border-default-200 rounded-lg flex items-center justify-center">
+      <div className="text-default-500">Loading markdown editor...</div>
+    </div>
+  ),
+})
+
+// Forward ref editor component with ready state handling
+const ForwardRefEditor = forwardRef<MDXEditorMethods, MDXEditorProps & {
+  onEditorReady?: () => void;
+  imageUploadHandler?: (file: File) => Promise<string>;
+}>((props, ref) => {
+  const { onEditorReady, imageUploadHandler, ...editorProps } = props;
+
+  useEffect(() => {
+    // Mark editor as ready after a short delay to ensure it's fully mounted
+    const timer = setTimeout(() => {
+      onEditorReady?.();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [onEditorReady]);
+
+  return <Editor {...editorProps} editorRef={ref} imageUploadHandler={imageUploadHandler} />;
+})
+
+ForwardRefEditor.displayName = 'ForwardRefEditor'
+
+// Sample markdown content for new projects
+const getSampleMarkdown = () => `# Project Overview
+
+## Description
+Write a brief description of your project here.
+
+## Features
+- **Feature 1**: Description of the first feature
+- **Feature 2**: Description of the second feature
+- Feature 3: Description of the third feature
+
+## Technologies Used
+1. Technology 1
+2. Technology 2
+3. Technology 3
+
+## Installation
+
+\`\`\`bash
+npm install
+npm start
+\`\`\`
+
+## Usage
+
+Here's how to use this project:
+
+\`\`\`javascript
+const example = "Hello World";
+console.log(example);
+\`\`\`
+
+> **Note**: This is a sample template. Replace this content with your actual project details.
+
+## Screenshots
+
+![Project Screenshot](https://via.placeholder.com/600x400)
+
+## Contributing
+
+Feel free to contribute to this project by submitting pull requests or reporting issues.
+
+---
+
+*Last updated: ${new Date().toLocaleDateString()}*`
+
+// Function to sanitize markdown content to prevent parsing errors
+const sanitizeMarkdown = (content: string): string => {
+	if (!content) return '';
+	
+	try {
+		// Fix common markdown parsing issues
+		let sanitized = content;
+		
+		// Fix code blocks without language specification
+		sanitized = sanitized.replace(/```(\s*\n)/g, '```txt$1');
+		
+		// Fix malformed code blocks
+		sanitized = sanitized.replace(/```(\w*)\s*\n([\s\S]*?)```/g, (match, lang, code) => {
+			const cleanLang = lang || 'txt';
+			return `\`\`\`${cleanLang}\n${code}\`\`\``;
+		});
+		
+		// Remove any problematic characters that might cause parsing issues
+		sanitized = sanitized.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '');
+		
+		return sanitized;
+	} catch (error) {
+		console.error('Error sanitizing markdown:', error);
+		// Return a safe fallback
+		return '# Content Error\n\nThere was an issue loading the content. Please edit in source mode to fix any formatting issues.';
+	}
+};
+
+interface ProjectFormMarkDownProps {
+	mode: "create" | "edit";
+	defaultValues?: TProjectResponse;
+	projectId?: string;
+}
+
+export default function ProjectFormMarkDownComponent({ mode, defaultValues, projectId }: ProjectFormMarkDownProps) {
+	const router = useRouter();
+	const mdxEditorRef = useRef<MDXEditorMethods>(null);
+	const [initArticle, setInitArticle] = useState("");
+	const [convertText, setConvertText] = useState<string>("");
+	const [isEditorReady, setIsEditorReady] = useState(false);
+	const [pendingContent, setPendingContent] = useState<string>("");
+	const [projectDetails, setProjectDetails] = useState<TNewProject | TUpdateProject>({
+		project_fullname: "",
+		project_shortname: "",
+		start_date: "",
+		end_date: "",
+		project_thumbnail: null,
+		short_description: "",
+		article_body: "",
+		group_id: null,
+		github_link: "",
+		demo_link: "",
+		project_images: null,
+	});
+
+	const [listProjectGroups, setListProjectGroups] = useState<TProjectGroup[]>([]);
+	const [currentThumbnail, setCurrentThumbnail] = useState<string>("");
+	const [listCurrentImages, setListCurrentImages] = useState<TProjectImage[]>([]);
+	const [listRemoveImages, setListRemoveImages] = useState<string[]>([]);
+
+	// Modal state for image management
+	const { isOpen: isImageModalOpen, onOpen: onImageModalOpen, onClose: onImageModalClose } = useDisclosure();
+	const [selectedImage, setSelectedImage] = useState<{
+		url: string;
+		name: string;
+		type: "thumbnail" | "image";
+	} | null>(null);
+
+	/* HANDLE FETCH PROJECT GROUPS */
+	const {
+		data: fetchProjectGroupsResult,
+		error: fetchProjectGroupsError,
+		loading: fetchingProjectGroups,
+		fetch: fetchProjectGroups,
+	} = useFetch<IAPIResponse<TProjectGroup[]>>(API_ROUTE.PROJECT.GET_ALL_GROUP);
+
+	useEffect(() => {
+		fetchProjectGroups();
+	}, []);
+
+	useEffect(() => {
+		if (fetchProjectGroupsResult && fetchProjectGroupsResult.results) {
+			setListProjectGroups(fetchProjectGroupsResult.results);
+		}
+
+		if (fetchProjectGroupsError) {
+			const parseError = JSON.parse(fetchProjectGroupsError);
+
+			if (parseError.message) {
+				addToast({
+					title: "Error",
+					description: MAP_MESSAGE[parseError.message],
+					color: "danger",
+				});
+			}
+		}
+	}, [fetchProjectGroupsResult, fetchProjectGroupsError]);
+
+	/* HANDLE FETCH PROJECT DETAILS (for edit mode) */
+	const {
+		data: fetchProjectDetailResult,
+		error: fetchProjectDetailError,
+		loading: fetchingProjectDetail,
+		fetch: fetchProjectDetail,
+	} = useFetch<IAPIResponse<TProjectResponse>>(
+		mode === "edit" && projectId ? API_ROUTE.PROJECT.GET_ONE(parseInt(projectId)) : "",
+		{
+			skip: mode === "create" || !projectId,
+		}
+	);
+
+	useEffect(() => {
+		if (mode === "edit" && projectId) {
+			fetchProjectDetail();
+		}
+	}, [mode, projectId]);
+
+	useEffect(() => {
+		if (mode === "edit" && fetchProjectDetailResult && fetchProjectDetailResult.results) {
+			const projectData = fetchProjectDetailResult.results;
+			console.log('Raw API response:', fetchProjectDetailResult);
+			setProjectDetails({
+				...projectData,
+				start_date: formatDate(projectData.start_date, "onlyDateReverse"),
+				end_date: formatDate(projectData.end_date, "onlyDateReverse"),
+				project_thumbnail: null,
+				project_images: null,
+			});
+			setCurrentThumbnail(projectData.project_thumbnail);
+			setListCurrentImages(projectData.project_images);
+
+			// Store the content and set it when editor is ready
+			const articleContent = sanitizeMarkdown(projectData.article_body || "");
+			console.log('Project data loaded:', { articleContent, isEditorReady, mode });
+			setPendingContent(articleContent);
+			setInitArticle(articleContent);
+
+			// If editor is already ready, set content immediately
+			if (isEditorReady) {
+				setConvertText(articleContent);
+			}
+
+			// Set the date picker with the actual project dates
+			setDatePicked({
+				start: parseDate(formatDate(projectData.start_date, "onlyDateReverse")),
+				end: parseDate(formatDate(projectData.end_date, "onlyDateReverse")),
+			});
+		} else if (mode === "create" && defaultValues) {
+			// If we have default values for create mode
+			setProjectDetails({
+				...defaultValues,
+				project_thumbnail: null,
+				project_images: null,
+			});
+			const content = sanitizeMarkdown(defaultValues.article_body || getSampleMarkdown());
+			setPendingContent(content);
+			if (isEditorReady) {
+				setConvertText(content);
+			}
+		} else if (mode === "create") {
+			// For completely new projects, use sample markdown
+			const content = sanitizeMarkdown(getSampleMarkdown());
+			setPendingContent(content);
+			if (isEditorReady) {
+				setConvertText(content);
+			}
+		}
+	}, [mode, fetchProjectDetailResult, defaultValues, isEditorReady]);
+
+	/* HANDLE SUBMIT */
+	const [formData, setFormData] = useState<FormData | null>(null);
+
+	const {
+		data: submitResult,
+		error: submitError,
+		loading: submitting,
+		fetch: submitForm,
+	} = useFetch(mode === "create" ? API_ROUTE.PROJECT.NEW : API_ROUTE.PROJECT.UPDATE_PROJECT(parseInt(projectId!)), {
+		method: mode === "create" ? "POST" : "PATCH",
+		skip: true,
+	});
+
+	useEffect(() => {
+		if (submitResult) {
+			addToast({
+				title: "Success",
+				description:
+					submitResult.message || `Project ${mode === "create" ? "created" : "updated"} successfully`,
+				color: "success",
+			});
+			if (mode === "create") {
+				router.push(ROUTE_PATH.ADMIN.PROJECT.INDEX);
+			} else {
+				fetchProjectDetail();
+			}
+		}
+
+		if (submitError) {
+			const parseError = JSON.parse(submitError);
+
+			if (parseError.message) {
+				addToast({
+					title: "Error",
+					description: MAP_MESSAGE[parseError.message],
+					color: "danger",
+				});
+			}
+		}
+	}, [submitResult, submitError, mode, router]);
+
+	useEffect(() => {
+		if (formData) {
+			submitForm({
+				body: formData,
+				options: {
+					removeContentType: true,
+				},
+			});
+			setFormData(null);
+		}
+	}, [formData]);
+
+	const handleSubmit = () => {
+		// Validate required fields
+		if (
+			!projectDetails.project_fullname ||
+			!projectDetails.project_shortname ||
+			!projectDetails.short_description
+		) {
+			addToast({
+				title: "Error",
+				description: "Please fill in all required fields",
+				color: "danger",
+			});
+			return;
+		}
+
+		if (!datePicked?.start || !datePicked?.end) {
+			addToast({
+				title: "Error",
+				description: "Please select start and end dates",
+				color: "danger",
+			});
+			return;
+		}
+
+		const submitFormData = new FormData();
+
+		// Append basic project information
+		submitFormData.append("project_fullname", projectDetails.project_fullname);
+		submitFormData.append("project_shortname", projectDetails.project_shortname);
+		submitFormData.append("short_description", projectDetails.short_description);
+		submitFormData.append("github_link", projectDetails.github_link || "");
+		submitFormData.append("demo_link", projectDetails.demo_link || "");
+		submitFormData.append("article_body", convertText);
+		submitFormData.append("group_id", projectDetails.group_id?.toString() || "null");
+
+		// Handle dates from date picker
+		if (datePicked?.start && datePicked?.end) {
+			submitFormData.append("start_date", datePicked.start.toString());
+			submitFormData.append("end_date", datePicked.end.toString());
+		}
+
+		// Handle file uploads
+		if (projectDetails.project_thumbnail && projectDetails.project_thumbnail.length > 0) {
+			submitFormData.append("project_thumbnail", projectDetails.project_thumbnail[0]);
+			if (mode === "edit") {
+				submitFormData.append("is_change_thumbnail", "true");
+			}
+		} else if (mode === "edit") {
+			submitFormData.append("is_change_thumbnail", "false");
+		}
+
+		if (projectDetails.project_images && projectDetails.project_images.length > 0) {
+			Array.from(projectDetails.project_images).forEach((file) => {
+				submitFormData.append(`project_images`, file);
+			});
+		}
+
+		// Handle edit-specific fields
+		if (mode === "edit") {
+			submitFormData.append("is_change_article", projectDetails.article_body !== initArticle ? "true" : "false");
+			submitFormData.append("remove_images", JSON.stringify(listRemoveImages));
+		}
+
+		setFormData(submitFormData);
+	};
+
+	/* HANDLE PARSE DATE */
+	const [datePicked, setDatePicked] = useState<RangeValue<DateValue> | null>({
+		start: parseDate(moment().format("YYYY-MM-DD")),
+		end: parseDate(moment().add(1, "days").format("YYYY-MM-DD")),
+	});
+
+	/* HANDLE REMOVE IMAGE */
+	const handleAddRemoveImage = (imageName: string) => {
+		if (listRemoveImages.includes(imageName)) {
+			setListRemoveImages((prev) => prev.filter((v) => v !== imageName));
+		} else {
+			setListRemoveImages((prev) => [...prev, imageName]);
+		}
+	};
+
+	// Modal handlers
+	const handleOpenImageModal = (url: string, name: string, type: "thumbnail" | "image") => {
+		setSelectedImage({ url, name, type });
+		onImageModalOpen();
+	};
+
+	const handleCloseImageModal = () => {
+		setSelectedImage(null);
+		onImageModalClose();
+	};
+
+	// Handle editor ready state and set pending content
+	useEffect(() => {
+		if (isEditorReady && pendingContent) {
+			console.log('Setting editor content:', { pendingContent, convertText, isEditorReady });
+			try {
+				const sanitizedContent = sanitizeMarkdown(pendingContent);
+				setConvertText(sanitizedContent);
+				setPendingContent(""); // Clear pending content after setting
+			} catch (error) {
+				console.error('Error setting editor content:', error);
+				// Fallback to empty content if there's an error
+				setConvertText("");
+				setPendingContent("");
+			}
+		}
+	}, [isEditorReady, pendingContent]);
+
+	// Fallback: Force set content after a delay if editor is loaded but content is still empty
+	useEffect(() => {
+		if (mode === "edit" && isEditorReady && !convertText && initArticle) {
+			console.log('Fallback: Setting content from initArticle:', initArticle);
+			const timer = setTimeout(() => {
+				try {
+					const sanitizedContent = sanitizeMarkdown(initArticle);
+					setConvertText(sanitizedContent);
+				} catch (error) {
+					console.error('Error in fallback content setting:', error);
+					setConvertText("");
+				}
+			}, 500);
+			return () => clearTimeout(timer);
+		}
+	}, [mode, isEditorReady, convertText, initArticle]);
+
+	// Image upload functionality for MDX Editor
+	const {
+		data: uploadImageResult,
+		error: uploadImageError,
+		loading: uploadingImage,
+		fetch: uploadImage,
+	} = useFetch(API_ROUTE.S3.UPLOAD_IMAGE, {
+		method: "POST",
+		skip: true,
+		options: {
+			removeContentType: true,
+		},
+	});
+
+	const uploadImageResultRef = useRef(uploadImageResult);
+	const uploadImageErrorRef = useRef(uploadImageError);
+
+	useEffect(() => {
+		if (uploadImageResult) {
+			uploadImageResultRef.current = uploadImageResult;
+		}
+
+		if (uploadImageError) {
+			uploadImageErrorRef.current = uploadImageError;
+		}
+	}, [uploadImageResult, uploadImageError]);
+
+	const handleUploadImage = async (file: File): Promise<string> => {
+		try {
+			// Show upload toast
+			addToast({
+				title: "Uploading Image",
+				description: `Uploading ${file.name}...`,
+				color: "primary",
+			});
+
+			const formData = new FormData();
+			formData.append("image", file);
+			await uploadImage({ body: formData });
+
+			return new Promise<string>((resolve, reject) => {
+				let retry = 20;
+				const checkResult = () => {
+					const result = uploadImageResultRef.current;
+					const error = uploadImageErrorRef.current;
+
+					console.log("Image upload result:", result);
+					console.log("Image upload error:", error);
+
+					if (!error && result && result.results && result.results.imageKey) {
+						const imageUrl = process.env.NEXT_PUBLIC_BASE_API_URL + API_ROUTE.S3.GET_IMAGE(result.results.imageKey);
+
+						// Show success toast
+						addToast({
+							title: "Image Uploaded",
+							description: "Image uploaded successfully!",
+							color: "success",
+						});
+
+						resolve(imageUrl);
+					} else if (error) {
+						// Show error toast
+						addToast({
+							title: "Upload Failed",
+							description: "Failed to upload image. Please try again.",
+							color: "danger",
+						});
+						reject(error);
+					} else if (retry > 0) {
+						retry--;
+						setTimeout(checkResult, 250);
+					} else {
+						// Show timeout error toast
+						addToast({
+							title: "Upload Timeout",
+							description: "Image upload timed out. Please try again.",
+							color: "danger",
+						});
+						reject(new Error("Image upload timed out."));
+					}
+				};
+				checkResult();
+			}).finally(() => {
+				uploadImageResultRef.current = null;
+			});
+		} catch (error) {
+			// Show general error toast
+			addToast({
+				title: "Upload Error",
+				description: "An error occurred while uploading the image.",
+				color: "danger",
+			});
+			throw error;
+		}
+	};
+
+	useEffect(() => {
+		setProjectDetails((prev) => ({ ...prev, article_body: convertText }));
+	}, [convertText]);
+
+	const isLoading = submitting || (mode === "edit" && fetchingProjectDetail);
+
+	return (
+		<div className={"w-full border border-default-200 bg-white rounded-2xl shadow-lg p-4 flex flex-col gap-4"}>
+			<CustomForm
+				formId={`${mode}ProjectForm`}
+				className={"w-full flex flex-col gap-4"}
+				isLoading={isLoading}
+				onSubmit={handleSubmit}
+				useEnterKey={false}
+				useCtrlSKey={true}
+			>
+				<div className={"w-full flex flex-col gap-2"}>
+					<h3 className={"text-xl font-semibold"}>Project Information</h3>
+					<div className={"w-full grid grid-cols-3 gap-4"}>
+						<Input
+							label={"Full Project Name"}
+							labelPlacement={"outside"}
+							type={"text"}
+							value={projectDetails.project_fullname}
+							name={"project_fullname"}
+							placeholder={"Enter project name..."}
+							variant={"bordered"}
+							isRequired
+							onValueChange={(value) =>
+								setProjectDetails((prev) => ({ ...prev, project_fullname: value }))
+							}
+						/>
+						<Input
+							label={"Short Project Name"}
+							type={"text"}
+							variant={"bordered"}
+							value={projectDetails.project_shortname}
+							name={"project_shortname"}
+							labelPlacement={"outside"}
+							placeholder={"Enter short name of project"}
+							isRequired
+							onValueChange={(e) => setProjectDetails((prev) => ({ ...prev, project_shortname: e }))}
+						/>
+						<Select
+							label={"Select group"}
+							labelPlacement={"outside"}
+							placeholder={"Select project group"}
+							selectedKeys={projectDetails.group_id ? [projectDetails.group_id.toString()] : []}
+							items={listProjectGroups}
+							variant={"bordered"}
+							isLoading={fetchingProjectGroups}
+							onSelectionChange={(keys) => {
+								const selectedKey = Array.from(keys)[0] as string;
+								setProjectDetails((prev) => ({
+									...prev,
+									group_id: selectedKey ? parseInt(selectedKey) : null,
+								}));
+							}}
+						>
+							{(item) => <SelectItem key={item.group_id}>{item.group_title}</SelectItem>}
+						</Select>
+						<div className={"w-full col-span-3"}>
+							<Textarea
+								label={"Description"}
+								labelPlacement={"outside"}
+								value={projectDetails.short_description}
+								name={"short_description"}
+								placeholder={mode === "create" ? "Enter a brief description of your project..." : ""}
+								isRequired
+								variant={"bordered"}
+								onValueChange={(e) =>
+									setProjectDetails((prev) => ({
+										...prev,
+										short_description: e,
+									}))
+								}
+							/>
+						</div>
+						<DateRangePicker
+							label={mode === "create" ? "Project Duration" : "Start date"}
+							labelPlacement={"outside"}
+							value={datePicked}
+							onChange={setDatePicked}
+							aria-label={"Project duration"}
+							variant={"bordered"}
+							isRequired
+						/>
+						<Input
+							label={"Github"}
+							labelPlacement={"outside"}
+							placeholder={"Enter Github link"}
+							type={"text"}
+							value={projectDetails.github_link || ""}
+							name={"github_link"}
+							variant={"bordered"}
+							onValueChange={(e) =>
+								setProjectDetails((prev) => ({
+									...prev,
+									github_link: e,
+								}))
+							}
+						/>
+						<Input
+							label={"Demo"}
+							labelPlacement={"outside"}
+							placeholder={"Enter Demo link"}
+							type={"text"}
+							value={projectDetails.demo_link || ""}
+							variant={"bordered"}
+							name={"demo_link"}
+							onValueChange={(e) =>
+								setProjectDetails((prev) => ({
+									...prev,
+									demo_link: e,
+								}))
+							}
+						/>
+						<div className={"col-span-3 grid grid-cols-2 gap-4"}>
+							<Input
+								type={"file"}
+								label={"Project Thumbnail"}
+								labelPlacement={"outside"}
+								placeholder={"Select thumbnail for project"}
+								name={"project_thumbnail"}
+								accept={"image/*"}
+								variant={"bordered"}
+								onChange={(e) => {
+									setProjectDetails((prev) => ({
+										...prev,
+										project_thumbnail:
+											e.target.files && e.target.files.length > 0 ? e.target.files : null,
+									}));
+								}}
+							/>
+							<Input
+								label={mode === "create" ? "Project Images" : "List Project Images"}
+								labelPlacement={"outside"}
+								name={"project_images"}
+								type={"file"}
+								placeholder={
+									mode === "create" ? "Select images for project" : "Select thumbnail for project"
+								}
+								multiple={true}
+								accept={"image/*"}
+								variant={"bordered"}
+								onChange={(e) => {
+									setProjectDetails((prev) => ({
+										...prev,
+										project_images:
+											e.target.files && e.target.files.length > 0 ? e.target.files : null,
+									}));
+								}}
+							/>
+						</div>
+					</div>
+				</div>
+
+				{mode === "edit" && (currentThumbnail || listCurrentImages.length > 0) && (
+					<>
+						<Divider />
+						<div className={"w-full flex flex-col gap-2"}>
+							<h3 className={"text-lg font-semibold"}>Project Images</h3>
+							<div className={"w-full grid grid-cols-6 gap-4"}>
+								{/* Current Thumbnail */}
+								{currentThumbnail && (
+									<div className={"relative w-full cursor-pointer col-span-1"}>
+										<div
+											className={
+												"bg-transparent relative border-2 rounded-2xl overflow-hidden border-success-300 hover:border-success-500 transition-colors"
+											}
+											onClick={() =>
+												handleOpenImageModal(currentThumbnail, "Project Thumbnail", "thumbnail")
+											}
+										>
+											<div className={"absolute top-1 right-1 z-[20]"}>
+												<Chip
+													color={"success"}
+													size="sm"
+													variant="solid"
+												>
+													Thumbnail
+												</Chip>
+											</div>
+											<Image
+												src={currentThumbnail}
+												alt={"Project Thumbnail"}
+												className={
+													"object-cover w-max transition-transform"
+												}
+												height={156}
+												isZoomed={false}
+												shadow={"sm"}
+												isBlurred
+											/>
+										</div>
+										<p className={"text-xs text-center mt-1 text-foreground-600"}>
+											Current Thumbnail
+										</p>
+									</div>
+								)}
+
+								{/* Current Images */}
+								{listCurrentImages.map((image, index) => (
+									<div
+										key={index}
+										className={"relative w-full col-span-1 cursor-pointer"}
+									>
+										<div
+											className={clsx(
+												"relative border-2 rounded-2xl overflow-hidden transition-colors",
+												{
+													"border-danger-300 hover:border-danger-500":
+														listRemoveImages.includes(image.image_name),
+													"border-default-200 hover:border-default-400":
+														!listRemoveImages.includes(image.image_name),
+												}
+											)}
+											onClick={() =>
+												handleOpenImageModal(image.image_url, image.image_name, "image")
+											}
+										>
+											<Image
+												src={image.image_url}
+												alt={image.image_name}
+												className={
+													"object-cover w-max transition-transform"
+												}
+												height={156}
+												isZoomed={false}
+												shadow={"sm"}
+												isBlurred
+											/>
+											<div
+												className={"absolute top-1 right-1 z-10"}
+												onClick={(e) => e.stopPropagation()}
+											>
+												<Button
+													color={"danger"}
+													size={"sm"}
+													className={"opacity-80 hover:opacity-100"}
+													isIconOnly
+													variant="solid"
+													onPress={() => handleAddRemoveImage(image.image_name)}
+												>
+													{ICON_CONFIG.SOFT_DELETE}
+												</Button>
+											</div>
+											{listRemoveImages.includes(image.image_name) && (
+												<div
+													className={
+														"absolute inset-0 bg-danger-200/50 flex items-center justify-center"
+													}
+												>
+													<Chip
+														color={"danger"}
+														size="sm"
+														variant="solid"
+													>
+														Will Remove
+													</Chip>
+												</div>
+											)}
+										</div>
+										<p className={"text-xs text-center mt-1 text-foreground-600 truncate"}>
+											Photo {index + 1}
+										</p>
+									</div>
+								))}
+							</div>
+						</div>
+					</>
+				)}
+				<Divider />
+				<div className={"w-full flex flex-col gap-2"}>
+					<h3 className={"text-lg font-semibold"}>Project Article</h3>
+					<div className="w-full">
+						<label className="text-sm text-foreground pb-1.5 block">Article Content</label>
+						<div className="border border-default-200 rounded-lg overflow-hidden bg-white shadow-sm">
+							<ForwardRefEditor
+								key={`mdx-editor-${mode}-${projectId || 'new'}-${convertText ? 'with-content' : 'empty'}`}
+								ref={mdxEditorRef}
+								markdown={convertText}
+								onChange={setConvertText}
+								placeholder="Write your project article here using Markdown..."
+								className="min-h-[400px] w-full"
+								onEditorReady={() => setIsEditorReady(true)}
+								imageUploadHandler={handleUploadImage}
+							/>
+						</div>
+						<p className="text-xs text-gray-500 mt-1">
+							Use Markdown syntax to format your content. You can switch to source mode to see the raw markdown.
+							<br />
+							<strong>Image Upload:</strong> Click the image icon in the toolbar or drag & drop images directly into the editor. Images will be automatically uploaded to S3.
+						</p>
+					</div>
+				</div>
+			</CustomForm>
+
+			<Modal
+				isOpen={isImageModalOpen}
+				onClose={handleCloseImageModal}
+				size="5xl"
+				hideCloseButton
+			>
+				<ModalContent>
+					{(onClose) => (
+						<>
+							<ModalHeader className="flex flex-col gap-1">
+								<div className={"flex items-center gap-2"}>
+									<h3 className={"text-xl font-semibold"}>
+										{"Photo of " + projectDetails.project_shortname}
+									</h3>
+								</div>
+							</ModalHeader>
+							<ModalBody>
+								{selectedImage && (
+									<div className={"flex justify-center"}>
+										<Image
+											src={selectedImage.url}
+											alt={selectedImage.name}
+											className={"object-contain"}
+											height={512}
+											shadow={"sm"}
+											isBlurred
+										/>
+									</div>
+								)}
+							</ModalBody>
+							<ModalFooter>
+								<div className={"flex justify-end items-center w-full"}>
+									<Button
+										color={"danger"}
+										onPress={onClose}
+										variant={"flat"}
+									>
+										Close
+									</Button>
+								</div>
+							</ModalFooter>
+						</>
+					)}
+				</ModalContent>
+			</Modal>
+		</div>
+	);
+}

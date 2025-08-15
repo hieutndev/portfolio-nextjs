@@ -1,60 +1,71 @@
+import { TApp } from "@/types/application";
+import { TCertification } from "@/types/certification";
+import { TEducation } from "@/types/education";
+import { TEmployment } from "@/types/employment";
+import { TProject, TProjectGroup } from "@/types/project";
+import { TUser } from "@/types/user";
+
 const API_ROUTE = {
   PROJECT: {
     GET_ALL: "/projects",
-    GET_ONE: (projectId: string | number) => `/projects/${projectId}`,
+    GET_ONE: (projectId: TProject["id"]) => `/projects/${projectId}`,
     NEW: "/projects",
     GET_ALL_GROUP: "/projects/groups",
     NEW_GROUP: "/projects/groups",
-    UPDATE_GROUP: (groupId: string | number) => `/projects/groups/${groupId}`,
-    SOFT_DELETE_GROUP: (groupId: string | number) => `/projects/groups/${groupId}/delete`,
-    RECOVER_GROUP: (groupId: string | number) => `/projects/groups/${groupId}/recover`,
-    DELETE_GROUP: (groupId: string | number) => `/projects/groups/${groupId}`,
-    UPDATE_PROJECT: (projectId: string | number) => `/projects/${projectId}`,
-    DELETE_PROJECT: (projectId: string | number) => `/projects/${projectId}`,
+    UPDATE_GROUP: (groupId: TProjectGroup['group_id']) => `/projects/groups/${groupId}`,
+    SOFT_DELETE_GROUP: (groupId: TProjectGroup['group_id']) => `/projects/groups/${groupId}/delete`,
+    RECOVER_GROUP: (groupId: TProjectGroup['group_id']) => `/projects/groups/${groupId}/recover`,
+    DELETE_GROUP: (groupId: TProjectGroup['group_id']) => `/projects/groups/${groupId}`,
+    UPDATE_PROJECT: (projectId: TProjectGroup['group_id']) => `/projects/${projectId}`,
+    DELETE_PROJECT: (projectId: TProjectGroup['group_id']) => `/projects/${projectId}`,
   },
   EDUCATION: {
     GET_ALL: "/education",
-    GET_ONE: (educationId: string | number) => `/education/${educationId}`,
+    GET_ONE: (educationId: TEducation['id']) => `/education/${educationId}`,
     NEW: "/education",
-    UPDATE: (educationId: string | number) => `/education/${educationId}`,
-    SOFT_DELETE: (educationId: string | number) => `/education/${educationId}/delete`,
-    RECOVER: (educationId: string | number) => `/education/${educationId}/recover`,
-    DELETE: (educationId: string | number) => `/education/${educationId}`,
+    UPDATE: (educationId: TEducation['id']) => `/education/${educationId}`,
+    SOFT_DELETE: (educationId: TEducation['id']) => `/education/${educationId}/delete`,
+    RECOVER: (educationId: TEducation['id']) => `/education/${educationId}/recover`,
+    DELETE: (educationId: TEducation['id']) => `/education/${educationId}`,
   },
   CERTIFICATION: {
     GET_ALL: "/certification",
-    GET_ONE: (certId: string | number) => `/certification/${certId}`,
+    GET_ONE: (certId: TCertification['id']) => `/certification/${certId}`,
     NEW: "/certification",
-    UPDATE: (certId: string | number) => `/certification/${certId}`,
-    SOFT_DELETE: (certId: string | number) => `/certification/${certId}/delete`,
-    RECOVER: (certId: string | number) => `/certification/${certId}/recover`,
-    DELETE: (certId: string | number) => `/certification/${certId}`,
+    UPDATE: (certId: TCertification['id']) => `/certification/${certId}`,
+    SOFT_DELETE: (certId: TCertification['id']) => `/certification/${certId}/delete`,
+    RECOVER: (certId: TCertification['id']) => `/certification/${certId}/recover`,
+    DELETE: (certId: TCertification['id']) => `/certification/${certId}`,
   },
   EMPLOYMENT: {
     GET_ALL: "/employment",
-    GET_ONE: (employmentId: string | number) => `/employment/${employmentId}`,
+    GET_ONE: (employmentId: TEmployment['id']) => `/employment/${employmentId}`,
     NEW: "/employment",
-    UPDATE: (employmentId: string | number) => `/employment/${employmentId}`,
-    SOFT_DELETE: (employmentId: string | number) => `/employment/${employmentId}/delete`,
-    RECOVER: (employmentId: string | number) => `/employment/${employmentId}/recover`,
-    DELETE: (employmentId: string | number) => `/employment/${employmentId}`,
+    UPDATE: (employmentId: TEmployment['id']) => `/employment/${employmentId}`,
+    SOFT_DELETE: (employmentId: TEmployment['id']) => `/employment/${employmentId}/delete`,
+    RECOVER: (employmentId: TEmployment['id']) => `/employment/${employmentId}/recover`,
+    DELETE: (employmentId: TEmployment['id']) => `/employment/${employmentId}`,
   },
   ACCOUNT: {
     GET_ALL: "/accounts",
-    GET_ONE: (accountId: string | number) => `/accounts/${accountId}`,
+    GET_ONE: (accountId: TUser['user_id']) => `/accounts/${accountId}`,
     SIGN_UP: "/accounts/sign-up",
     SIGN_IN: "/accounts/sign-in",
     RFTK: "/accounts/rftk",
-    ACTIVE_STATUS: (accountId: string | number) => `/accounts/${accountId}/active`,
+    ACTIVE_STATUS: (accountId: TUser['user_id']) => `/accounts/${accountId}/active`,
   },
   APP: {
     GET_ALL: "/apps",
-    GET_ONE: (appId: string | number) => `/apps/${appId}`,
+    GET_ONE: (appId: TApp['app_id']) => `/apps/${appId}`,
     NEW: "/apps",
-    UPDATE_INFO: (appId: string | number) => `/apps/${appId}`,
-    UPDATE_DISPLAY: (appId: string | number) => `/apps/${appId}/display-status`,
-    DELETE: (appId: string | number) => `/apps/${appId}`,
+    UPDATE_INFO: (appId: TApp['app_id']) => `/apps/${appId}`,
+    UPDATE_DISPLAY: `/apps/display-status`,
+    DELETE: (appId: TApp['app_id']) => `/apps/${appId}`,
   },
+  S3: {
+    UPLOAD_IMAGE: "/s3",
+    GET_IMAGE: (key: string)=> `/s3?key=${key}`
+  }
 };
 
 export default API_ROUTE;

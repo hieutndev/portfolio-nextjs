@@ -1,5 +1,5 @@
 export type TEmployment = {
-  id: string;
+  id: number;
   title: string;
   organization: string;
   time_start: string;

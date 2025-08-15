@@ -23,8 +23,8 @@ const AnimatedQuote = ({ renderText }: AnimatedQuoteProps) => {
 
 	return (
 		<BlockQuote
-			size={"6xl"}
-			customClass={"font-cairo-play font-bold text-primary-800 bg-primary-100/25 py-8"}
+			size={"5xl"}
+			customClass={"font-ari-w9500 !not-italic font-normal text-primary-500 bg-primary/10 py-8 border-primary leading-tight"}
 		>
 			{currentText}
 		</BlockQuote>

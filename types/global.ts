@@ -72,6 +72,7 @@ export interface IAPIResponse<TResponse = any, TError = any> {
   status: "success" | "failure" | "error";
   message: TMessageCode;
   results?: TResponse;
+  metadata?: any;
   errors?: TError;
   validateErrors?: ErrorObject[];
 }
@@ -83,3 +84,7 @@ export interface IDataTable<T> {
   }[];
   rows: T[];
 }
+
+export type TContentType = "application/json" | "multipart/form-data";
+
+export type TDataAction = 'softDelete' | 'recover' | 'permanentDelete' |'create' | 'update' | 'block' | 'unblock' | null

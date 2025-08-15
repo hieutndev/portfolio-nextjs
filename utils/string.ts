@@ -25,3 +25,13 @@ export function generateUniqueString(size: number = 32): string {
     }
     return result;
 }
+
+export const sliceText = (text: string, numsSlice: number = 4): string => {
+	const parseText = text.toString();
+
+	try {
+		return parseText.length <= numsSlice ? parseText : parseText.slice(0, numsSlice) + "...";
+	} catch (error: unknown) {
+		return error instanceof Error  ? error.message : "error";
+	}
+};

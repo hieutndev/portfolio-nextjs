@@ -18,6 +18,8 @@ interface CustomFormProps {
 	disableSubmitButton?: boolean;
 	submitButtonSize?: ButtonProps["size"];
 	resetButtonSize?: ButtonProps["size"];
+	useEnterKey?: boolean;
+	useCtrlSKey?: boolean;
 	children: React.ReactNode;
 }
 
@@ -34,10 +36,26 @@ export default function CustomForm({
 	disableSubmitButton = false,
 	submitButtonSize = "md",
 	resetButtonSize = "md",
+	useEnterKey = true,
+	useCtrlSKey = false,
 	children,
 }: CustomFormProps) {
 	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === "Enter" && !event.shiftKey) {
+		console.log(event.target instanceof HTMLElement ? event.target.classList : '');
+		if (
+			useEnterKey &&
+			event.key === "Enter" &&
+			!event.shiftKey &&
+			!(event.target instanceof HTMLElement && event.target.classList.contains("ql-editor")) &&
+			!(event.target instanceof HTMLElement && event.target.classList.contains("cm-lineWrapping")) &&
+			!(event.target instanceof HTMLElement && event.target.classList.contains("mdxeditor-content")) &&
+			!(event.target instanceof HTMLElement && event.target.classList.contains("_textInput_sects_1201")) 
+		) {
+			event.preventDefault();
+			onSubmit?.();
+		}
+
+		if (useCtrlSKey && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
 			event.preventDefault();
 			onSubmit?.();
 		}
