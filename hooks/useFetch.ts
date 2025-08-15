@@ -15,7 +15,10 @@ interface FetchOptions<TBody> {
 	};
 }
 
-type SearchParams = Record<string, string | number | boolean | null | undefined>;
+type SearchParams = Record<
+	string,
+	string | number | boolean | null | undefined
+>;
 
 interface FetchState<T> {
 	data: T | null;
@@ -96,13 +99,17 @@ async function refreshToken() {
 export function useFetch<TResponse = any, TBody = any>(
 	url: string,
 	options?: FetchOptions<TBody>
-): FetchState<TResponse> & { fetch: (overrideOptions?: FetchOptions<TBody>) => Promise<void> };
+): FetchState<TResponse> & {
+	fetch: (overrideOptions?: FetchOptions<TBody>) => Promise<void>;
+};
 
 export function useFetch<TResponse = any, TBody = any>(
 	url: string,
 	searchParams?: SearchParams,
 	options?: FetchOptions<TBody>
-): FetchState<TResponse> & { fetch: (overrideOptions?: FetchOptions<TBody>) => Promise<void> };
+): FetchState<TResponse> & {
+	fetch: (overrideOptions?: FetchOptions<TBody>) => Promise<void>;
+};
 
 export function useFetch<TResponse = any, TBody = any>(
 	url: string,
@@ -119,8 +126,12 @@ export function useFetch<TResponse = any, TBody = any>(
 		!("skip" in searchParamsOrOptions) &&
 		!("options" in searchParamsOrOptions);
 
-	const searchParams = isSearchParams ? (searchParamsOrOptions as SearchParams) : undefined;
-	const rawOptions = isSearchParams ? options : (searchParamsOrOptions as FetchOptions<TBody>);
+	const searchParams = isSearchParams
+		? (searchParamsOrOptions as SearchParams)
+		: undefined;
+	const rawOptions = isSearchParams
+		? options
+		: (searchParamsOrOptions as FetchOptions<TBody>);
 
 	// Memoize the final options to prevent unnecessary re-renders
 	const finalOptions = useMemo(
@@ -135,7 +146,10 @@ export function useFetch<TResponse = any, TBody = any>(
 	);
 
 	// Memoize searchParams to prevent unnecessary re-renders
-	const memoizedSearchParams = useMemo(() => searchParams, [JSON.stringify(searchParams || {})]);
+	const memoizedSearchParams = useMemo(
+		() => searchParams,
+		[JSON.stringify(searchParams || {})]
+	);
 
 	const [state, setState] = useState<FetchState<TResponse>>({
 		data: null,
@@ -153,7 +167,12 @@ export function useFetch<TResponse = any, TBody = any>(
 	};
 
 	const fetchData = async (overrideOptions?: FetchOptions<TBody>) => {
-		setState((prevState) => ({ ...prevState, loading: true, error: null, statusCode: null }));
+		setState((prevState) => ({
+			...prevState,
+			loading: true,
+			error: null,
+			statusCode: null,
+		}));
 
 		const mergedOptions = {
 			...finalOptions,
@@ -169,11 +188,15 @@ export function useFetch<TResponse = any, TBody = any>(
 			const response = await fetch(parseURL(url, memoizedSearchParams), {
 				method: mergedOptions.method ?? "GET",
 				headers: {
-					...(mergedOptions.options?.removeContentType ? {} : { "Content-Type": "application/json" }),
+					...(mergedOptions.options?.removeContentType
+						? {}
+						: { "Content-Type": "application/json" }),
 					Authorization: `Bearer ${getCookie("access_token") || ""}`,
 					...(mergedOptions.headers || {}),
 				},
-				body: mergedOptions.body ? parseFetchBody(mergedOptions.body) : undefined,
+				body: mergedOptions.body
+					? parseFetchBody(mergedOptions.body)
+					: undefined,
 			});
 
 			if (response.status === 401 && hasCookie("refresh_token")) {
@@ -182,11 +205,15 @@ export function useFetch<TResponse = any, TBody = any>(
 				const retryResponse = await fetch(parseURL(url, memoizedSearchParams), {
 					method: mergedOptions.method ?? "GET",
 					headers: {
-						...(mergedOptions.options?.removeContentType ? {} : { "Content-Type": "application/json" }),
+						...(mergedOptions.options?.removeContentType
+							? {}
+							: { "Content-Type": "application/json" }),
 						Authorization: `Bearer ${getCookie("access_token") || ""}`,
 						...(mergedOptions.headers || {}),
 					},
-					body: mergedOptions.body ? parseFetchBody(mergedOptions.body) : undefined,
+					body: mergedOptions.body
+						? parseFetchBody(mergedOptions.body)
+						: undefined,
 				});
 
 				if (!retryResponse.ok) {
@@ -204,34 +231,49 @@ export function useFetch<TResponse = any, TBody = any>(
 
 				const retryData = await retryResponse.json();
 
-				setState({ data: retryData, loading: false, error: null, statusCode: retryResponse.status });
+				setState({
+					data: retryData,
+					loading: false,
+					error: null,
+					statusCode: retryResponse.status,
+				});
 
 				return;
 			}
 
 			if (!response.ok) {
-				const errorText = await response.text();
+
+				const errorJson = await response.json();
 
 				setState({
 					data: null,
 					loading: false,
-					error: errorText || response.statusText,
+					error: errorJson || response.statusText,
 					statusCode: response.status,
 				});
+
+				if (errorJson.message === "NO_PERMISSION") {
+					window.location.href = "/sign-in?message=NO_PERMISSION";
+				}
 
 				return;
 			}
 
 			const data = await response.json();
 
-			setState({ data, loading: false, error: null, statusCode: response.status });
+			setState({
+				data,
+				loading: false,
+				error: null,
+				statusCode: response.status,
+			});
 		} catch (error: any) {
             if (error.message === "RefreshTokenExpiredError") {
                 setState({ data: null, loading: false, error: null, statusCode: null });
 				window.location.href = "/sign-in?message=EXPIRED_REFRESH_TOKEN";
 			} else {
-                setState({ data: null, loading: false, error: error.message, statusCode: null });
-            }
+				setState({ data: null, loading: false, error: error.message, statusCode: null });
+			}
 		}
 	};
 

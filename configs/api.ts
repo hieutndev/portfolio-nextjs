@@ -52,6 +52,7 @@ const API_ROUTE = {
     SIGN_UP: "/accounts/sign-up",
     SIGN_IN: "/accounts/sign-in",
     RFTK: "/accounts/rftk",
+    CHECK_SESSION: "/accounts/check-session",
     ACTIVE_STATUS: (accountId: TUser['user_id']) => `/accounts/${accountId}/active`,
   },
   APP: {

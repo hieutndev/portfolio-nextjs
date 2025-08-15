@@ -76,5 +76,7 @@ export const MAP_MESSAGE: Record<string, string> = {
     SUCCESS_UPDATE_PROJECT_GROUP_INFO: "Successfully updated project group information",
     SUCCESS_DELETE_PROJECT_GROUP: "Successfully deleted project group",
     SUCCESS_RECOVER_PROJECT_GROUP: "Successfully recovered project group",
+    EXPIRED_REFRESH_TOKEN: "Your sessions has expired. Please sign in again.",
+    NO_PERMISSION: "You don't have permission to perform this."
 }
 

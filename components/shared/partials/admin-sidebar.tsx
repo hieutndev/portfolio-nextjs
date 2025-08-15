@@ -34,7 +34,7 @@ export default function AdminSidebar() {
 						size={"lg"}
 						variant={pathname.startsWith(item.href) ? "flat" : "light"}
 						className={clsx("justify-start", {
-							"text-default-400": !pathname.startsWith(item.href),
+							// "text-default-400": !pathname.startsWith(item.href),
 						})}
 						fullWidth
 						startContent={item.icon}

@@ -9,7 +9,7 @@ import { useFetch } from "@/hooks/useFetch";
 import { IAPIResponse } from "@/types/global";
 import { addToast, Button, Divider, Input } from "@heroui/react";
 import { useReactiveCookiesNext } from "cookies-next";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
 import clsx from "clsx";
@@ -20,6 +20,17 @@ import { TSignIn, TSignInResponse } from "@/types/auth";
 function SignInContent() {
   const router = useRouter();
   const { setCookie } = useReactiveCookiesNext();
+  const search = useSearchParams();
+
+  useEffect(() => {
+    if (search.get("message")) {
+      addToast({
+        title: "Error",
+        description: MAP_MESSAGE[search.get("message") ?? ""],
+        color: "danger"
+      })
+    }
+  }, [search]);
 
   const [signInForm, setSignInForm] = useState<TSignIn>({
     email: "",
@@ -69,7 +80,7 @@ function SignInContent() {
         description: MAP_MESSAGE[signInResponse.message],
         color: "success",
       });
-      router.push(ROUTE_PATH.CLIENT.INDEX);
+      router.push(ROUTE_PATH.ADMIN.ACCOUNT.INDEX);
     }
 
     if (signInError) {
@@ -115,7 +126,7 @@ function SignInContent() {
           loadingText={"Signing in"}
           isLoading={signingIn}>
           <Input
-            label={"Your email"}
+            label={"Email"}
             labelPlacement={"outside"}
             name={"email"}
             variant={"bordered"}
