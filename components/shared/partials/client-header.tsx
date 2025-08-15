@@ -30,12 +30,8 @@ const ClientHeader = () => {
 
 	const headerConfig = [
 		{
-			path: ROUTE_PATH.CLIENT.INDEX,
-			label: "Introduce",
-		},
-		{
 			path: ROUTE_PATH.CLIENT.MY_APPS,
-			label: "My Apps",
+			label: "🧑‍💻 My apps",
 		},
 	];
 
@@ -86,10 +82,10 @@ const ClientHeader = () => {
 						size={"lg"}
 						className={"px-4 bg-black text-white"}
 					>
-						tnh@hieutn.xyz
+						📮 Email Me
 					</Button>
 
-					<Button
+					{/* <Button
 						size={"lg"}
 						variant={"light"}
 						isIconOnly
@@ -111,7 +107,7 @@ const ClientHeader = () => {
 						>
 							{ICON_CONFIG.LOG_OUT}
 						</Button>
-					)}
+					)} */}
 				</div>
 				<div
 					className={clsx("mobile-up lg:hidden", {

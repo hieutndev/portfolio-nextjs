@@ -30,6 +30,7 @@ import {
 	HiChevronLeft,
 	HiChevronRight
 } from "react-icons/hi2";
+import { FcConferenceCall, FcDepartment, FcDiploma1, FcGraduationCap, FcOpenedFolder, FcPortraitMode, FcTemplate, FcWorkflow } from "react-icons/fc";
 
 const ICON_CONFIG = {
 	MENU: <FaBars />,
@@ -52,13 +53,20 @@ const ICON_CONFIG = {
 	UNBLOCK: <FaLockOpen />,
 	CLOSE: <FaXmark />,
 	SAVE: <FaFloppyDisk />,
-	DASHBOARD: <IoGrid />,
-	ACCOUNT: <FaUserGroup />,
-	EDUCATION: <FaGraduationCap />,
-	CERTIFICATION: <PiCertificateFill />,
-	EMPLOYMENT: <FaBuilding />,
-	PROJECT: <FaFileCode />,
-	APP: <FaFileCode />,
+	// DASHBOARD: <IoGrid />,
+	DASHBOARD: <FcTemplate size={24} />,
+	// ACCOUNT: <FaUserGroup />,
+	ACCOUNT: <FcConferenceCall size={24} />,
+	// EDUCATION: <FaGraduationCap />,
+	EDUCATION: <FcGraduationCap size={24} />,
+	// CERTIFICATION: <PiCertificateFill />,
+	CERTIFICATION: <PiCertificateFill size={24} />,
+	// EMPLOYMENT: <FaBuilding />,
+	EMPLOYMENT: <FcDepartment size={24} />,
+	// PROJECT: <FaFileCode />,
+	PROJECT: <FcOpenedFolder size={24} />,
+	// APP: <FaFileCode />,
+	APP: <FcWorkflow size={24} />,
 	// Search and Pagination Icons
 	SEARCH: <FaMagnifyingGlass />,
 	PAGINATION_FIRST: <HiChevronDoubleLeft />,

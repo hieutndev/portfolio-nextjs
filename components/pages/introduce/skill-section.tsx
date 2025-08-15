@@ -36,7 +36,7 @@ const SkillSection = () => {
 		"https://img.icons8.com/?size=100&id=UECmBSgBOvPT&format=png&color=000000",
 		"https://img.icons8.com/?size=100&id=ifP93G7BXUhU&format=png&color=000000",
 		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/photoshop/photoshop-original.svg",
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/illustrator/illustrator-line.svg",
+		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/illustrator/illustrator-original.svg",
 		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/figma/figma-original.svg",
 		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/canva/canva-original.svg",
 	];

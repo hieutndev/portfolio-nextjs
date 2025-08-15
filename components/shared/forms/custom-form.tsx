@@ -41,7 +41,7 @@ export default function CustomForm({
 	children,
 }: CustomFormProps) {
 	const handleKeyDown = (event: KeyboardEvent) => {
-		console.log(event.target instanceof HTMLElement ? event.target.classList : '');
+
 		if (
 			useEnterKey &&
 			event.key === "Enter" &&

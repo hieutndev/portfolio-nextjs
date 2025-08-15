@@ -27,7 +27,7 @@ const SidebarGroup = ({
   const [isFold, setIsFold] = useState<boolean>(isCloseDefault);
 
   return (
-    <div className={"flex flex-col gap-4"}>
+    <div className={"flex flex-col gap-2"}>
       <div
         className={
           "flex items-center justify-between cursor-pointer gap-4 group"
@@ -58,7 +58,7 @@ const SidebarGroup = ({
       </div>
       <div
         className={clsx(
-          "flex flex-col w-full gap-4 pl-6 transition-all duration-500 overflow-hidden ease-in-out",
+          "flex flex-col w-full gap-1 pl-6 transition-all duration-500 overflow-hidden ease-in-out",
           {
             "opacity-0 max-h-0": isFold,
             "opacity-100 max-h-64": !isFold,
