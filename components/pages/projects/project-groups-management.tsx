@@ -28,7 +28,6 @@ import {
 
 import { useState, useEffect } from "react";
 import ModalCreateUpdateProjectGroup from "./modal-create-update-project-group";
-import { TProject } from "../../../../portfolio-v4/src/types/project";
 import { MAP_MESSAGE } from "../../../configs/response-message";
 import { TTableAction } from "@/types/table";
 
@@ -44,7 +43,7 @@ export default function ProjectGroupsManagement() {
 		},
 	];
 
-	const [currentEditing, setCurrentEditing] = useState<null | string | number>(null);
+	const [currentEditing, setCurrentEditing] = useState<null | number>(null);
 	const [groupTitle, setGroupTitle] = useState<string>("");
 
 	const [listProjectGroups, setListProjectGroups] = useState<TProjectGroup[]>([]);
@@ -123,7 +122,7 @@ export default function ProjectGroupsManagement() {
 		error: updateProjectGroupError,
 		loading: updatingProjectGroup,
 		fetch: updateProjectGroup,
-	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.UPDATE_GROUP(currentEditing ?? ""), {
+	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.UPDATE_GROUP(currentEditing ?? -1), {
 		method: "PATCH",
 		body: { newGroupTitle: groupTitle },
 		skip: true,
@@ -162,7 +161,7 @@ export default function ProjectGroupsManagement() {
 		error: softDeleteProjectGroupError,
 		loading: softDeletingProjectGroup,
 		fetch: softDeleteProjectGroup,
-	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.SOFT_DELETE_GROUP(currentEditing ?? ""), {
+	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.SOFT_DELETE_GROUP(currentEditing ?? -1), {
 		method: "PATCH",
 		skip: true,
 	});
@@ -197,7 +196,7 @@ export default function ProjectGroupsManagement() {
 		error: recoverProjectGroupError,
 		loading: recoveringProjectGroup,
 		fetch: recoverProjectGroup,
-	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.RECOVER_GROUP(currentEditing ?? ""), {
+	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.RECOVER_GROUP(currentEditing ?? -1), {
 		method: "PATCH",
 		skip: true,
 	});
@@ -232,7 +231,7 @@ export default function ProjectGroupsManagement() {
 		error: deleteProjectGroupError,
 		loading: deletingProjectGroup,
 		fetch: deleteProjectGroup,
-	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.DELETE_GROUP(currentEditing ?? ""), {
+	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.DELETE_GROUP(currentEditing ?? -1), {
 		method: "DELETE",
 		skip: true,
 	});
