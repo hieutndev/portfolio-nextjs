@@ -108,7 +108,7 @@ export default function ProjectManagement() {
 		error: deleteProjectError,
 		loading: deletingProject,
 		fetch: deleteProject,
-	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.DELETE_PROJECT(selectedId ?? ""), {
+	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.DELETE_PROJECT(selectedId ?? -1), {
 		method: "DELETE",
 		skip: true,
 	});

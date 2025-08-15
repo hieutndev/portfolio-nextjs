@@ -78,7 +78,7 @@ const ReactQuill = dynamic(
 interface ProjectFormQuillProps {
 	mode: "create" | "edit";
 	defaultValues?: TProjectResponse;
-	projectId?: string;
+	projectId?: number;
 }
 
 export default function ProjectFormQuillComponent({ mode, defaultValues, projectId }: ProjectFormQuillProps) {
