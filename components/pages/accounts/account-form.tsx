@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, FormEvent } from "react";
-import { Input, Button, addToast, Select, SelectItem, Switch } from "@heroui/react";
+import { useState, useEffect } from "react";
+import { Input, addToast, Select, SelectItem } from "@heroui/react";
+
 import CustomForm from "@/components/shared/forms/custom-form";
 import { useFetch } from "@/hooks/useFetch";
 import API_ROUTE from "@/configs/api";
-import { TAccount, TNewAccount, TUpdateAccount } from "@/types/account";
-import { IAPIResponse } from "@/types/global";
+import { TNewAccount } from "@/types/account";
 import { MAP_MESSAGE } from "@/configs/response-message";
 
 export interface AccountFormProps {
@@ -46,6 +46,7 @@ export default function AccountForm({onSuccess }: AccountFormProps) {
 
 		if (submitError) {
 			const parsedError = JSON.parse(submitError);
+
 			addToast({
 				title: "Error",
 				description: MAP_MESSAGE[parsedError.message],
@@ -57,11 +58,13 @@ export default function AccountForm({onSuccess }: AccountFormProps) {
 
 		// Email validation
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 		if (!emailRegex.test(formData.email)) {
 			addToast({
 				title: "Validation Error",
 				description: "Please enter a valid email address",
 			});
+
 			return;
 		}
 
@@ -82,55 +85,60 @@ export default function AccountForm({onSuccess }: AccountFormProps) {
 
 	return (
 		<CustomForm
-			formId={"accountForm"}
-			onSubmit={handleSubmit}
 			className={"flex flex-col gap-4"}
-			submitButtonText={"Create Account"}
-			isLoading={submitting}
 			disableSubmitButton={submitting}
+			formId={"accountForm"}
+			isLoading={submitting}
+			submitButtonText={"Create Account"}
+			onSubmit={handleSubmit}
 		>
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<Input
+					isRequired
 					label="Email"
+					labelPlacement={"outside"}
 					placeholder="Enter email address"
 					type="email"
 					value={formData.email}
-					onValueChange={(value) => setFormData((prev) => ({ ...prev, email: value }))}
-					isRequired
 					variant="bordered"
+					onValueChange={(value) => setFormData((prev) => ({ ...prev, email: value }))}
 				/>
 
 				<Input
+					isRequired
 					label="Username"
+					labelPlacement={"outside"}
 					placeholder="Enter username"
 					value={formData.username}
-					onValueChange={(value) => setFormData((prev) => ({ ...prev, username: value }))}
-					isRequired
 					variant="bordered"
+					onValueChange={(value) => setFormData((prev) => ({ ...prev, username: value }))}
 				/>
 			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<Input
+					isRequired
 					label={"Password"}
+					labelPlacement={"outside"}
 					placeholder={"Enter password"}
 					type="password"
 					value={formData.password}
-					onValueChange={(value) => setFormData((prev) => ({ ...prev, password: value }))}
-					isRequired
 					variant="bordered"
+					onValueChange={(value) => setFormData((prev) => ({ ...prev, password: value }))}
 				/>
 
 				<Select
+					isRequired
 					label="Role"
+					labelPlacement={"outside"}
 					placeholder="Select user role"
 					selectedKeys={[formData.role.toString()]}
+					variant="bordered"
 					onSelectionChange={(keys) => {
 						const selectedKey = Array.from(keys)[0] as string;
+
 						setFormData((prev) => ({ ...prev, role: parseInt(selectedKey) }));
 					}}
-					variant="bordered"
-					isRequired
 				>
 					{roleOptions.map((option) => (
 						<SelectItem key={option.key}>{option.label}</SelectItem>

@@ -1,5 +1,11 @@
 "use client";
 
+import { addToast, Divider, Image, Input } from "@heroui/react";
+import { useReactiveCookiesNext } from "cookies-next";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import clsx from "clsx";
+
 import Container from "@/components/shared/container/container";
 import CustomForm from "@/components/shared/forms/custom-form";
 import API_ROUTE from "@/configs/api";
@@ -7,12 +13,6 @@ import { MAP_MESSAGE } from "@/configs/response-message";
 import ROUTE_PATH from "@/configs/route-path";
 import { useFetch } from "@/hooks/useFetch";
 import { IAPIResponse } from "@/types/global";
-import { addToast, Button, Divider, Input } from "@heroui/react";
-import { useReactiveCookiesNext } from "cookies-next";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
-
-import clsx from "clsx";
 import { BREAK_POINT } from "@/configs/break-point";
 import useScreenSize from "@/hooks/useScreenSize";
 import { TSignIn, TSignInResponse } from "@/types/auth";
@@ -27,8 +27,8 @@ function SignInContent() {
       addToast({
         title: "Error",
         description: MAP_MESSAGE[search.get("message") ?? ""],
-        color: "danger"
-      })
+        color: "danger",
+      });
     }
   }, [search]);
 
@@ -55,6 +55,7 @@ function SignInContent() {
         description: "Please fill in all fields",
         color: "danger",
       });
+
       return false;
     }
 
@@ -101,11 +102,11 @@ function SignInContent() {
       className={
         "bg-light w-screen h-screen flex flex-col justify-center items-center gap-8 px-4"
       }>
-      <div
+      <button
         className={"w-96"}
         onClick={() => router.push(ROUTE_PATH.CLIENT.INDEX)}>
-        <img src="/logow_b.png" alt="" className={"drop-shadow-2xl"} />
-      </div>
+        <Image alt="" className={"drop-shadow-2xl"} src="/logow_b.png" />
+      </button>
 
       <Container
         className={clsx(
@@ -118,21 +119,21 @@ function SignInContent() {
         orientation={"vertical"}>
         <h2 className={"text-primary text-4xl font-bold"}>Sign in.</h2>
         <CustomForm
-          formId={"loginForm"}
-          submitButtonText={"Sign in"}
-          submitButtonSize={"lg"}
           className={"flex flex-col gap-4"}
-          onSubmit={onSubmitSignIn}
+          formId={"loginForm"}
+          isLoading={signingIn}
           loadingText={"Signing in"}
-          isLoading={signingIn}>
+          submitButtonSize={"lg"}
+          submitButtonText={"Sign in"}
+          onSubmit={onSubmitSignIn}>
           <Input
             label={"Email"}
             labelPlacement={"outside"}
             name={"email"}
-            variant={"bordered"}
             placeholder={"example@email.com"}
             size={"lg"}
             value={signInForm.email}
+            variant={"bordered"}
             onValueChange={(value) =>
               setSignInForm((prev) => ({ ...prev, email: value }))
             }
@@ -141,14 +142,14 @@ function SignInContent() {
             label={"Password"}
             labelPlacement={"outside"}
             name={"password"}
-            variant={"bordered"}
-            type={"password"}
             placeholder={"Enter your password"}
+            size={"lg"}
+            type={"password"}
             value={signInForm.password}
+            variant={"bordered"}
             onChange={(e) =>
               setSignInForm((prev) => ({ ...prev, password: e.target.value }))
             }
-            size={"lg"}
           />
         </CustomForm>
         <Divider />

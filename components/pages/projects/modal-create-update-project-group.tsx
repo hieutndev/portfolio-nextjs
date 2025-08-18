@@ -1,6 +1,6 @@
+import { Modal, ModalContent, ModalHeader, ModalBody, Input } from "@heroui/react";
+
 import CustomForm from "@/components/shared/forms/custom-form";
-import ICON_CONFIG from "@/configs/icons";
-import { Modal, ModalContent, ModalHeader, ModalBody, Button, Input, ModalFooter } from "@heroui/react";
 
 interface ModalCreateUpdateProjectGroupProps {
 	title: string;
@@ -21,9 +21,11 @@ export default function ModalCreateUpdateProjectGroup({
 }: ModalCreateUpdateProjectGroupProps) {
 	return (
 		<Modal
+			hideCloseButton
 			isOpen={isOpen}
-			onOpenChange={onOpenChange}
 			placement="top"
+			onOpenChange={onOpenChange}
+
 		>
 			<ModalContent>
 				<ModalHeader>
@@ -31,21 +33,20 @@ export default function ModalCreateUpdateProjectGroup({
 				</ModalHeader>
 				<ModalBody>
 					<CustomForm
+						className={"flex flex-col gap-4 pb-4"}
 						formId={"crudForm"}
 						onSubmit={onSubmit}
-						className={"flex flex-col gap-4 pb-4"}
 					>
 						<Input
-							label={"Group Title"}
 							isRequired={true}
-							value={defaultValue}
-							onValueChange={onUpdateValue}
-							type={"text"}
+							label={"Group Title"}
 							labelPlacement={"outside"}
-							placeholder={"Enter project group title"}
-							variant={"bordered"}
 							name={"group_title"}
-							autoFocus
+							placeholder={"Enter project group title"}
+							type={"text"}
+							value={defaultValue}
+							variant={"bordered"}
+							onValueChange={onUpdateValue}
 						/>
 					</CustomForm>
 				</ModalBody>

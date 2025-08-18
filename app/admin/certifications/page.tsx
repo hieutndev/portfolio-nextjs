@@ -15,14 +15,13 @@ import {
 	ModalHeader,
 	ModalBody,
 	useDisclosure,
-	Spinner,
 } from "@heroui/react";
+import { useRouter } from "next/navigation";
+
 import { useFetch } from "@/hooks/useFetch";
 import AdminHeader from "@/components/shared/partials/admin-header";
 import CertificationForm from "@/components/pages/certifications/certification-form";
-import { useRouter } from "next/navigation";
 import API_ROUTE from "@/configs/api";
-import ROUTE_PATH from "@/configs/route-path";
 import ICON_CONFIG from "@/configs/icons";
 import Container from "@/components/shared/container/container";
 import { IAPIResponse, TDataAction } from "@/types/global";
@@ -102,6 +101,7 @@ export default function CertificationListPage() {
 		}
 		if (softDeleteError) {
 			const parsedError = JSON.parse(softDeleteError);
+
 			addToast({ title: "Error", description: parsedError.message, color: "danger" });
 		}
 	}, [softDeleteResult, softDeleteError]);
@@ -125,6 +125,7 @@ export default function CertificationListPage() {
 		}
 		if (recoverError) {
 			const parsedError = JSON.parse(recoverError);
+
 			addToast({ title: "Error", description: parsedError.message, color: "danger" });
 		}
 	}, [recoverResult, recoverError]);
@@ -148,6 +149,7 @@ export default function CertificationListPage() {
 		}
 		if (deleteError) {
 			const parsedError = JSON.parse(deleteError);
+
 			addToast({ title: "Error", description: parsedError.message, color: "danger" });
 		}
 	}, [deleteResult, deleteError]);
@@ -209,18 +211,18 @@ export default function CertificationListPage() {
 
 	return (
 		<Container
-			orientation={"vertical"}
-			className={"border border-default-200 rounded-2xl"}
 			shadow
+			className={"border border-default-200 rounded-2xl"}
+			orientation={"vertical"}
 		>
-			<AdminHeader title="Certification Management" breadcrumbs={["Admin", "Certification Management"]}/>
+			<AdminHeader breadcrumbs={["Admin", "Certification Management"]} title="Certification Management"/>
 			<div className={"flex flex-col gap-4"}>
 				<div className="flex items-center justify-between gap-4">
 					<div className="flex items-center gap-4">
 						<Button
 							color="primary"
-							variant="solid"
 							startContent={ICON_CONFIG.NEW}
+							variant="solid"
 							onPress={() => mapAction(null, "create")}
 						>
 							Add New Certification
@@ -229,17 +231,17 @@ export default function CertificationListPage() {
 					<div className="w-80">
 						<SearchInput
 							placeholder="Search certifications by title or issuer..."
-							onSearch={handleSearch}
 							value={searchTerm}
+							onSearch={handleSearch}
 						/>
 					</div>
 				</div>
 				<Table
+					isHeaderSticky
 					aria-label="Certification List"
 					classNames={{
 						wrapper: "h-[60vh]",
 					}}
-					isHeaderSticky
 				>
 					<TableHeader>
 						<TableColumn>ID</TableColumn>
@@ -259,12 +261,12 @@ export default function CertificationListPage() {
 								</TableCell>
 								<TableCell>
 									<TableCellAction
-										onEdit={() => mapAction(cert, "update")}
-										onSoftDelete={() => mapAction(cert, "softDelete")}
-										onRecover={() => mapAction(cert, "recover")}
-										mode={cert.is_deleted === 1}
-										onPermanentDelete={() => mapAction(cert, "permanentDelete")}
 										buttonSize={"sm"}
+										mode={cert.is_deleted === 1}
+										onEdit={() => mapAction(cert, "update")}
+										onPermanentDelete={() => mapAction(cert, "permanentDelete")}
+										onRecover={() => mapAction(cert, "recover")}
+										onSoftDelete={() => mapAction(cert, "softDelete")}
 									/>
 								</TableCell>
 							</TableRow>
@@ -275,18 +277,19 @@ export default function CertificationListPage() {
 				{/* Pagination */}
 				<CustomPagination
 					currentPage={currentPage}
-					totalPages={totalPages}
-					totalItems={totalItems}
 					itemsPerPage={itemsPerPage}
-					onPageChange={handlePageChange}
+					totalItems={totalItems}
+					totalPages={totalPages}
 					onItemsPerPageChange={handleItemsPerPageChange}
+					onPageChange={handlePageChange}
 				/>
 			</div>
 			<Modal
-				isOpen={isOpen}
-				onOpenChange={onOpenChange}
-				size="xl"
 				hideCloseButton
+				isOpen={isOpen}
+				placement={"top"}
+				size="xl"
+				onOpenChange={onOpenChange}
 			>
 				<ModalContent>
 					<ModalHeader>
@@ -296,8 +299,8 @@ export default function CertificationListPage() {
 					</ModalHeader>
 					<ModalBody>
 						<CertificationForm
-							mode={modalMode}
 							certificationId={selectedCert?.id ?? -1}
+							mode={modalMode}
 							onSuccess={handleModalSuccess}
 						/>
 					</ModalBody>
