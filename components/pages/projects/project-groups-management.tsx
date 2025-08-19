@@ -1,13 +1,6 @@
 "use client";
 
-import TableCellAction from "@/components/shared/tables/table-cell-action";
-import API_ROUTE from "@/configs/api";
-import ICON_CONFIG from "@/configs/icons";
-import { useFetch } from "@/hooks/useFetch";
-import { IAPIResponse } from "@/types/global";
-import { TProjectGroup } from "@/types/project";
 import {
-	toast,
 	Button,
 	TableHeader,
 	TableCell,
@@ -17,18 +10,20 @@ import {
 	Table,
 	TableColumn,
 	Spinner,
-	Input,
-	Modal,
 	useDisclosure,
-	ModalBody,
-	ModalHeader,
-	ModalContent,
-	ModalFooter,
 } from "@heroui/react";
-
 import { useState, useEffect } from "react";
-import ModalCreateUpdateProjectGroup from "./modal-create-update-project-group";
+
 import { MAP_MESSAGE } from "../../../configs/response-message";
+
+import ModalCreateUpdateProjectGroup from "./modal-create-update-project-group";
+
+import TableCellAction from "@/components/shared/tables/table-cell-action";
+import API_ROUTE from "@/configs/api";
+import ICON_CONFIG from "@/configs/icons";
+import { useFetch } from "@/hooks/useFetch";
+import { IAPIResponse } from "@/types/global";
+import { TProjectGroup } from "@/types/project";
 import { TTableAction } from "@/types/table";
 
 export default function ProjectGroupsManagement() {
@@ -82,7 +77,7 @@ export default function ProjectGroupsManagement() {
 	const {
 		data: createProjectGroupResult,
 		error: createProjectGroupError,
-		loading: creatingProjectGroup,
+		// loading: creatingProjectGroup,
 		fetch: createProjectGroup,
 	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.NEW_GROUP, {
 		method: "POST",
@@ -120,7 +115,7 @@ export default function ProjectGroupsManagement() {
 	const {
 		data: updateProjectGroupResult,
 		error: updateProjectGroupError,
-		loading: updatingProjectGroup,
+		// loading: updatingProjectGroup,
 		fetch: updateProjectGroup,
 	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.UPDATE_GROUP(currentEditing ?? -1), {
 		method: "PATCH",
@@ -159,7 +154,7 @@ export default function ProjectGroupsManagement() {
 	const {
 		data: softDeleteProjectGroupResult,
 		error: softDeleteProjectGroupError,
-		loading: softDeletingProjectGroup,
+		// loading: softDeletingProjectGroup,
 		fetch: softDeleteProjectGroup,
 	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.SOFT_DELETE_GROUP(currentEditing ?? -1), {
 		method: "PATCH",
@@ -194,7 +189,7 @@ export default function ProjectGroupsManagement() {
 	const {
 		data: recoverProjectGroupResult,
 		error: recoverProjectGroupError,
-		loading: recoveringProjectGroup,
+		// loading: recoveringProjectGroup,
 		fetch: recoverProjectGroup,
 	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.RECOVER_GROUP(currentEditing ?? -1), {
 		method: "PATCH",
@@ -229,7 +224,7 @@ export default function ProjectGroupsManagement() {
 	const {
 		data: deleteProjectGroupResult,
 		error: deleteProjectGroupError,
-		loading: deletingProjectGroup,
+		// loading: deletingProjectGroup,
 		fetch: deleteProjectGroup,
 	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.DELETE_GROUP(currentEditing ?? -1), {
 		method: "DELETE",
@@ -312,11 +307,11 @@ export default function ProjectGroupsManagement() {
 	return (
 		<div className={"flex flex-col gap-4"}>
 			<Button
+				className={"w-max"}
+				color={"primary"}
+				isDisabled={fetchingProjectGroups}
 				startContent={ICON_CONFIG.NEW}
 				onPress={onOpen}
-				className={"w-max"}
-				isDisabled={fetchingProjectGroups}
-				color={"primary"}
 			>
 				Create new group
 			</Button>
@@ -326,10 +321,10 @@ export default function ProjectGroupsManagement() {
 				</TableHeader>
 				<TableBody
 					aria-labelledby={"Project Groups"}
-					emptyContent={<p className={"text-center"}>"No project groups found"</p>}
+					emptyContent={<p className={"text-center"}>No project groups found</p>}
 					isLoading={fetchingProjectGroups}
-					loadingContent={<Spinner>Fetching groups...</Spinner>}
 					items={listProjectGroups}
+					loadingContent={<Spinner>Fetching groups...</Spinner>}
 				>
 					{(item) => (
 						<TableRow key={item.group_id}>
@@ -339,9 +334,9 @@ export default function ProjectGroupsManagement() {
 									buttonSize={"sm"}
 									mode={item.is_deleted === 1}
 									onEdit={() => handleTableAction(item, "edit")}
-									onSoftDelete={() => handleTableAction(item, "softdel")}
-									onRecover={() => handleTableAction(item, "recover")}
 									onPermanentDelete={() => handleTableAction(item, "forcedel")}
+									onRecover={() => handleTableAction(item, "recover")}
+									onSoftDelete={() => handleTableAction(item, "softdel")}
 								/>
 							</TableCell>
 						</TableRow>
@@ -349,12 +344,12 @@ export default function ProjectGroupsManagement() {
 				</TableBody>
 			</Table>
 			<ModalCreateUpdateProjectGroup
-				title={currentEditing ? "Edit Project Group" : "New Project Group"}
-				isOpen={isOpen}
-				onOpenChange={onOpenChange}
 				defaultValue={groupTitle}
-				onUpdateValue={setGroupTitle}
+				isOpen={isOpen}
+				title={currentEditing ? "Edit Project Group" : "New Project Group"}
+				onOpenChange={onOpenChange}
 				onSubmit={currentEditing ? updateProjectGroup : createProjectGroup}
+				onUpdateValue={setGroupTitle}
 			/>
 		</div>
 	);

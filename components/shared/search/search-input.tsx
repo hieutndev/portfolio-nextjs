@@ -1,8 +1,9 @@
 "use client";
 
 import { Input } from "@heroui/react";
-import ICON_CONFIG from "@/configs/icons";
 import { useState, useEffect } from "react";
+
+import ICON_CONFIG from "@/configs/icons";
 
 interface SearchInputProps {
 	placeholder?: string;
@@ -39,15 +40,15 @@ export default function SearchInput({
 
 	return (
 		<Input
-			placeholder={placeholder}
-			value={searchTerm}
-			onValueChange={setSearchTerm}
-			startContent={ICON_CONFIG.SEARCH}
-			size={size}
-			className={className}
 			isClearable
-			onClear={() => setSearchTerm("")}
+			className={className}
+			placeholder={placeholder}
+			size={size}
+			startContent={ICON_CONFIG.SEARCH}
+			value={searchTerm}
 			variant={"bordered"}
+			onClear={() => setSearchTerm("")}
+			onValueChange={setSearchTerm}
 		/>
 	);
 }

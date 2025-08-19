@@ -1,5 +1,6 @@
-import ICON_CONFIG from "@/configs/icons";
 import { Button, ButtonProps } from "@heroui/react";
+
+import ICON_CONFIG from "@/configs/icons";
 
 interface TableCellActionProps {
 	mode: boolean;
@@ -26,18 +27,18 @@ const TableCellAction = ({
 		{mode ? (
 			<>
 				<Button
-					size={buttonSize}
-					color={"success"}
 					isIconOnly
+					color={"success"}
+					size={buttonSize}
 					onPress={onRecover}
 				>
 					{ICON_CONFIG.RECOVER}
 				</Button>
 
 				<Button
-					size={buttonSize}
-					color={"danger"}
 					isIconOnly
+					color={"danger"}
+					size={buttonSize}
 					onPress={onPermanentDelete}
 				>
 					{ICON_CONFIG.PERMANENT_DELETE}
@@ -47,27 +48,27 @@ const TableCellAction = ({
 			<>
 				{showViewButton && (
 					<Button
-						size={buttonSize}
-						color={"secondary"}
 						isIconOnly
+						color={"secondary"}
+						size={buttonSize}
 						onPress={onViewDetails}
 					>
 						{ICON_CONFIG.VIEW}
 					</Button>
 				)}
 				<Button
-					size={buttonSize}
-					color={"warning"}
 					isIconOnly
+					color={"warning"}
+					size={buttonSize}
 					onPress={onEdit}
 				>
 					{ICON_CONFIG.EDIT}
 				</Button>
 
 				<Button
-					size={buttonSize}
-					color={"danger"}
 					isIconOnly
+					color={"danger"}
+					size={buttonSize}
 					onPress={onSoftDelete}
 				>
 					{ICON_CONFIG.SOFT_DELETE}

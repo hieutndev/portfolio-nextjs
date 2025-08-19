@@ -1,11 +1,12 @@
 "use client";
 
 import { Button } from "@heroui/button";
-import { SITE_CONFIG } from "@/configs/site-config";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Divider } from "@heroui/react";
 import clsx from "clsx";
+
+import { SITE_CONFIG } from "@/configs/site-config";
 
 export default function AdminSidebar() {
 	const pathname = usePathname();
@@ -13,14 +14,14 @@ export default function AdminSidebar() {
 	const router = useRouter();
 
 	return (
-		<div className={"min-w-80 h-full flex flex-col items-center gap-8 p-8 rounded-e-2xl border border-gray-300"}>
+		<div className={"w-1/6 fixed h-full flex flex-col items-center gap-8 p-8 rounded-e-2xl border border-gray-300"}>
 			<div className={"h-max max-w-56"}>
 				<Image
-					src={SITE_CONFIG.LOGO.FULL_BLACK}
 					alt={"logo"}
-					width={1200}
-					height={1200}
 					className={"w-full h-max object-contain cursor-pointer"}
+					height={1200}
+					src={SITE_CONFIG.LOGO.FULL_BLACK}
+					width={1200}
 					onClick={() => router.push("/")}
 				/>
 			</div>
@@ -29,15 +30,15 @@ export default function AdminSidebar() {
 				{SITE_CONFIG.ADMIN_SIDEBAR_ITEMS.map((item) => (
 					<Button
 						key={item.href}
-						onPress={() => router.push(item.href)}
-						color={pathname.startsWith(item.href) ? "primary" : "default"}
-						size={"lg"}
-						variant={pathname.startsWith(item.href) ? "flat" : "light"}
+						fullWidth
 						className={clsx("justify-start", {
 							// "text-default-400": !pathname.startsWith(item.href),
 						})}
-						fullWidth
+						color={pathname.startsWith(item.href) ? "primary" : "default"}
+						size={"lg"}
 						startContent={item.icon}
+						variant={pathname.startsWith(item.href) ? "flat" : "light"}
+						onPress={() => router.push(item.href)}
 					>
 						{item.label}
 					</Button>

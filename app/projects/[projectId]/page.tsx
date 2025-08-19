@@ -1,3 +1,6 @@
+import { notFound } from "next/navigation";
+import { Metadata } from "next";
+
 import { TProject } from "@/types/project";
 import { nonAuthFetch } from "@/utils/non-auth-fetch";
 import API_ROUTE from "@/configs/api";
@@ -5,8 +8,6 @@ import ProjectBlogHeader from "@/components/pages/projects/project-blog-header";
 import ProjectBlogContent from "@/components/pages/projects/project-blog-content";
 import ProjectBlogFooter from "@/components/pages/projects/project-blog-footer";
 import Container from "@/components/shared/container/container";
-import { notFound } from "next/navigation";
-import { Metadata } from "next";
 
 interface ProjectBlogPageProps {
     params: Promise<{ projectId: string }>;

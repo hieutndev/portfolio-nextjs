@@ -1,17 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getCookie } from "cookies-next";
-import Container from "@/components/shared/container/container";
-import AdminHeader from "@/components/shared/partials/admin-header";
-import ICON_CONFIG from "@/configs/icons";
-import ROUTE_PATH from "@/configs/route-path";
-import { useFetch } from "@/hooks/useFetch";
-import { IAPIResponse, TDataAction } from "@/types/global";
-import { TEmployment } from "@/types/employment";
-import API_ROUTE from "@/configs/api";
-import { MAP_MESSAGE } from "@/configs/response-message";
-import { formatDate } from "@/utils/date";
 import {
 	addToast,
 	Button,
@@ -22,26 +11,29 @@ import {
 	TableRow,
 	TableCell,
 	Chip,
-	Dropdown,
-	DropdownTrigger,
-	DropdownMenu,
-	DropdownItem,
 	Spinner,
 	Modal,
 	ModalContent,
 	ModalHeader,
 	useDisclosure,
 	ModalBody,
-	Divider,
 } from "@heroui/react";
-import { useRouter } from "next/navigation";
+
+import Container from "@/components/shared/container/container";
+import AdminHeader from "@/components/shared/partials/admin-header";
+import ICON_CONFIG from "@/configs/icons";
+import { useFetch } from "@/hooks/useFetch";
+import { IAPIResponse, TDataAction } from "@/types/global";
+import { TEmployment } from "@/types/employment";
+import API_ROUTE from "@/configs/api";
+import { MAP_MESSAGE } from "@/configs/response-message";
+import { formatDate } from "@/utils/date";
 import TableCellAction from "@/components/shared/tables/table-cell-action";
 import EmploymentFormComponent from "@/components/pages/employments/employment-form";
 import SearchInput from "@/components/shared/search/search-input";
 import CustomPagination from "@/components/shared/custom-pagination/custom-pagination";
 
 export default function EmploymentManagementPage() {
-	const router = useRouter();
 	const [listEmploymentHistory, setListEmploymentHistory] = useState<TEmployment[]>([]);
 	const [selectedEmployment, setSelectedEmployment] = useState<TEmployment | null>(null);
 	const [action, setAction] = useState<TDataAction>(null);
@@ -78,6 +70,7 @@ export default function EmploymentManagementPage() {
 
 		if (fetchEmploymentError) {
 			const parseError = JSON.parse(fetchEmploymentError);
+
 			if (parseError.message) {
 				addToast({
 					title: "Error",
@@ -98,7 +91,7 @@ export default function EmploymentManagementPage() {
 	const {
 		data: softDeleteResult,
 		error: softDeleteError,
-		loading: softDeleting,
+		// loading: softDeleting,
 		fetch: softDeleteEmployment,
 	} = useFetch<IAPIResponse>(API_ROUTE.EMPLOYMENT.SOFT_DELETE(selectedEmployment?.id ?? -1), {
 		method: "PATCH",
@@ -117,6 +110,7 @@ export default function EmploymentManagementPage() {
 
 		if (softDeleteError) {
 			const parseError = JSON.parse(softDeleteError);
+
 			if (parseError.message) {
 				addToast({
 					title: "Error",
@@ -132,7 +126,7 @@ export default function EmploymentManagementPage() {
 	const {
 		data: recoverResult,
 		error: recoverError,
-		loading: recovering,
+		// loading: recovering,
 		fetch: recoverEmployment,
 	} = useFetch<IAPIResponse>(API_ROUTE.EMPLOYMENT.RECOVER(selectedEmployment?.id ?? -1), {
 		method: "PATCH",
@@ -151,6 +145,7 @@ export default function EmploymentManagementPage() {
 
 		if (recoverError) {
 			const parseError = JSON.parse(recoverError);
+
 			if (parseError.message) {
 				addToast({
 					title: "Error",
@@ -166,7 +161,7 @@ export default function EmploymentManagementPage() {
 	const {
 		data: deleteResult,
 		error: deleteError,
-		loading: deleting,
+		// loading: deleting,
 		fetch: deleteEmployment,
 	} = useFetch(API_ROUTE.EMPLOYMENT.DELETE(selectedEmployment?.id ?? -1), {
 		method: "DELETE",
@@ -185,6 +180,7 @@ export default function EmploymentManagementPage() {
 
 		if (deleteError) {
 			const parseError = JSON.parse(deleteError);
+
 			if (parseError.message) {
 				addToast({
 					title: "Error",
@@ -282,21 +278,21 @@ export default function EmploymentManagementPage() {
 
 	return (
 		<Container
-			orientation={"vertical"}
-			className={"border border-default-200 rounded-2xl"}
 			shadow
+			className={"border border-default-200 rounded-2xl"}
+			orientation={"vertical"}
 		>
 			<AdminHeader
-				title={"Employment History"}
 				breadcrumbs={["Admin", "Employment History"]}
+				title={"Employment History"}
 			/>
 			<div className={"flex flex-col gap-4"}>
 				<div className="flex items-center justify-between gap-4">
 					<div className="flex items-center gap-4">
 						<Button
 							color="primary"
-							variant="solid"
 							startContent={ICON_CONFIG.NEW}
+							variant="solid"
 							onPress={() => mapAction(null, "create")}
 						>
 							Add New Employment
@@ -305,17 +301,17 @@ export default function EmploymentManagementPage() {
 					<div className="w-80">
 						<SearchInput
 							placeholder="Search employments by title or organization..."
-							onSearch={handleSearch}
 							value={searchTerm}
+							onSearch={handleSearch}
 						/>
 					</div>
 				</div>
 				<Table
+					isHeaderSticky
 					aria-label="Employment history table"
 					classNames={{
 						wrapper: "h-[60vh]",
 					}}
-					isHeaderSticky
 				>
 					<TableHeader columns={columns}>
 						{(column) => (
@@ -328,10 +324,10 @@ export default function EmploymentManagementPage() {
 						)}
 					</TableHeader>
 					<TableBody
-						items={listEmploymentHistory}
-						isLoading={fetchingEmployment}
-						loadingContent={<Spinner label="Loading employment history..." />}
 						emptyContent={"No employment history have been added yet"}
+						isLoading={fetchingEmployment}
+						items={listEmploymentHistory}
+						loadingContent={<Spinner label="Loading employment history..." />}
 					>
 						{(employment) => (
 							<TableRow key={employment.id}>
@@ -345,8 +341,8 @@ export default function EmploymentManagementPage() {
 								<TableCell>
 									<Chip
 										color={employment.is_deleted === 1 ? "danger" : "success"}
-										variant="flat"
 										size="sm"
+										variant="flat"
 									>
 										{employment.is_deleted === 1 ? "Deleted" : "Active"}
 									</Chip>
@@ -355,11 +351,11 @@ export default function EmploymentManagementPage() {
 									<TableCellAction
 										buttonSize={"sm"}
 										mode={employment.is_deleted === 1}
-										onEdit={() => mapAction(employment, "update")}
-										onSoftDelete={() => mapAction(employment, "softDelete")}
-										onRecover={() => mapAction(employment, "recover")}
-										onPermanentDelete={() => mapAction(employment, "permanentDelete")}
 										showViewButton={true}
+										onEdit={() => mapAction(employment, "update")}
+										onPermanentDelete={() => mapAction(employment, "permanentDelete")}
+										onRecover={() => mapAction(employment, "recover")}
+										onSoftDelete={() => mapAction(employment, "softDelete")}
 									/>
 								</TableCell>
 							</TableRow>
@@ -370,28 +366,30 @@ export default function EmploymentManagementPage() {
 				{/* Pagination */}
 				<CustomPagination
 					currentPage={currentPage}
-					totalPages={totalPages}
-					totalItems={totalItems}
 					itemsPerPage={itemsPerPage}
-					onPageChange={handlePageChange}
+					totalItems={totalItems}
+					totalPages={totalPages}
 					onItemsPerPageChange={handleItemsPerPageChange}
+					onPageChange={handlePageChange}
 				/>
 			</div>
 			<Modal
-				isOpen={isOpen}
-				onOpenChange={onOpenChange}
-				size={"xl"}
 				hideCloseButton={true}
-			>
+				isOpen={isOpen}
+				placement={"top"}
+				size={"xl"}
+				onOpenChange={onOpenChange}
+
+				>
 				<ModalContent>
 					<ModalHeader>
 						<h3 className={"text-xl font-semibold"}>Employment History Information</h3>
 					</ModalHeader>
 					<ModalBody>
 						<EmploymentFormComponent
-							mode={modalMode}
 							defaultValues={selectedEmployment ?? undefined}
 							employmentId={selectedEmployment?.id ?? undefined}
+							mode={modalMode}
 							onSuccess={onModalSuccess}
 						/>
 					</ModalBody>

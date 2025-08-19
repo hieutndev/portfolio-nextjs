@@ -1,18 +1,17 @@
 "use client";
 
-import { useState, useEffect, FormEvent } from "react";
-
-import { Input, Button, addToast, DatePicker } from "@heroui/react";
-import AchievementRow from "@/components/pages/introduce/achievement-row";
-import { formatDate } from "@/utils/date";
-import { CalendarDate, parseDate } from "@internationalized/date";
+import { useState, useEffect } from "react";
+import { Input, addToast, DatePicker } from "@heroui/react";
+import { parseDate } from "@internationalized/date";
 import moment from "moment";
+import Image from "next/image";
+
 import CustomForm from "@/components/shared/forms/custom-form";
 import { useFetch } from "@/hooks/useFetch";
 import API_ROUTE from "@/configs/api";
 import { TCertification, TNewCertification, TUpdateCertification } from "@/types/certification";
 import { IAPIResponse } from "@/types/global";
-import Image from "next/image";
+
 
 export interface CertificationFormProps {
 	mode: "create" | "update";
@@ -29,12 +28,12 @@ export default function CertificationForm({ mode, certificationId, onSuccess }: 
 		image_url: "",
 	});
 
-	const [currentCertImage, setcurrentCertImage] = useState<string>("");
+	// const [currentCertImage, setcurrentCertImage] = useState<string>("");
 
 	const {
 		data: submitResult,
 		error: submitError,
-		loading: submitting,
+		// loading: submitting,
 		fetch: submitEmployment,
 	} = useFetch(
 		mode === "create" ? API_ROUTE.CERTIFICATION.NEW : API_ROUTE.CERTIFICATION.UPDATE(certificationId ?? -1),
@@ -50,7 +49,7 @@ export default function CertificationForm({ mode, certificationId, onSuccess }: 
 	const {
 		data: fetchCertDetailResult,
 		error: fetchCertDetailError,
-		loading: fetchingCertDetail,
+		// loading: fetchingCertDetail,
 		fetch: fetchCertDetail,
 	} = useFetch<IAPIResponse<TCertification>>(API_ROUTE.CERTIFICATION.GET_ONE(certificationId ?? -1), {
 		skip: true,
@@ -111,68 +110,68 @@ export default function CertificationForm({ mode, certificationId, onSuccess }: 
 
 	return (
 		<CustomForm
-			onSubmit={handleSubmit}
-			formId={"certificationForm"}
 			className={"flex flex-col gap-4 mb-4"}
+			formId={"certificationForm"}
 			loadingText={loadingText}
 			submitButtonText={buttonText}
+			onSubmit={handleSubmit}
 		>
 			<div className="grid grid-cols-2 gap-4">
 				<div className="w-full col-span-2">
 					<Input
-						type="text"
+						isRequired
 						label="Title"
-						value={formData.title}
-						onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+						labelPlacement={"outside"}
 						name="title"
 						placeholder="Enter certificate title..."
-						isRequired
-						labelPlacement={"outside"}
+						type="text"
+						value={formData.title}
 						variant={"bordered"}
+						onChange={(e) => setFormData({ ...formData, title: e.target.value })}
 					/>
 				</div>
 				<Input
-					type="text"
+					isRequired
 					label="Issued By"
-					value={formData.issued_by}
-					onChange={(e) => setFormData({ ...formData, issued_by: e.target.value })}
+					labelPlacement={"outside"}
 					name="issued_by"
 					placeholder="Enter organization issuing..."
-					isRequired
-					labelPlacement={"outside"}
+					type="text"
+					value={formData.issued_by}
 					variant={"bordered"}
+					onChange={(e) => setFormData({ ...formData, issued_by: e.target.value })}
 				/>
 				<Input
-					type="file"
+					isRequired
+					accept="image/*"
 					label="Certification Image"
+					labelPlacement={"outside"}
 					name="cert_image"
+					type="file"
+					variant={"bordered"}
 					onChange={(e) => {
 						setFormData((prev) => ({
 							...prev,
 							cert_image: e.target.files && e.target.files.length > 0 ? e.target.files : null,
 						}));
 					}}
-					accept="image/*"
-					labelPlacement={"outside"}
-					variant={"bordered"}
-					isRequired
 				/>
 				<DatePicker
+					isRequired
+					className="col-span-2"
 					label="Issued Date"
+					labelPlacement={"outside"}
+					name="issued_date"
 					value={parseDate(moment(formData.issued_date).format("YYYY-MM-DD")) || undefined}
+					variant="bordered"
 					onChange={(e) => {
 						setFormData((prev) => ({
 							...prev,
 							issued_date: moment(e?.toString()).startOf("day").format("YYYY-MM-DD") ?? prev.issued_date,
 						}));
 					}}
-					name="issued_date"
-					isRequired
-					variant="bordered"
-					className="col-span-2"
-					labelPlacement={"outside"}
 				/>
-				{mode === "update" && formData.image_url && <Image src={formData.image_url} alt={"certificate image"} width={1000} height={1000}/>}
+				{mode === "update" && formData.image_url && <Image alt={"certificate image"} height={1000} src={formData.image_url} width={1000}/>}
 			</div>
 		</CustomForm>
 	);

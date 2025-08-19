@@ -1,21 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Input, Button, addToast, DatePicker, Checkbox, Divider } from "@heroui/react";
-import AchievementRow from "@/components/pages/introduce/achievement-row";
-import { formatDate } from "@/utils/date";
-import { CalendarDate, parseDate } from "@internationalized/date";
+import { Input, addToast, DatePicker, Checkbox } from "@heroui/react";
+import { parseDate } from "@internationalized/date";
 import moment from "moment";
+import { useRouter } from "next/navigation";
+
 import CustomForm from "@/components/shared/forms/custom-form";
 import { useFetch } from "@/hooks/useFetch";
 import API_ROUTE from "@/configs/api";
 import { TEducation, TNewEducation, TUpdateEducation } from "@/types/education";
 import { IAPIResponse } from "@/types/global";
-import Container from "@/components/shared/container/container";
-import AdminHeader from "@/components/shared/partials/admin-header";
-import ICON_CONFIG from "@/configs/icons";
-import ROUTE_PATH from "@/configs/route-path";
-import { useRouter } from "next/navigation";
+
 
 export interface EducationFormProps {
 	mode: "create" | "edit";
@@ -24,7 +20,7 @@ export interface EducationFormProps {
 }
 
 export default function EducationForm({ mode, educationId, onSuccess }: EducationFormProps) {
-	const router = useRouter();
+
 	const [formData, setFormData] = useState<TNewEducation & TUpdateEducation>({
 		title: "",
 		organization: "",
@@ -37,7 +33,7 @@ export default function EducationForm({ mode, educationId, onSuccess }: Educatio
 	const {
 		data: submitResult,
 		error: submitError,
-		loading: submitting,
+		// loading: submitting,
 		fetch: submitEducation,
 	} = useFetch(mode === "create" ? API_ROUTE.EDUCATION.NEW : API_ROUTE.EDUCATION.UPDATE(educationId ?? -1), {
 		method: mode === "create" ? "POST" : "PATCH",
@@ -47,7 +43,7 @@ export default function EducationForm({ mode, educationId, onSuccess }: Educatio
 	const {
 		data: fetchEducationDetailResult,
 		error: fetchEducationDetailError,
-		loading: fetchingEducationDetail,
+		// loading: fetchingEducationDetail,
 		fetch: fetchEducationDetail,
 	} = useFetch<IAPIResponse<TEducation>>(API_ROUTE.EDUCATION.GET_ONE(educationId ?? -1), {
 		skip: true,
@@ -84,6 +80,7 @@ export default function EducationForm({ mode, educationId, onSuccess }: Educatio
 		}
 		if (submitError) {
 			const parsedError = JSON.parse(submitError);
+
 			if (parsedError.message) {
 				addToast({ title: "Error", description: parsedError.message, color: "danger" });
 			}
@@ -110,7 +107,6 @@ export default function EducationForm({ mode, educationId, onSuccess }: Educatio
 
 	const buttonText = mode === "create" ? "Add Education" : "Update Education";
 	const loadingText = mode === "create" ? "Adding..." : "Updating...";
-	const headerTitle = mode === "create" ? "Add New Education" : "Update Education Information";
 
 	const isFormValid = () => {
 		return formData.title && formData.organization && formData.time_start && (isCurrent || formData.time_end);
@@ -118,71 +114,71 @@ export default function EducationForm({ mode, educationId, onSuccess }: Educatio
 
 	return (
 		<CustomForm
-			onSubmit={handleSubmit}
-			formId="educationForm"
 			className="flex flex-col gap-4"
+			disableSubmitButton={!isFormValid()}
+			formId="educationForm"
 			loadingText={loadingText}
 			submitButtonText={buttonText}
-			disableSubmitButton={!isFormValid()}
+			onSubmit={handleSubmit}
 		>
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<Input
-					type="text"
+					isRequired
 					label="Title/Major"
-					value={formData.title}
-					onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+					labelPlacement="outside"
 					name="title"
 					placeholder="Enter title or major..."
-					isRequired
-					labelPlacement="outside"
+					type="text"
+					value={formData.title}
 					variant="bordered"
+					onChange={(e) => setFormData({ ...formData, title: e.target.value })}
 				/>
 				<Input
-					type="text"
+					isRequired
 					label="Organization/School"
-					value={formData.organization}
-					onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
+					labelPlacement="outside"
 					name="organization"
 					placeholder="Enter organization or school..."
-					isRequired
-					labelPlacement="outside"
+					type="text"
+					value={formData.organization}
 					variant="bordered"
+					onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
 				/>
 				<DatePicker
+					isRequired
 					label="Start Date"
+					labelPlacement="outside"
+					name="time_start"
 					value={parseDate(moment(formData.time_start).format("YYYY-MM-DD")) || undefined}
+					variant="bordered"
 					onChange={(e) => {
 						setFormData((prev) => ({
 							...prev,
 							time_start: moment(e?.toString()).startOf("day").format("YYYY-MM-DD") ?? prev.time_start,
 						}));
 					}}
-					name="time_start"
-					isRequired
-					variant="bordered"
-					labelPlacement="outside"
 				/>
 				<DatePicker
+					isDisabled={isCurrent}
 					label="End Date"
+					labelPlacement="outside"
+					name="time_end"
 					value={formData.time_end ? parseDate(moment(formData.time_end).format("YYYY-MM-DD")) : undefined}
+					variant="bordered"
 					onChange={(e) => {
 						setFormData((prev) => ({
 							...prev,
 							time_end: e ? moment(e.toString()).startOf("day").format("YYYY-MM-DD") : null,
 						}));
 					}}
-					name="time_end"
-					variant="bordered"
-					labelPlacement="outside"
-					isDisabled={isCurrent}
 				/>
 			</div>
 
 			<div className="flex justify-end">
 				<Checkbox
 					isSelected={isCurrent}
-					onValueChange={setIsCurrent}
 					name="isCurrent"
+					onValueChange={setIsCurrent}
 				>
 					Currently studying here?
 				</Checkbox>

@@ -1,11 +1,13 @@
 "use client";
 
-import Container from "@/components/shared/container/container";
 import clsx from "clsx";
+import { Image } from "@heroui/react";
+
+import Container from "@/components/shared/container/container";
 
 const SkillIconBlock = ({ iconPath }: { iconPath: string }) => (
 	<div className={clsx("h-12 w-12", "xl:w-14 xl:h-14", "lg:w-12 lg:h-12", "")}>
-		<img src={iconPath} />
+		<Image src={iconPath} />
 	</div>
 );
 
@@ -75,8 +77,8 @@ const SkillSection = () => {
 					<div className={"flex flex-wrap items-center gap-8"}>
 						{listTools.map((_v, index) => (
 							<SkillIconBlock
-								iconPath={_v}
 								key={index}
+								iconPath={_v}
 							/>
 						))}
 					</div>

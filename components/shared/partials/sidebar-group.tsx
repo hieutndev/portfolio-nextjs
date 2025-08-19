@@ -1,9 +1,11 @@
 "use client";
 
 import { FaChevronUp } from "react-icons/fa6";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import clsx from "clsx";
 import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+
 
 export type SidebarGroupItem = {
   title: string;
@@ -28,7 +30,7 @@ const SidebarGroup = ({
 
   return (
     <div className={"flex flex-col gap-2"}>
-      <div
+      <button
         className={
           "flex items-center justify-between cursor-pointer gap-4 group"
         }
@@ -55,8 +57,8 @@ const SidebarGroup = ({
             }
           )}
         />
-      </div>
-      <div
+      </button>
+      <button
         className={clsx(
           "flex flex-col w-full gap-1 pl-6 transition-all duration-500 overflow-hidden ease-in-out",
           {
@@ -66,21 +68,21 @@ const SidebarGroup = ({
         )}
         onClick={onItemClick}>
         {groupItems.map((item) => (
-          <div
+          <Link
+            key={item.href}
             className={
-              clsx("relative w-full cursor-pointer group hover:pl-2 transition-all duration-300 group", {
+              clsx("text-left relative w-full cursor-pointer group hover:pl-2 transition-all duration-300 group", {
                 "pl-2": pathname.includes(item.href),
               })
             }
-            onClick={() => router.push(item.href)}
-            key={item.href}>
+            href={item.href}>
             <div
               className={clsx(
                 "absolute left-0 bg-default-500/20 h-full w-0 group-hover:w-full transition-all duration-300",
                 {
                   "!bg-black w-full": pathname.includes(item.href),
                 }
-              )}></div>
+              )} />
             <p
               className={
                 clsx("relative w-full transition-all duration-300 text-lg p-1", {
@@ -89,9 +91,9 @@ const SidebarGroup = ({
               }>
               {item.title}
             </p>
-          </div>
+          </Link>
         ))}
-      </div>
+      </button>
     </div>
   );
 };

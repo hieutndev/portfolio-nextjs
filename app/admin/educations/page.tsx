@@ -18,12 +18,11 @@ import {
 	Spinner,
 	Chip,
 } from "@heroui/react";
+
 import { useFetch } from "@/hooks/useFetch";
 import AdminHeader from "@/components/shared/partials/admin-header";
 import EducationForm from "@/components/pages/educations/education-form";
-import { useRouter } from "next/navigation";
 import API_ROUTE from "@/configs/api";
-import ROUTE_PATH from "@/configs/route-path";
 import ICON_CONFIG from "@/configs/icons";
 import Container from "@/components/shared/container/container";
 import { IAPIResponse, TDataAction } from "@/types/global";
@@ -39,7 +38,7 @@ export default function EducationManagementPage() {
 	const [selectedEducation, setSelectedEducation] = useState<TEducation | null>(null);
 	const [action, setAction] = useState<TDataAction>(null);
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
-	const router = useRouter();
+
 
 	// Search and pagination state
 	const [searchTerm, setSearchTerm] = useState("");
@@ -52,7 +51,7 @@ export default function EducationManagementPage() {
 	const {
 		data: fetchEducationsResult,
 		loading: fetchingEducations,
-		error: fetchEducationsError,
+		// error: fetchEducationsError,
 		fetch: fetchEducations,
 	} = useFetch<IAPIResponse<TEducation[]>>(API_ROUTE.EDUCATION.GET_ALL, {
 		search: searchTerm,
@@ -77,7 +76,7 @@ export default function EducationManagementPage() {
 	const {
 		data: softDeleteResult,
 		error: softDeleteError,
-		loading: softDeleting,
+		// loading: softDeleting,
 		fetch: softDeleteEducation,
 	} = useFetch<IAPIResponse>(API_ROUTE.EDUCATION.SOFT_DELETE(selectedEducation?.id ?? -1), {
 		method: "PATCH",
@@ -92,6 +91,7 @@ export default function EducationManagementPage() {
 		}
 		if (softDeleteError) {
 			const parsedError = JSON.parse(softDeleteError);
+
 			addToast({ title: "Error", description: parsedError.message, color: "danger" });
 		}
 	}, [softDeleteResult, softDeleteError]);
@@ -100,7 +100,7 @@ export default function EducationManagementPage() {
 	const {
 		data: recoverResult,
 		error: recoverError,
-		loading: recovering,
+		// loading: recovering,
 		fetch: recoverEducation,
 	} = useFetch<IAPIResponse>(API_ROUTE.EDUCATION.RECOVER(selectedEducation?.id ?? -1), {
 		method: "PATCH",
@@ -115,6 +115,7 @@ export default function EducationManagementPage() {
 		}
 		if (recoverError) {
 			const parsedError = JSON.parse(recoverError);
+
 			addToast({ title: "Error", description: parsedError.message, color: "danger" });
 		}
 	}, [recoverResult, recoverError]);
@@ -123,7 +124,7 @@ export default function EducationManagementPage() {
 	const {
 		data: deleteResult,
 		error: deleteError,
-		loading: deleting,
+		// loading: deleting,
 		fetch: deleteEducation,
 	} = useFetch<IAPIResponse>(API_ROUTE.EDUCATION.DELETE(selectedEducation?.id ?? -1), {
 		method: "DELETE",
@@ -138,6 +139,7 @@ export default function EducationManagementPage() {
 		}
 		if (deleteError) {
 			const parsedError = JSON.parse(deleteError);
+
 			addToast({ title: "Error", description: parsedError.message, color: "danger" });
 		}
 	}, [deleteResult, deleteError]);
@@ -199,13 +201,13 @@ export default function EducationManagementPage() {
 
 	return (
 		<Container
-			className="border border-gray-200 rounded-2xl"
 			shadow
+			className="border border-gray-200 rounded-2xl"
 			orientation="vertical"
 		>
 			<AdminHeader
-				title="Education Management"
 				breadcrumbs={["Admin", "Education"]}
+				title="Education Management"
 			/>
 
 			<div className={"flex flex-col gap-4"}>
@@ -213,8 +215,8 @@ export default function EducationManagementPage() {
 					<div className="flex items-center gap-4">
 						<Button
 							color="primary"
-							variant="solid"
 							startContent={ICON_CONFIG.NEW}
+							variant="solid"
 							onPress={() => mapAction(null, "create")}
 						>
 							Add New Education
@@ -223,17 +225,17 @@ export default function EducationManagementPage() {
 					<div className="w-80">
 						<SearchInput
 							placeholder="Search educations by title or organization..."
-							onSearch={handleSearch}
 							value={searchTerm}
+							onSearch={handleSearch}
 						/>
 					</div>
 				</div>
 				<Table
+					isHeaderSticky
 					aria-label="Education List"
 					classNames={{
 						wrapper: "h-[60vh]",
 					}}
-					isHeaderSticky
 				>
 					<TableHeader>
 						<TableColumn>ID</TableColumn>
@@ -245,10 +247,10 @@ export default function EducationManagementPage() {
 						<TableColumn align="center">Action</TableColumn>
 					</TableHeader>
 					<TableBody
-						items={fetchEducationsResult?.results ?? []}
-						isLoading={fetchingEducations}
-						loadingContent={<Spinner label="Loading education records..." />}
 						emptyContent="No education records found"
+						isLoading={fetchingEducations}
+						items={fetchEducationsResult?.results ?? []}
+						loadingContent={<Spinner label="Loading education records..." />}
 					>
 						{(education: TEducation) => (
 							<TableRow key={education.id}>
@@ -264,8 +266,8 @@ export default function EducationManagementPage() {
 								<TableCell>
 									<Chip
 										color={education.is_deleted === 1 ? "danger" : "success"}
-										variant="flat"
 										size="sm"
+										variant="flat"
 									>
 										{education.is_deleted === 1 ? "Deleted" : "Active"}
 									</Chip>
@@ -275,9 +277,9 @@ export default function EducationManagementPage() {
 										buttonSize="sm"
 										mode={education.is_deleted === 1}
 										onEdit={() => mapAction(education, "update")}
-										onSoftDelete={() => mapAction(education, "softDelete")}
-										onRecover={() => mapAction(education, "recover")}
 										onPermanentDelete={() => mapAction(education, "permanentDelete")}
+										onRecover={() => mapAction(education, "recover")}
+										onSoftDelete={() => mapAction(education, "softDelete")}
 									/>
 								</TableCell>
 							</TableRow>
@@ -288,34 +290,35 @@ export default function EducationManagementPage() {
 				{/* Pagination */}
 				<CustomPagination
 					currentPage={currentPage}
-					totalPages={totalPages}
-					totalItems={totalItems}
 					itemsPerPage={itemsPerPage}
-					onPageChange={handlePageChange}
+					totalItems={totalItems}
+					totalPages={totalPages}
 					onItemsPerPageChange={handleItemsPerPageChange}
+					onPageChange={handlePageChange}
 				/>
 			</div>
 
 			{/* Modal for Create/Edit */}
 			<Modal
-				isOpen={isOpen}
-				onOpenChange={onOpenChange}
-				size="xl"
-				scrollBehavior="inside"
 				hideCloseButton
+				isOpen={isOpen}
+				placement={"top"}
+				scrollBehavior="inside"
+				size="xl"
+				onOpenChange={onOpenChange}
 			>
 				<ModalContent>
 					{(onClose) => (
 						<>
 							<ModalHeader>
 								<h3 className={"text-xl font-semibold"}>
-									{modalMode === "create" ? "Add New Education" : "Edit Education"}
+									{modalMode === "create" ? "Add New Education" : "Update Education"}
 								</h3>
 							</ModalHeader>
 							<ModalBody className="mb-4">
 								<EducationForm
-									mode={modalMode}
 									educationId={selectedEducation?.id ? Number(selectedEducation.id) : undefined}
+									mode={modalMode}
 									onSuccess={() => {
 										fetchEducations();
 										onClose();

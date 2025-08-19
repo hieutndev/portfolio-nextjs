@@ -26,10 +26,10 @@ export default function AdminHeader({ title, backButton, customElement, breadcru
 					{customElement}
 					{backButton && (
 						<Button
-							size={backButton.size}
 							color={backButton.color}
-							startContent={backButton.startContent}
 							endContent={backButton.endContent}
+							size={backButton.size}
+							startContent={backButton.startContent}
 							onPress={() => router.push(backButton.href)}
 						>
 							{backButton.text}

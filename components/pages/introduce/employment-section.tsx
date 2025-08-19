@@ -1,13 +1,15 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { addToast, Spinner } from "@heroui/react";
+
+import AchievementRow from "./achievement-row";
+
 import API_ROUTE from "@/configs/api";
 import { useFetch } from "@/hooks/useFetch";
 import { TEmployment } from "@/types/employment";
 import { IAPIResponse } from "@/types/global";
 import { formatDate } from "@/utils/date";
-import { useEffect, useState } from "react";
-import AchievementRow from "./achievement-row";
-import { addToast, Spinner } from "@heroui/react";
 import Container from "@/components/shared/container/container";
 
 // interface EmploymentSectionProps {}
@@ -51,12 +53,12 @@ const EmploymentSection = () => {
 					listEmployment.map((_, index) => (
 						<AchievementRow
 							key={index}
-							title={_.title}
 							organization={_.organization}
 							time={`${formatDate(_.time_start, "onlyMonthYear")} - ${formatDate(
 								_.time_end,
 								"onlyMonthYear"
 							)}`}
+							title={_.title}
 						/>
 					))
 				) : (

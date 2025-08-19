@@ -1,8 +1,8 @@
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { TProject } from "@/types/project";
-
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
+
+import { TProject } from "@/types/project";
 import Container from "@/components/shared/container/container";
 import { formatDate, getDiffTime } from "@/utils/date";
 
@@ -17,7 +17,7 @@ export default function ProjectBlogContent({
   const mdxContent = project.article_body || "No content available.";
 
   return (
-    <Container className="!p-4 " orientation="vertical" gapSize={8}>
+    <Container className="!p-4 " gapSize={8} orientation="vertical">
       {/* <Container className={"prose h-max"}>
       </Container> */}
       <article className="prose max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-gray-900 prose-code:text-red-600 prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded">
@@ -32,13 +32,13 @@ export default function ProjectBlogContent({
           </p>
         )}
         <MDXRemote
-          source={mdxContent}
           options={{
             mdxOptions: {
               remarkPlugins: [remarkGfm],
               rehypePlugins: [rehypeHighlight],
             },
           }}
+          source={mdxContent}
         />
       </article>
     </Container>

@@ -1,9 +1,10 @@
 "use client";
 
-import Container from "@/components/shared/container/container";
-import ICON_CONFIG from "@/configs/icons";
 import { Button } from "@heroui/react";
 import Link from "next/link";
+
+import Container from "@/components/shared/container/container";
+import ICON_CONFIG from "@/configs/icons";
 
 export default function NotFound() {
   return (
@@ -16,7 +17,7 @@ export default function NotFound() {
           Project Not Found
         </h2>
         <p className={"text-gray-600 max-w-md"}>
-          The project you're looking for doesn't exist or may have been removed.
+          The project you&apos;re looking for doesn&apos;t exist or may have been removed.
         </p>
         <div
           className={
@@ -24,9 +25,9 @@ export default function NotFound() {
           }>
           <Button
             as={Link}
-            href={"/projects"}
-            color={"primary"}
             className={"w-full sm:w-auto"}
+            color={"primary"}
+            href={"/projects"}
             
             startContent={ICON_CONFIG.BACK}
             >

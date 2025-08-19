@@ -1,7 +1,8 @@
 "use client";
 
-import { TProject } from "@/types/project";
 import { Button } from "@heroui/react";
+
+import { TProject } from "@/types/project";
 import Container from "@/components/shared/container/container";
 import ICON_CONFIG from "@/configs/icons";
 
@@ -16,12 +17,12 @@ export default function ProjectBlogFooter({ project }: ProjectBlogFooterProps) {
                 {project.github_link && (
                     <Button 
                         as="a" 
+                        className="w-full sm:w-auto" 
                         href={project.github_link} 
-                        target="_blank" 
                         rel="noopener noreferrer"
-                        variant="bordered"
-                        className="w-full sm:w-auto"
                         startContent={ICON_CONFIG.GITHUB}
+                        target="_blank"
+                        variant="bordered"
                     >
                         Open on Github
                     </Button>
@@ -29,12 +30,12 @@ export default function ProjectBlogFooter({ project }: ProjectBlogFooterProps) {
                 {project.demo_link && (
                     <Button 
                         as="a" 
-                        href={project.demo_link} 
-                        target="_blank" 
+                        className="w-full sm:w-auto" 
+                        color="primary" 
+                        href={project.demo_link}
                         rel="noopener noreferrer"
-                        color="primary"
-                        className="w-full sm:w-auto"
                         startContent={ICON_CONFIG.LIVE_DEMO}
+                        target="_blank"
                     >
                         Live Demo
                     </Button>
