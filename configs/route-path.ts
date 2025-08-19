@@ -27,7 +27,7 @@ const ROUTE_PATH = {
             NEW: "/admin/projects/new",
             NEW_GROUP: "/admin/projects/new-group",
             DETAILS: (projectId: string | number) => `/admin/projects/${projectId}`,
-            EDIT: (projectId: string | number) => `/admin/projects/${projectId}/edit`,
+            EDIT: (projectId: string | number) => `/admin/projects/${projectId}/update`,
         },
         APP: {
             INDEX: "/admin/apps",

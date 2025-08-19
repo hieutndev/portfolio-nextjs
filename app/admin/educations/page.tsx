@@ -18,7 +18,6 @@ import {
 	Spinner,
 	Chip,
 } from "@heroui/react";
-import { useRouter } from "next/navigation";
 
 import { useFetch } from "@/hooks/useFetch";
 import AdminHeader from "@/components/shared/partials/admin-header";
@@ -39,7 +38,7 @@ export default function EducationManagementPage() {
 	const [selectedEducation, setSelectedEducation] = useState<TEducation | null>(null);
 	const [action, setAction] = useState<TDataAction>(null);
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
-	const router = useRouter();
+
 
 	// Search and pagination state
 	const [searchTerm, setSearchTerm] = useState("");
@@ -52,7 +51,7 @@ export default function EducationManagementPage() {
 	const {
 		data: fetchEducationsResult,
 		loading: fetchingEducations,
-		error: fetchEducationsError,
+		// error: fetchEducationsError,
 		fetch: fetchEducations,
 	} = useFetch<IAPIResponse<TEducation[]>>(API_ROUTE.EDUCATION.GET_ALL, {
 		search: searchTerm,
@@ -77,7 +76,7 @@ export default function EducationManagementPage() {
 	const {
 		data: softDeleteResult,
 		error: softDeleteError,
-		loading: softDeleting,
+		// loading: softDeleting,
 		fetch: softDeleteEducation,
 	} = useFetch<IAPIResponse>(API_ROUTE.EDUCATION.SOFT_DELETE(selectedEducation?.id ?? -1), {
 		method: "PATCH",
@@ -101,7 +100,7 @@ export default function EducationManagementPage() {
 	const {
 		data: recoverResult,
 		error: recoverError,
-		loading: recovering,
+		// loading: recovering,
 		fetch: recoverEducation,
 	} = useFetch<IAPIResponse>(API_ROUTE.EDUCATION.RECOVER(selectedEducation?.id ?? -1), {
 		method: "PATCH",
@@ -125,7 +124,7 @@ export default function EducationManagementPage() {
 	const {
 		data: deleteResult,
 		error: deleteError,
-		loading: deleting,
+		// loading: deleting,
 		fetch: deleteEducation,
 	} = useFetch<IAPIResponse>(API_ROUTE.EDUCATION.DELETE(selectedEducation?.id ?? -1), {
 		method: "DELETE",

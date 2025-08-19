@@ -1,13 +1,15 @@
 "use client";
 
+import { addToast, Spinner } from "@heroui/react";
+import { useEffect, useState } from "react";
+
+import AchievementRow from "./achievement-row";
+
 import Container from "@/components/shared/container/container";
 import API_ROUTE from "@/configs/api";
 import { useFetch } from "@/hooks/useFetch";
 import { TEducation } from "@/types/education";
 import { IAPIResponse } from "@/types/global";
-import { addToast, Spinner } from "@heroui/react";
-import { useEffect, useState } from "react";
-import AchievementRow from "./achievement-row";
 import { formatDate } from "@/utils/date";
 
 const EducationSection = () => {
@@ -49,11 +51,11 @@ const EducationSection = () => {
 					listEducation.map((_, index) => (
 						<AchievementRow
 							key={index}
-							title={_.title}
 							organization={_.organization}
 							time={`${formatDate(_.time_start, "onlyMonthYear")} - ${
 								_.time_end ? formatDate(_.time_end, "onlyMonthYear") : "Present"
 							}`}
+							title={_.title}
 						/>
 					))
 				) : (

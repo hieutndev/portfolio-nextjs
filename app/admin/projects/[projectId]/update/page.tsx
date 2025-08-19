@@ -14,11 +14,10 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
 
 	return (
 		<Container
-			orientation={"vertical"}
 			className={"gap-4"}
+			orientation={"vertical"}
 		>
 			<AdminHeader
-				title={"Update Project Details"}
 				backButton={{
 					color: "default",
 					size: "md",
@@ -28,6 +27,7 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
 					href: ROUTE_PATH.ADMIN.PROJECT.INDEX,
 				}}
 				breadcrumbs={["Projects", "Update Project Details"]}
+				title={"Update Project Details"}
 			/>
 
 			<ProjectFormMarkDownComponent

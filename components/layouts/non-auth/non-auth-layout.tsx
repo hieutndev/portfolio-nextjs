@@ -1,11 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { Spinner } from "@heroui/spinner";
-
 export default function NonAuthLayout({ children }: { children: React.ReactNode }) {
-	const router = useRouter();
 
 	// useEffect(() => {
 	// 	if (isLoggedIn) {

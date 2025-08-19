@@ -10,7 +10,7 @@ import { IAPIResponse } from "@/types/global";
 interface MyAppsPageProps {}
 
 export default function MyAppsPage({}: MyAppsPageProps) {
-  const { data, error, loading } = useFetch<IAPIResponse<TApp[]>>(
+  const { data, loading } = useFetch<IAPIResponse<TApp[]>>(
     API_ROUTE.APP.GET_ALL
   );
 
@@ -21,7 +21,7 @@ export default function MyAppsPage({}: MyAppsPageProps) {
           <button
             key={app.app_id} // Ensure each item has a unique key
             className={
-              "block col-span-1 w-full flex flex-col items-center gap-4 cursor-pointer hover:scale-105 transition-all duration-300"
+              "col-span-1 w-full flex flex-col items-center gap-4 cursor-pointer hover:scale-105 transition-all duration-300"
             }
             onClick={() => window.open(app.app_link)}>
             <Image

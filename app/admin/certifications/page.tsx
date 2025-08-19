@@ -16,7 +16,6 @@ import {
 	ModalBody,
 	useDisclosure,
 } from "@heroui/react";
-import { useRouter } from "next/navigation";
 
 import { useFetch } from "@/hooks/useFetch";
 import AdminHeader from "@/components/shared/partials/admin-header";
@@ -44,13 +43,12 @@ export default function CertificationListPage() {
 	const [itemsPerPage, setItemsPerPage] = useState(10);
 	const [totalItems, setTotalItems] = useState(0);
 	const [totalPages, setTotalPages] = useState(0);
-	const router = useRouter();
 
 	/* Fetch all certifications */
 
 	const {
 		data: fetchCertsResult,
-		loading: fetchingCerts,
+		// loading: fetchingCerts,
 		error: fetchCertsError,
 		fetch: fetchCerts,
 	} = useFetch<IAPIResponse<TCertification[]>>(
@@ -86,7 +84,7 @@ export default function CertificationListPage() {
 	const {
 		data: softDeleteResult,
 		error: softDeleteError,
-		loading: softDeleting,
+		// loading: softDeleting,
 		fetch: softDeleteCert,
 	} = useFetch<IAPIResponse>(API_ROUTE.CERTIFICATION.SOFT_DELETE(selectedCert?.id ?? -1), {
 		method: "PATCH",
@@ -110,7 +108,7 @@ export default function CertificationListPage() {
 	const {
 		data: recoverResult,
 		error: recoverError,
-		loading: recovering,
+		// loading: recovering,
 		fetch: recoverCert,
 	} = useFetch<IAPIResponse>(API_ROUTE.CERTIFICATION.RECOVER(selectedCert?.id ?? -1), {
 		method: "PATCH",
@@ -134,7 +132,7 @@ export default function CertificationListPage() {
 	const {
 		data: deleteResult,
 		error: deleteError,
-		loading: deleting,
+		// loading: deleting,
 		fetch: deleteCert,
 	} = useFetch<IAPIResponse>(API_ROUTE.CERTIFICATION.DELETE(selectedCert?.id ?? -1), {
 		method: "DELETE",

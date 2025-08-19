@@ -68,7 +68,7 @@ export default function ApplicationManagementPage() {
   const {
     data: deleteResult,
     error: deleteError,
-    loading: deleting,
+    // loading: deleting,
     fetch: deleteApplication,
   } = useFetch<IAPIResponse>(
     API_ROUTE.APP.DELETE(selectedApplication?.app_id ?? -1),

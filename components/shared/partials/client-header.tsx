@@ -4,10 +4,12 @@ import clsx from "clsx";
 import { useState } from "react";
 import { useReactiveCookiesNext } from "cookies-next/client";
 import { useRouter } from "next/navigation";
-import ICON_CONFIG from "@/configs/icons";
-import useScroll from "../../../hooks/useScroll";
-import ROUTE_PATH from "@/configs/route-path";
 import { Button, Image } from "@heroui/react";
+
+import useScroll from "../../../hooks/useScroll";
+
+import ICON_CONFIG from "@/configs/icons";
+import ROUTE_PATH from "@/configs/route-path";
 import { SITE_CONFIG } from "@/configs/site-config";
 import useScreenSize from "@/hooks/useScreenSize";
 import { BREAK_POINT } from "@/configs/break-point";
@@ -54,33 +56,33 @@ const ClientHeader = () => {
 					"px-8": width >= BREAK_POINT.M && width < BREAK_POINT.XL,
 				})}
 			>
-				<div
+				<button
 					className={"lg:max-w-80 max-w-40"}
 					onClick={() => router.push(ROUTE_PATH.CLIENT.INDEX)}
 				>
 					<Image
-						src={SITE_CONFIG.LOGO.FULL_BLACK}
-						radius={"none"}
 						className={"cursor-pointer"}
+						radius={"none"}
+						src={SITE_CONFIG.LOGO.FULL_BLACK}
 
 					/>
-				</div>
+				</button>
 
 				<div className={"tablet-up lg:flex lg:items-center lg:gap-2 hidden bg-white"}>
 					{headerConfig.map((item, index) => (
 						<Button
 							key={index}
-							variant={"light"}
-							onPress={() => router.push(item.path)}
 							className={"px-4"}
 							size={"lg"}
+							variant={"light"}
+							onPress={() => router.push(item.path)}
 						>
 							{item.label}
 						</Button>
 					))}
 					<Button
-						size={"lg"}
 						className={"px-4 bg-black text-white"}
+						size={"lg"}
 					>
 						📮 Email Me
 					</Button>
@@ -118,21 +120,21 @@ const ClientHeader = () => {
 					{headerConfig.map((item, index) => (
 						<Button
 							key={index}
+							className={"px-4"}
 							variant={"light"}
 							onPress={() => {
 								router.push(item.path);
 								setIsOpenMiniHeader(false);
 							}}
-							className={"px-4"}
 						>
 							{item.label}
 						</Button>
 					))}
 					<div className={"flex flex-col"}>
 						<Button
+							isIconOnly
 							size={"lg"}
 							variant={"light"}
-							isIconOnly
 							onPress={() => {
 								setIsOpenMiniHeader(false);
 								router.push(
@@ -146,10 +148,10 @@ const ClientHeader = () => {
 						</Button>
 						{hasCookie("refresh_token") && (
 							<Button
+								isIconOnly
+								color={"danger"}
 								size={"lg"}
 								variant={"light"}
-								color={"danger"}
-								isIconOnly
 								onPress={handleSignOut}
 							>
 								{ICON_CONFIG.LOG_OUT}
@@ -158,10 +160,10 @@ const ClientHeader = () => {
 					</div>
 				</div>
 				<Button
-					size={"md"}
-					radius={"md"}
 					isIconOnly
 					className={"lg:hidden"}
+					radius={"md"}
+					size={"md"}
 					onPress={() => setIsOpenMiniHeader(!isOpenMiniHeader)}
 				>
 					{ICON_CONFIG.MENU}

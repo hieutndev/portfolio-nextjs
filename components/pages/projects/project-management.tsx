@@ -1,15 +1,5 @@
 "use client";
 
-import TableCellAction from "@/components/shared/tables/table-cell-action";
-import API_ROUTE from "@/configs/api";
-import ICON_CONFIG from "@/configs/icons";
-import { MAP_MESSAGE } from "@/configs/response-message";
-import ROUTE_PATH from "@/configs/route-path";
-import { useFetch } from "@/hooks/useFetch";
-import { IAPIResponse } from "@/types/global";
-import { TProject, TProjectResponse } from "@/types/project";
-import { TTableAction } from "@/types/table";
-import { formatDate } from "@/utils/date";
 import {
 	addToast,
 	Button,
@@ -20,11 +10,20 @@ import {
 	TableColumn,
 	TableHeader,
 	TableRow,
-	toast,
 } from "@heroui/react";
 import { useRouter } from "next/navigation";
-import { list } from "postcss";
 import { useState, useEffect } from "react";
+
+import TableCellAction from "@/components/shared/tables/table-cell-action";
+import API_ROUTE from "@/configs/api";
+import ICON_CONFIG from "@/configs/icons";
+import { MAP_MESSAGE } from "@/configs/response-message";
+import ROUTE_PATH from "@/configs/route-path";
+import { useFetch } from "@/hooks/useFetch";
+import { IAPIResponse } from "@/types/global";
+import { TProject, TProjectResponse } from "@/types/project";
+import { TTableAction } from "@/types/table";
+import { formatDate } from "@/utils/date";
 import SearchInput from "@/components/shared/search/search-input";
 import CustomPagination from "@/components/shared/custom-pagination/custom-pagination";
 
@@ -75,6 +74,7 @@ export default function ProjectManagement() {
 		page: currentPage,
 		limit: itemsPerPage,
 	});
+
 	// Handle fetch projects result
 	useEffect(() => {
 		if (fetchProjectResult) {
@@ -106,7 +106,7 @@ export default function ProjectManagement() {
 	const {
 		data: deleteProjectResult,
 		error: deleteProjectError,
-		loading: deletingProject,
+		// loading: deletingProject,
 		fetch: deleteProject,
 	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.DELETE_PROJECT(selectedId ?? -1), {
 		method: "DELETE",
@@ -183,28 +183,28 @@ export default function ProjectManagement() {
 		<div className={"flex flex-col gap-4"}>
 			<div className="flex items-center justify-between gap-4">
 				<Button
+					className={"w-max"}
+					color={"primary"}
+					isDisabled={fetchingProject}
 					startContent={ICON_CONFIG.NEW}
 					onPress={() => router.push(ROUTE_PATH.ADMIN.PROJECT.NEW)}
-					className={"w-max"}
-					isDisabled={fetchingProject}
-					color={"primary"}
 				>
 					Create new project
 				</Button>
 				<div className="w-80">
 					<SearchInput
 						placeholder="Search projects by name or group..."
-						onSearch={handleSearch}
 						value={searchTerm}
+						onSearch={handleSearch}
 					/>
 				</div>
 			</div>
 			<Table
+				isHeaderSticky
 				aria-label={"Projects"}
 				classNames={{
 					wrapper: "h-[60vh]",
 				}}
-				isHeaderSticky
 			>
 				<TableHeader>
 					{listColumns.map((column, index) => (
@@ -217,10 +217,10 @@ export default function ProjectManagement() {
 					))}
 				</TableHeader>
 				<TableBody
-					items={listProjects}
+					emptyContent={<p className={"text-center"}>No projects found</p>}
 					isLoading={fetchingProject}
+					items={listProjects}
 					loadingContent={<Spinner>Fetching projects...</Spinner>}
-					emptyContent={<p className={"text-center"}>"No projects found"</p>}
 				>
 					{(project) => (
 						<TableRow>
@@ -233,9 +233,9 @@ export default function ProjectManagement() {
 							</TableCell>
 							<TableCell>
 								<TableCellAction
+									showViewButton
 									buttonSize={"sm"}
 									mode={project.is_deleted === 1}
-									showViewButton
 									onEdit={() => router.push(ROUTE_PATH.ADMIN.PROJECT.EDIT(project.id))}
 									onSoftDelete={() => handleTableAction(project, "softdel")}
 									onViewDetails={() => handleTableAction(project, "view")}
@@ -249,11 +249,11 @@ export default function ProjectManagement() {
 			{/* Pagination */}
 			<CustomPagination
 				currentPage={currentPage}
-				totalPages={totalPages}
-				totalItems={totalItems}
 				itemsPerPage={itemsPerPage}
-				onPageChange={handlePageChange}
+				totalItems={totalItems}
+				totalPages={totalPages}
 				onItemsPerPageChange={handleItemsPerPageChange}
+				onPageChange={handlePageChange}
 			/>
 		</div>
 	);

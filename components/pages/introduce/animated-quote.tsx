@@ -1,7 +1,8 @@
 "use client";
 
-import BlockQuote from "@/components/shared/block-quote";
 import { useCallback, useEffect, useState } from "react";
+
+import BlockQuote from "@/components/shared/block-quote";
 
 interface AnimatedQuoteProps {
 	renderText: string;
@@ -23,8 +24,8 @@ const AnimatedQuote = ({ renderText }: AnimatedQuoteProps) => {
 
 	return (
 		<BlockQuote
-			size={"5xl"}
 			customClass={"font-ari-w9500 !not-italic font-normal text-primary-500 bg-primary/10 py-8 border-primary leading-tight"}
+			size={"5xl"}
 		>
 			{currentText}
 		</BlockQuote>

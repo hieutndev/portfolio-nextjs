@@ -14,7 +14,7 @@ export default function AdminSidebar() {
 	const router = useRouter();
 
 	return (
-		<div className={"min-w-80 fixed h-full flex flex-col items-center gap-8 p-8 rounded-e-2xl border border-gray-300"}>
+		<div className={"w-1/6 fixed h-full flex flex-col items-center gap-8 p-8 rounded-e-2xl border border-gray-300"}>
 			<div className={"h-max max-w-56"}>
 				<Image
 					alt={"logo"}

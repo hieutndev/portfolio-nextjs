@@ -1,5 +1,11 @@
 "use client";
 
+import { addToast, Button } from "@heroui/react";
+import clsx from "clsx";
+import { useState, useEffect } from "react";
+
+import SidebarGroup from "./sidebar-group";
+
 import API_ROUTE from "@/configs/api";
 import ICON_CONFIG from "@/configs/icons";
 import ROUTE_PATH from "@/configs/route-path";
@@ -7,10 +13,7 @@ import { useFetch } from "@/hooks/useFetch";
 import useScroll from "@/hooks/useScroll";
 import { IAPIResponse } from "@/types/global";
 import { TProjectResponse, TProjectGroup } from "@/types/project";
-import { addToast, Button } from "@heroui/react";
-import clsx from "clsx";
-import { useState, useEffect } from "react";
-import SidebarGroup from "./sidebar-group";
+
 
 // interface SidebarProps {}
 
@@ -22,7 +25,7 @@ export default function Sidebar() {
 	const {
 		data: fetchProjectsResult,
 		error: fetchProjectsError,
-		loading: fetchingProjects,
+		// loading: fetchingProjects,
 	} = useFetch<IAPIResponse<TProjectResponse[]>>(API_ROUTE.PROJECT.GET_ALL);
 
 	useEffect(() => {
@@ -80,10 +83,10 @@ export default function Sidebar() {
 					})}
 				>
 					<Button
-						size={"md"}
-						radius={"md"}
 						isIconOnly
 						className={"lg:hidden"}
+						radius={"md"}
+						size={"md"}
 						onPress={() => setIsOpenMiniHeader(!isOpenMiniHeader)}
 					>
 						{ICON_CONFIG.MENU}
@@ -103,17 +106,17 @@ export default function Sidebar() {
 						.map((group) => (
 							<SidebarGroup
 								key={group.group_id}
-								onItemClick={() => setIsOpenMiniHeader(false)}
-								title={group.group_title}
-								isCloseDefault={
-									listProjects.filter((item) => item.group_id === group.group_id).length <= 0
-								}
 								groupItems={listProjects
 									.filter((item) => item.group_id === group.group_id)
 									.map((_v) => ({
 										title: _v.project_shortname,
 										href: ROUTE_PATH.CLIENT.PROJECT.DETAILS(_v.id),
 									}))}
+								isCloseDefault={
+									listProjects.filter((item) => item.group_id === group.group_id).length <= 0
+								}
+								title={group.group_title}
+								onItemClick={() => setIsOpenMiniHeader(false)}
 							/>
 						))}
 				</div>
@@ -128,9 +131,9 @@ export default function Sidebar() {
 			>
 				{fetchingProjectGroups ? (
 					<SidebarGroup
-						title={"Loading..."}
-						isCloseDefault={false}
 						groupItems={[]}
+						isCloseDefault={false}
+						title={"Loading..."}
 					/>
 				) : (
 					listProjectGroups
@@ -138,16 +141,16 @@ export default function Sidebar() {
 						.map((group, index) => (
 							<SidebarGroup
 								key={index}
-								title={group.group_title}
-								isCloseDefault={
-									listProjects.filter((item) => item.group_id === group.group_id).length <= 0
-								}
 								groupItems={listProjects
 									.filter((item) => item.group_id === group.group_id)
 									.map((_v) => ({
 										title: _v.project_shortname,
 										href: ROUTE_PATH.CLIENT.PROJECT.DETAILS(_v.id),
 									}))}
+								isCloseDefault={
+									listProjects.filter((item) => item.group_id === group.group_id).length <= 0
+								}
+								title={group.group_title}
 							/>
 						))
 				)}

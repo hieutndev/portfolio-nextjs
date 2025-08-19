@@ -1,5 +1,6 @@
-import { TSizeBase } from "@/types/global";
 import clsx from "clsx";
+
+import { TSizeBase } from "@/types/global";
 
 interface BlockQuoteProps {
 	size?: Extract<TSizeBase, "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl" | "7xl">;
@@ -33,6 +34,7 @@ const BlockQuote = ({ size = "md", customClass, children }: BlockQuoteProps) => 
 		"6xl": "border-l-4",
 		"7xl": "border-l-4",
 	};
+
 	return (
 		<blockquote className={clsx("pl-6 italic", MapBorderLeft[size], MapTextSize[size], customClass)}>
 			{children}

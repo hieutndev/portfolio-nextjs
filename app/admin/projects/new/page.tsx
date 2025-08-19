@@ -8,11 +8,10 @@ import ProjectFormMarkDownComponent from "@/components/pages/projects/project-fo
 export default function NewProjectPage() {
 	return (
 		<Container
+			className={"gap-4 h-max"}
 			orientation={"vertical"}
-			className={"gap-4"}
 		>
 			<AdminHeader
-				title={"Create New Project"}
 				backButton={{
 					color: "default",
 					size: "lg",
@@ -22,6 +21,7 @@ export default function NewProjectPage() {
 					href: ROUTE_PATH.ADMIN.PROJECT.INDEX,
 				}}
 				breadcrumbs={["Projects", "Create new Project"]}
+				title={"Create New Project"}
 			/>
 			<ProjectFormMarkDownComponent mode="create" />
 		</Container>

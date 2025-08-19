@@ -1,6 +1,7 @@
 'use client'
 
 import type { ForwardedRef } from 'react'
+
 import {
   headingsPlugin,
   listsPlugin,
@@ -46,7 +47,6 @@ export default function InitializedMDXEditor({
   imageUploadHandler?: (file: File) => Promise<string>;
 } & MDXEditorProps) {
   const [editorMarkdown, setEditorMarkdown] = useState(markdown)
-  const [isInitialized, setIsInitialized] = useState(false)
 
   // Sanitize markdown to handle problematic code blocks
   const sanitizeMarkdown = (content: string) => {
@@ -55,9 +55,11 @@ export default function InitializedMDXEditor({
     try {
       // Fix code blocks without language specification
       const sanitized = content.replace(/```\s*\n/g, '```txt\n')
+
       return sanitized
     } catch (error) {
       console.warn('Error sanitizing markdown:', error)
+
       return content
     }
   }
@@ -65,6 +67,7 @@ export default function InitializedMDXEditor({
   useEffect(() => {
     if (markdown !== editorMarkdown) {
       const sanitized = sanitizeMarkdown(markdown)
+
       setEditorMarkdown(sanitized)
     }
   }, [markdown])
@@ -87,7 +90,7 @@ export default function InitializedMDXEditor({
   }
 
   return (
-    <div className="mdxeditor" onError={handleError}>
+    <div className="mdxeditor">
       <MDXEditor
         plugins={[
           // Core plugins for basic markdown functionality
@@ -193,11 +196,11 @@ export default function InitializedMDXEditor({
           })
         ]}
         {...props}
+        ref={editorRef}
+        className="mdxeditor-rich-text-editor"
+        contentEditableClassName="prose max-w-none mdxeditor-content"
         markdown={editorMarkdown}
         onChange={handleChange}
-        ref={editorRef}
-        contentEditableClassName="prose max-w-none mdxeditor-content"
-        className="mdxeditor-rich-text-editor"
         onError={handleError}
       />
     </div>

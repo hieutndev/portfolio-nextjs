@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Input, Button, addToast } from "@heroui/react";
+import { Input, addToast } from "@heroui/react";
+import Image from "next/image";
+
 import CustomForm from "@/components/shared/forms/custom-form";
 import { useFetch } from "@/hooks/useFetch";
 import API_ROUTE from "@/configs/api";
 import { TApp, TNewApp, TUpdateApp } from "@/types/application";
 import { IAPIResponse } from "@/types/global";
-import Image from "next/image";
 
 export interface ApplicationFormProps {
 	mode: "create" | "update";
@@ -27,7 +28,7 @@ export default function ApplicationForm({ mode, applicationId, onSuccess }: Appl
 	const {
 		data: submitResult,
 		error: submitError,
-		loading: submitting,
+		// loading: submitting,
 		fetch: submitApplication,
 	} = useFetch(
 		mode === "create" ? API_ROUTE.APP.NEW : API_ROUTE.APP.UPDATE_INFO(applicationId ?? -1),
@@ -42,8 +43,8 @@ export default function ApplicationForm({ mode, applicationId, onSuccess }: Appl
 
 	const {
 		data: fetchAppDetailResult,
-		error: fetchAppDetailError,
-		loading: fetchingAppDetail,
+		// error: fetchAppDetailError,
+		// loading: fetchingAppDetail,
 		fetch: fetchAppDetail,
 	} = useFetch<IAPIResponse<TApp>>(API_ROUTE.APP.GET_ONE(applicationId ?? -1), {
 		skip: true,
@@ -58,6 +59,7 @@ export default function ApplicationForm({ mode, applicationId, onSuccess }: Appl
 	useEffect(() => {
 		if (fetchAppDetailResult) {
 			const appData = fetchAppDetailResult.results;
+
 			setFormData((prev) => ({
 				app_name: appData?.app_name ?? prev.app_name,
 				app_link: appData?.app_link ?? prev.app_link,
@@ -113,54 +115,54 @@ export default function ApplicationForm({ mode, applicationId, onSuccess }: Appl
 
 	return (
 		<CustomForm
-			onSubmit={handleSubmit}
-			formId={"applicationForm"}
 			className={"flex flex-col gap-4"}
+			formId={"applicationForm"}
 			loadingText={loadingText}
 			submitButtonText={buttonText}
+			onSubmit={handleSubmit}
 		>
 			<div className="grid grid-cols-1 gap-4">
 				<Input
-					type="text"
+					isRequired
 					label="App Name"
-					value={formData.app_name}
-					onChange={(e) => setFormData({ ...formData, app_name: e.target.value })}
+					labelPlacement={"outside"}
 					name="app_name"
 					placeholder="Enter application name..."
-					isRequired
-					labelPlacement={"outside"}
+					type="text"
+					value={formData.app_name}
 					variant={"bordered"}
+					onChange={(e) => setFormData({ ...formData, app_name: e.target.value })}
 				/>
 				
 				<Input
-					type="text"
+					isRequired
 					label="App Link"
-					value={formData.app_link}
-					onChange={(e) => setFormData({ ...formData, app_link: e.target.value })}
+					labelPlacement={"outside"}
 					name="app_link"
 					placeholder="Enter application link/URL..."
-					isRequired
-					labelPlacement={"outside"}
+					type="text"
+					value={formData.app_link}
 					variant={"bordered"}
+					onChange={(e) => setFormData({ ...formData, app_link: e.target.value })}
 				/>
 
 				{mode === "update" && currentAppIcon ? (
 					<div className="grid grid-cols-4 gap-4 items-start">
 						<div className="col-span-3">
 							<Input
-								type="file"
+								accept="image/*"
+								description="Leave empty to keep current icon"
 								label="App Icon"
+								labelPlacement={"outside"}
 								name="app_icon"
+								type="file"
+								variant={"bordered"}
 								onChange={(e) => {
 									setFormData((prev) => ({
 										...prev,
 										app_icon: e.target.files && e.target.files.length > 0 ? e.target.files : null,
 									}));
 								}}
-								accept="image/*"
-								labelPlacement={"outside"}
-								variant={"bordered"}
-								description="Leave empty to keep current icon"
 							/>
 						</div>
 						<div className="col-span-1 flex flex-col justify-center items-center gap-1">
@@ -168,29 +170,29 @@ export default function ApplicationForm({ mode, applicationId, onSuccess }: Appl
 								Current Icon
 							</span>
 							<Image
-								src={currentAppIcon}
 								alt="Current app icon"
-								width={50}
-								height={50}
 								className="rounded-md border"
+								height={50}
+								src={currentAppIcon}
+								width={50}
 							/>
 						</div>
 					</div>
 				) : (
 					<Input
-						type="file"
+						isRequired
+						accept="image/*"
 						label="App Icon"
+						labelPlacement={"outside"}
 						name="app_icon"
+						type="file"
+						variant={"bordered"}
 						onChange={(e) => {
 							setFormData((prev) => ({
 								...prev,
 								app_icon: e.target.files && e.target.files.length > 0 ? e.target.files : null,
 							}));
 						}}
-						accept="image/*"
-						labelPlacement={"outside"}
-						variant={"bordered"}
-						isRequired
 					/>
 				)}
 			</div>

@@ -77,7 +77,7 @@ export default function ProjectGroupsManagement() {
 	const {
 		data: createProjectGroupResult,
 		error: createProjectGroupError,
-		loading: creatingProjectGroup,
+		// loading: creatingProjectGroup,
 		fetch: createProjectGroup,
 	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.NEW_GROUP, {
 		method: "POST",
@@ -115,7 +115,7 @@ export default function ProjectGroupsManagement() {
 	const {
 		data: updateProjectGroupResult,
 		error: updateProjectGroupError,
-		loading: updatingProjectGroup,
+		// loading: updatingProjectGroup,
 		fetch: updateProjectGroup,
 	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.UPDATE_GROUP(currentEditing ?? -1), {
 		method: "PATCH",
@@ -154,7 +154,7 @@ export default function ProjectGroupsManagement() {
 	const {
 		data: softDeleteProjectGroupResult,
 		error: softDeleteProjectGroupError,
-		loading: softDeletingProjectGroup,
+		// loading: softDeletingProjectGroup,
 		fetch: softDeleteProjectGroup,
 	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.SOFT_DELETE_GROUP(currentEditing ?? -1), {
 		method: "PATCH",
@@ -189,7 +189,7 @@ export default function ProjectGroupsManagement() {
 	const {
 		data: recoverProjectGroupResult,
 		error: recoverProjectGroupError,
-		loading: recoveringProjectGroup,
+		// loading: recoveringProjectGroup,
 		fetch: recoverProjectGroup,
 	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.RECOVER_GROUP(currentEditing ?? -1), {
 		method: "PATCH",
@@ -224,7 +224,7 @@ export default function ProjectGroupsManagement() {
 	const {
 		data: deleteProjectGroupResult,
 		error: deleteProjectGroupError,
-		loading: deletingProjectGroup,
+		// loading: deletingProjectGroup,
 		fetch: deleteProjectGroup,
 	} = useFetch<IAPIResponse>(API_ROUTE.PROJECT.DELETE_GROUP(currentEditing ?? -1), {
 		method: "DELETE",

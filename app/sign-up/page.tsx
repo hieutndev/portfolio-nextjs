@@ -1,5 +1,10 @@
 "use client";
 
+import { addToast, Divider, Image, Input } from "@heroui/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import clsx from "clsx";
+
 import Container from "@/components/shared/container/container";
 import CustomForm from "@/components/shared/forms/custom-form";
 import API_ROUTE from "@/configs/api";
@@ -7,13 +12,6 @@ import { MAP_MESSAGE } from "@/configs/response-message";
 import ROUTE_PATH from "@/configs/route-path";
 import { useFetch } from "@/hooks/useFetch";
 import { IAPIResponse } from "@/types/global";
-
-import { addToast, Button, Divider, Input } from "@heroui/react";
-import { useReactiveCookiesNext } from "cookies-next";
-import { useRouter } from "next/navigation";
-
-import { useEffect, useState } from "react";
-import clsx from "clsx";
 import { BREAK_POINT } from "@/configs/break-point";
 import useScreenSize from "@/hooks/useScreenSize";
 import { TSignInResponse, TSignUp } from "@/types/auth";
@@ -22,8 +20,6 @@ import { TSignInResponse, TSignUp } from "@/types/auth";
 
 export default function SignUpPage() {
 	const router = useRouter();
-
-	const { setCookie } = useReactiveCookiesNext();
 
 	const [signUpForm, setSignUpForm] = useState<TSignUp>({
 		email: "",
@@ -49,6 +45,7 @@ export default function SignUpPage() {
 				description: "Please fill in all fields",
 				color: "danger",
 			});
+
 			return false;
 		}
 
@@ -80,16 +77,17 @@ export default function SignUpPage() {
 
 	return (
 		<div className={"bg-light w-screen h-screen flex flex-col justify-center items-center gap-8 px-4"}>
-			<div
+			<button
 				className={"w-96"}
 				onClick={() => router.push(ROUTE_PATH.CLIENT.INDEX)}
 			>
-				<img
-					src="/logow_b.png"
+				<Image
 					alt=""
 					className={"drop-shadow-2xl"}
+					radius={"none"}
+					src="/logow_b.png"
 				/>
-			</div>
+			</button>
 
 			<Container
 				className={clsx(
@@ -103,45 +101,45 @@ export default function SignUpPage() {
 			>
 				<h2 className={"text-primary text-4xl font-bold"}>Sign up.</h2>
 				<CustomForm
-					formId={"loginForm"}
-					submitButtonText={"Sign up"}
-					submitButtonSize={"lg"}
-					loadingText={"Signing up"}
-					isLoading={signingUp}
 					className={"flex flex-col gap-4"}
+					formId={"loginForm"}
+					isLoading={signingUp}
+					loadingText={"Signing up"}
+					submitButtonSize={"lg"}
+					submitButtonText={"Sign up"}
 					onSubmit={onSubmitSignUp}
 				>
 					<Input
 						label={"Your email"}
 						labelPlacement={"outside"}
 						name={"email"}
-						variant={"bordered"}
 						placeholder={"example@email.com"}
 						size={"lg"}
 						value={signUpForm.email}
+						variant={"bordered"}
 						onValueChange={(value) => setSignUpForm((prev) => ({ ...prev, email: value }))}
 					/>
 					<Input
 						label={"Password"}
 						labelPlacement={"outside"}
 						name={"password"}
-						variant={"bordered"}
-						type={"password"}
 						placeholder={"Enter your password"}
-						value={signUpForm.password}
-						onValueChange={(value) => setSignUpForm((prev) => ({ ...prev, password: value }))}
 						size={"lg"}
+						type={"password"}
+						value={signUpForm.password}
+						variant={"bordered"}
+						onValueChange={(value) => setSignUpForm((prev) => ({ ...prev, password: value }))}
 					/>
 					<Input
 						label={"Confirm password"}
 						labelPlacement={"outside"}
 						name={"confirm_password"}
-						variant={"bordered"}
-						type={"password"}
 						placeholder={"Re-enter your password"}
-						value={signUpForm.confirm_password}
-						onValueChange={(value) => setSignUpForm((prev) => ({ ...prev, confirm_password: value }))}
 						size={"lg"}
+						type={"password"}
+						value={signUpForm.confirm_password}
+						variant={"bordered"}
+						onValueChange={(value) => setSignUpForm((prev) => ({ ...prev, confirm_password: value }))}
 					/>
 				</CustomForm>
 				<Divider />

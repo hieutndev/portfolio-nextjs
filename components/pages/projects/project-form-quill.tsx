@@ -1,17 +1,6 @@
 "use client";
 
 import "react-quill-new/dist/quill.snow.css";
-import Container from "@/components/shared/container/container";
-import CustomForm from "@/components/shared/forms/custom-form";
-import AdminHeader from "@/components/shared/partials/admin-header";
-import API_ROUTE from "@/configs/api";
-import ICON_CONFIG from "@/configs/icons";
-import { MAP_MESSAGE } from "@/configs/response-message";
-import ROUTE_PATH from "@/configs/route-path";
-import { useFetch } from "@/hooks/useFetch";
-import { IAPIResponse } from "@/types/global";
-import { TProjectGroup, TProjectImage, TProjectResponse, TNewProject, TUpdateProject } from "@/types/project";
-import { formatDate } from "@/utils/date";
 import {
 	addToast,
 	Button,
@@ -34,12 +23,22 @@ import {
 import clsx from "clsx";
 import { ComponentType, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { DateValue, parseDate } from "@internationalized/date";
 import moment from "moment";
 import dynamic from "next/dynamic";
+
+import CustomForm from "@/components/shared/forms/custom-form";
+import API_ROUTE from "@/configs/api";
+import ICON_CONFIG from "@/configs/icons";
+import { MAP_MESSAGE } from "@/configs/response-message";
+import ROUTE_PATH from "@/configs/route-path";
+import { useFetch } from "@/hooks/useFetch";
+import { IAPIResponse } from "@/types/global";
+import { TProjectGroup, TProjectImage, TProjectResponse, TNewProject, TUpdateProject } from "@/types/project";
+import { formatDate } from "@/utils/date";
+
+
 import "@writergate/quill-image-uploader-nextjs/dist/quill.imageUploader.min.css";
-import { sliceText } from "@/utils/string";
 
 // TypeScript interface for ReactQuill props
 interface ReactQuillProps {
@@ -57,13 +56,26 @@ const ReactQuill = dynamic(
 	async () => {
 		const ImageUploader = require("@writergate/quill-image-uploader-nextjs").default;
 		const { default: RQ, Quill } = await import("react-quill-new");
+
 		Quill.register("modules/imageUploader", ImageUploader);
-		return ({ forwardedRef, ...props }: ReactQuillProps) => (
+
+		// return ({ forwardedRef, ...props }: ReactQuillProps) => (
+		// 	<RQ
+		// 		ref={forwardedRef}
+		// 		{...props}
+		// 	/>
+		// );
+
+		const QuillComponent = ({ forwardedRef, ...props }: ReactQuillProps) => (
 			<RQ
 				ref={forwardedRef}
 				{...props}
 			/>
 		);
+
+		QuillComponent.displayName = "QuillComponent";
+
+		return QuillComponent;
 	},
 	{
 		ssr: false,
@@ -145,7 +157,7 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 	/* HANDLE FETCH PROJECT DETAILS (for edit mode) */
 	const {
 		data: fetchProjectDetailResult,
-		error: fetchProjectDetailError,
+		// error: fetchProjectDetailError,
 		loading: fetchingProjectDetail,
 		fetch: fetchProjectDetail,
 	} = useFetch<IAPIResponse<TProjectResponse>>(
@@ -164,6 +176,7 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 	useEffect(() => {
 		if (mode === "edit" && fetchProjectDetailResult && fetchProjectDetailResult.results) {
 			const projectData = fetchProjectDetailResult.results;
+
 			setProjectDetails({
 				...projectData,
 				start_date: formatDate(projectData.start_date, "onlyDateReverse"),
@@ -257,6 +270,7 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 				description: "Please fill in all required fields",
 				color: "danger",
 			});
+
 			return;
 		}
 
@@ -266,6 +280,7 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 				description: "Please select start and end dates",
 				color: "danger",
 			});
+
 			return;
 		}
 
@@ -297,7 +312,7 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 		}
 
 		if (projectDetails.project_images && projectDetails.project_images.length > 0) {
-			Array.from(projectDetails.project_images).forEach((file, index) => {
+			Array.from(projectDetails.project_images).forEach((file) => {
 				submitFormData.append(`project_images`, file);
 			});
 		}
@@ -345,7 +360,7 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 	const {
 		data: uploadImageResult,
 		error: uploadImageError,
-		loading: uploadingImage,
+		// loading: uploadingImage,
 		fetch: uploadImage,
 	} = useFetch(API_ROUTE.S3.UPLOAD_IMAGE, {
 		method: "POST",
@@ -370,8 +385,10 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 
 	const handleUploadImage = async (file: File) => {
 		const formData = new FormData();
+
 		formData.append("image", file);
 		await uploadImage({ body: formData });
+
 		return new Promise((resolve, reject) => {
 			let retry = 20;
 			const checkResult = () => {
@@ -391,6 +408,7 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 					reject(new Error("Image upload timed out."));
 				}
 			};
+
 			checkResult();
 		}).finally(() => {
 			uploadImageResultRef.current = null;
@@ -457,8 +475,8 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 	return (
 		<div className={"w-full border border-default-200 bg-white rounded-2xl shadow-lg p-4 flex flex-col gap-4"}>
 			<CustomForm
-				formId={`${mode}ProjectForm`}
 				className={"w-full flex flex-col gap-4"}
+				formId={`${mode}ProjectForm`}
 				isLoading={isLoading}
 				onSubmit={handleSubmit}
 			>
@@ -466,39 +484,40 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 					<h3 className={"text-xl font-semibold"}>Project Information</h3>
 					<div className={"w-full grid grid-cols-3 gap-4"}>
 						<Input
+							isRequired
 							label={"Full Project Name"}
 							labelPlacement={"outside"}
-							type={"text"}
-							value={projectDetails.project_fullname}
 							name={"project_fullname"}
 							placeholder={"Enter project name..."}
+							type={"text"}
+							value={projectDetails.project_fullname}
 							variant={"bordered"}
-							isRequired
 							onValueChange={(value) =>
 								setProjectDetails((prev) => ({ ...prev, project_fullname: value }))
 							}
 						/>
 						<Input
-							label={"Short Project Name"}
-							type={"text"}
-							variant={"bordered"}
-							value={projectDetails.project_shortname}
-							name={"project_shortname"}
-							labelPlacement={"outside"}
-							placeholder={"Enter short name of project"}
 							isRequired
+							label={"Short Project Name"}
+							labelPlacement={"outside"}
+							name={"project_shortname"}
+							placeholder={"Enter short name of project"}
+							type={"text"}
+							value={projectDetails.project_shortname}
+							variant={"bordered"}
 							onValueChange={(e) => setProjectDetails((prev) => ({ ...prev, project_shortname: e }))}
 						/>
 						<Select
+							isLoading={fetchingProjectGroups}
+							items={listProjectGroups}
 							label={"Select group"}
 							labelPlacement={"outside"}
 							placeholder={"Select project group"}
 							selectedKeys={projectDetails.group_id ? [projectDetails.group_id.toString()] : []}
-							items={listProjectGroups}
 							variant={"bordered"}
-							isLoading={fetchingProjectGroups}
 							onSelectionChange={(keys) => {
 								const selectedKey = Array.from(keys)[0] as string;
+
 								setProjectDetails((prev) => ({
 									...prev,
 									group_id: selectedKey ? parseInt(selectedKey) : null,
@@ -509,12 +528,12 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 						</Select>
 						<div className={"w-full col-span-3"}>
 							<Textarea
+								isRequired
 								label={"Description"}
 								labelPlacement={"outside"}
-								value={projectDetails.short_description}
 								name={"short_description"}
 								placeholder={mode === "create" ? "Enter a brief description of your project..." : ""}
-								isRequired
+								value={projectDetails.short_description}
 								variant={"bordered"}
 								onValueChange={(e) =>
 									setProjectDetails((prev) => ({
@@ -525,21 +544,21 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 							/>
 						</div>
 						<DateRangePicker
+							isRequired
+							aria-label={"Project duration"}
 							label={mode === "create" ? "Project Duration" : "Start date"}
 							labelPlacement={"outside"}
 							value={datePicked}
-							onChange={setDatePicked}
-							aria-label={"Project duration"}
 							variant={"bordered"}
-							isRequired
+							onChange={setDatePicked}
 						/>
 						<Input
 							label={"Github"}
 							labelPlacement={"outside"}
+							name={"github_link"}
 							placeholder={"Enter Github link"}
 							type={"text"}
 							value={projectDetails.github_link || ""}
-							name={"github_link"}
 							variant={"bordered"}
 							onValueChange={(e) =>
 								setProjectDetails((prev) => ({
@@ -551,11 +570,11 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 						<Input
 							label={"Demo"}
 							labelPlacement={"outside"}
+							name={"demo_link"}
 							placeholder={"Enter Demo link"}
 							type={"text"}
 							value={projectDetails.demo_link || ""}
 							variant={"bordered"}
-							name={"demo_link"}
 							onValueChange={(e) =>
 								setProjectDetails((prev) => ({
 									...prev,
@@ -565,12 +584,12 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 						/>
 						<div className={"col-span-3 grid grid-cols-2 gap-4"}>
 							<Input
-								type={"file"}
+								accept={"image/*"}
 								label={"Project Thumbnail"}
 								labelPlacement={"outside"}
-								placeholder={"Select thumbnail for project"}
 								name={"project_thumbnail"}
-								accept={"image/*"}
+								placeholder={"Select thumbnail for project"}
+								type={"file"}
 								variant={"bordered"}
 								onChange={(e) => {
 									setProjectDetails((prev) => ({
@@ -581,15 +600,15 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 								}}
 							/>
 							<Input
+								accept={"image/*"}
 								label={mode === "create" ? "Project Images" : "List Project Images"}
 								labelPlacement={"outside"}
+								multiple={true}
 								name={"project_images"}
-								type={"file"}
 								placeholder={
 									mode === "create" ? "Select images for project" : "Select thumbnail for project"
 								}
-								multiple={true}
-								accept={"image/*"}
+								type={"file"}
 								variant={"bordered"}
 								onChange={(e) => {
 									setProjectDetails((prev) => ({
@@ -616,9 +635,6 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 											className={
 												"bg-transparent relative border-2 rounded-xl overflow-hidden border-success-300 hover:border-success-500 transition-colors"
 											}
-											onClick={() =>
-												handleOpenImageModal(currentThumbnail, "Project Thumbnail", "thumbnail")
-											}
 										>
 											<div className={"absolute top-1 right-1 z-[20]"}>
 												<Chip
@@ -630,7 +646,7 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 												</Chip>
 											</div>
 											<Image
-												src={currentThumbnail}
+												isBlurred
 												alt={"Project Thumbnail"}
 												className={
 													"object-cover w-max group-hover:scale-105 transition-transform"
@@ -638,7 +654,10 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 												height={156}
 												isZoomed={false}
 												shadow={"sm"}
-												isBlurred
+												src={currentThumbnail}
+												onClick={() =>
+												handleOpenImageModal(currentThumbnail, "Project Thumbnail", "thumbnail")
+											}
 											/>
 										</div>
 										<p className={"text-xs text-center mt-1 text-foreground-600"}>
@@ -663,12 +682,9 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 														!listRemoveImages.includes(image.image_name),
 												}
 											)}
-											onClick={() =>
-												handleOpenImageModal(image.image_url, image.image_name, "image")
-											}
 										>
 											<Image
-												src={image.image_url}
+												isBlurred
 												alt={image.image_name}
 												className={
 													"object-cover w-max group-hover:scale-105 transition-transform"
@@ -676,23 +692,25 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 												height={156}
 												isZoomed={false}
 												shadow={"sm"}
-												isBlurred
+												src={image.image_url}
+												onClick={() =>
+												handleOpenImageModal(image.image_url, image.image_name, "image")
+											}
 											/>
-											<div
-												className={"absolute top-1 right-1 z-10"}
-												onClick={(e) => e.stopPropagation()}
-											>
+											{/* <div
+												className={""}
+												> */}
 												<Button
+													isIconOnly
+													className={"absolute top-1 right-1 z-10 opacity-80 hover:opacity-100"}
 													color={"danger"}
 													size={"sm"}
-													className={"opacity-80 hover:opacity-100"}
-													isIconOnly
 													variant="solid"
 													onPress={() => handleAddRemoveImage(image.image_name)}
 												>
 													{ICON_CONFIG.SOFT_DELETE}
 												</Button>
-											</div>
+											{/* </div> */}
 											{listRemoveImages.includes(image.image_name) && (
 												<div
 													className={
@@ -724,23 +742,23 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 					<div>
 						<p className={"text-sm text-foreground pb-1.5 block"}>Article Content</p>
 						<ReactQuill
+							formats={formats}
 							forwardedRef={reactQuillRef}
+							modules={customModules}
+							placeholder={"Write your project article here..."}
+							theme={"snow"}
 							value={convertText}
 							onChange={setConvertText}
-							modules={customModules}
-							formats={formats}
-							theme={"snow"}
-							placeholder={"Write your project article here..."}
 						/>
 					</div>
 				</div>
 			</CustomForm>
 
 			<Modal
-				isOpen={isImageModalOpen}
-				onClose={handleCloseImageModal}
-				size="5xl"
 				hideCloseButton
+				isOpen={isImageModalOpen}
+				size="5xl"
+				onClose={handleCloseImageModal}
 			>
 				<ModalContent>
 					{(onClose) => (
@@ -756,12 +774,12 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 								{selectedImage && (
 									<div className={"flex justify-center"}>
 										<Image
-											src={selectedImage.url}
+											isBlurred
 											alt={selectedImage.name}
 											className={"object-contain"}
 											height={512}
 											shadow={"sm"}
-											isBlurred
+											src={selectedImage.url}
 										/>
 									</div>
 								)}
@@ -770,8 +788,8 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 								<div className={"flex justify-end items-center w-full"}>
 									<Button
 										color={"danger"}
-										onPress={onClose}
 										variant={"flat"}
+										onPress={onClose}
 									>
 										Close
 									</Button>

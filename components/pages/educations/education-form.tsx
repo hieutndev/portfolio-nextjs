@@ -20,7 +20,7 @@ export interface EducationFormProps {
 }
 
 export default function EducationForm({ mode, educationId, onSuccess }: EducationFormProps) {
-	const router = useRouter();
+
 	const [formData, setFormData] = useState<TNewEducation & TUpdateEducation>({
 		title: "",
 		organization: "",
@@ -33,7 +33,7 @@ export default function EducationForm({ mode, educationId, onSuccess }: Educatio
 	const {
 		data: submitResult,
 		error: submitError,
-		loading: submitting,
+		// loading: submitting,
 		fetch: submitEducation,
 	} = useFetch(mode === "create" ? API_ROUTE.EDUCATION.NEW : API_ROUTE.EDUCATION.UPDATE(educationId ?? -1), {
 		method: mode === "create" ? "POST" : "PATCH",
@@ -43,7 +43,7 @@ export default function EducationForm({ mode, educationId, onSuccess }: Educatio
 	const {
 		data: fetchEducationDetailResult,
 		error: fetchEducationDetailError,
-		loading: fetchingEducationDetail,
+		// loading: fetchingEducationDetail,
 		fetch: fetchEducationDetail,
 	} = useFetch<IAPIResponse<TEducation>>(API_ROUTE.EDUCATION.GET_ONE(educationId ?? -1), {
 		skip: true,

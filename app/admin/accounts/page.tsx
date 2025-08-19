@@ -18,6 +18,8 @@ import {
   ModalContent,
   ModalHeader,
 } from "@heroui/react";
+
+import AdminHeader from "@/components/shared/partials/admin-header";
 import { useFetch } from "@/hooks/useFetch";
 import API_ROUTE from "@/configs/api";
 import { TAccount } from "@/types/account";
@@ -27,7 +29,6 @@ import ICON_CONFIG from "@/configs/icons";
 import AccountForm from "@/components/pages/accounts/account-form";
 import { MAP_MESSAGE } from "@/configs/response-message";
 import Container from "@/components/shared/container/container";
-import AdminHeader from "../../../components/shared/partials/admin-header";
 import SearchInput from "@/components/shared/search/search-input";
 import CustomPagination from "@/components/shared/custom-pagination/custom-pagination";
 
@@ -35,7 +36,7 @@ export default function AccountManagementPage() {
   const [accounts, setAccounts] = useState<TAccount[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<TAccount | null>(null);
   const [action, setAction] = useState<TDataAction>(null);
-  const [mode, setMode] = useState<"create" | "update">("create");
+  // const [mode, setMode] = useState<"create" | "update">("create");
 
   // Search and pagination state
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,7 +50,7 @@ export default function AccountManagementPage() {
   const {
     data: fetchAccountsResult,
     loading: fetchingAccounts,
-    error: fetchAccountsError,
+    // error: fetchAccountsError,
     fetch: fetchAccounts,
   } = useFetch<IAPIResponse<TAccount[]>>(
     API_ROUTE.ACCOUNT.GET_ALL,
@@ -66,7 +67,7 @@ export default function AccountManagementPage() {
   const {
     data: updateStatusResult,
     error: updateStatusError,
-    loading: updatingStatus,
+    // loading: updatingStatus,
     fetch: updateStatus,
   } = useFetch(
     API_ROUTE.ACCOUNT.ACTIVE_STATUS(selectedAccount?.user_id ?? -1),
@@ -101,6 +102,7 @@ export default function AccountManagementPage() {
 
     if (updateStatusError) {
       const parsedError = JSON.parse(updateStatusError);
+
       addToast({
         title: "Error",
         description: MAP_MESSAGE[parsedError.message],
@@ -117,7 +119,7 @@ export default function AccountManagementPage() {
     if (selectedAccount || action === "create" || action === "update") {
       switch (action) {
         case "create":
-          setMode("create");
+          // setMode("create");
           onOpen();
           break;
         case "block":
@@ -181,11 +183,11 @@ export default function AccountManagementPage() {
   return (
     <Container
       shadow
-      orientation={"vertical"}
-      className={"border border-gray-200 rounded-2xl"}>
+      className={"border border-gray-200 rounded-2xl"}
+      orientation={"vertical"}>
       <AdminHeader
-        title="Account Management"
         breadcrumbs={["Admin", "Account Management"]}
+        title="Account Management"
       />
 
       <div className={"flex flex-col gap-4"}>
@@ -201,17 +203,17 @@ export default function AccountManagementPage() {
           <div className="w-80">
             <SearchInput
               placeholder="Search by username or email..."
-              onSearch={handleSearch}
               value={searchTerm}
+              onSearch={handleSearch}
             />
           </div>
         </div>
         <Table
+          isHeaderSticky
           aria-label="Accounts table"
           classNames={{
             wrapper: "h-[60vh]",
-          }}
-          isHeaderSticky>
+          }}>
           <TableHeader columns={columns}>
             {(column) => (
               <TableColumn
@@ -228,18 +230,18 @@ export default function AccountManagementPage() {
             )}
           </TableHeader>
           <TableBody
-            items={accounts}
+            emptyContent="No accounts found"
             isLoading={fetchingAccounts}
-            loadingContent={<Spinner label="Loading accounts..." />}
-            emptyContent="No accounts found">
+            items={accounts}
+            loadingContent={<Spinner label="Loading accounts..." />}>
             {(account) => (
               <TableRow key={account.user_id}>
                 <TableCell>{account.username}</TableCell>
                 <TableCell>{account.email}</TableCell>
                 <TableCell>
                   <Chip
-                    size="sm"
                     color={account.role === 0 ? "success" : "danger"}
+                    size="sm"
                     variant="flat">
                     {account.role === 0 ? "User" : "Admin"}
                   </Chip>
@@ -249,8 +251,8 @@ export default function AccountManagementPage() {
                 </TableCell>
                 <TableCell>
                   <Chip
-                    size="sm"
                     color={account.is_active === 1 ? "success" : "danger"}
+                    size="sm"
                     variant="flat">
                     {account.is_active === 1 ? "Active" : "Blocked"}
                   </Chip>
@@ -260,8 +262,8 @@ export default function AccountManagementPage() {
                     {account.is_active === 1 ? (
                       <Button
                         isIconOnly
-                        size="sm"
                         color="danger"
+                        size="sm"
                         variant="flat"
                         onPress={() => mapAction(account, "block")}>
                         {ICON_CONFIG.BLOCK}
@@ -269,8 +271,8 @@ export default function AccountManagementPage() {
                     ) : (
                       <Button
                         isIconOnly
-                        size="sm"
                         color="success"
+                        size="sm"
                         variant="flat"
                         onPress={() => mapAction(account, "unblock")}>
                         {ICON_CONFIG.UNBLOCK}
@@ -286,21 +288,21 @@ export default function AccountManagementPage() {
         {/* Pagination */}
         <CustomPagination
           currentPage={currentPage}
-          totalPages={totalPages}
-          totalItems={totalItems}
           itemsPerPage={itemsPerPage}
-          onPageChange={handlePageChange}
+          totalItems={totalItems}
+          totalPages={totalPages}
           onItemsPerPageChange={handleItemsPerPageChange}
+          onPageChange={handlePageChange}
         />
       </div>
 
       <Modal
+        hideCloseButton
         isOpen={isOpen}
-        onOpenChange={onOpenChange}
         placement="top"
-        size="2xl"
         scrollBehavior="inside"
-        hideCloseButton>
+        size="2xl"
+        onOpenChange={onOpenChange}>
         <ModalContent>
           <ModalHeader>
             <h3 className="text-xl">Create account</h3>

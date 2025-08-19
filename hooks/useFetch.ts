@@ -243,12 +243,15 @@ export function useFetch<TResponse = any, TBody = any>(
 
 			if (!response.ok) {
 
-				const errorJson = await response.json();
+
+				const responseText = await response.text();
+
+				const errorJson = JSON.parse(responseText || '{}');
 
 				setState({
 					data: null,
 					loading: false,
-					error: errorJson || response.statusText,
+					error: responseText || response.statusText,
 					statusCode: response.status,
 				});
 
@@ -268,8 +271,8 @@ export function useFetch<TResponse = any, TBody = any>(
 				statusCode: response.status,
 			});
 		} catch (error: any) {
-            if (error.message === "RefreshTokenExpiredError") {
-                setState({ data: null, loading: false, error: null, statusCode: null });
+			if (error.message === "RefreshTokenExpiredError") {
+				setState({ data: null, loading: false, error: null, statusCode: null });
 				window.location.href = "/sign-in?message=EXPIRED_REFRESH_TOKEN";
 			} else {
 				setState({ data: null, loading: false, error: error.message, statusCode: null });

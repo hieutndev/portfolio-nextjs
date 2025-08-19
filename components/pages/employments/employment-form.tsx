@@ -1,22 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Container from "@/components/shared/container/container";
-import AdminHeader from "@/components/shared/partials/admin-header";
+import { addToast, Input, DateRangePicker, RangeValue } from "@heroui/react";
+import { useRouter } from "next/navigation";
+import { DateValue, parseDate } from "@internationalized/date";
+import moment from "moment";
+
 import CustomForm from "@/components/shared/forms/custom-form";
-import ICON_CONFIG from "@/configs/icons";
-import ROUTE_PATH from "@/configs/route-path";
 import { useFetch } from "@/hooks/useFetch";
 import { IAPIResponse } from "@/types/global";
 import { TEmployment, TNewEmployment } from "@/types/employment";
 import API_ROUTE from "@/configs/api";
 import { MAP_MESSAGE } from "@/configs/response-message";
 import { formatDate } from "@/utils/date";
-import { addToast, Button, Input, DateRangePicker, Divider, RangeValue } from "@heroui/react";
-import { useRouter } from "next/navigation";
-import { DateValue, parseDate } from "@internationalized/date";
-import moment from "moment";
-import AchievementRow from "@/components/pages/introduce/achievement-row";
+
+
 
 interface EmploymentFormProps {
 	mode: "create" | "update";
@@ -90,6 +88,7 @@ export default function EmploymentFormComponent({ mode, defaultValues, employmen
 				time_start: formatDate(defaultValues.time_start, "onlyDateReverse"),
 				time_end: formatDate(defaultValues.time_end, "onlyDateReverse"),
 			};
+
 			setEmploymentData(formattedData);
 			setDatePicked({
 				start: parseDate(formattedData.time_start),
@@ -99,6 +98,7 @@ export default function EmploymentFormComponent({ mode, defaultValues, employmen
 
 		if (fetchEmploymentError) {
 			const parseError = JSON.parse(fetchEmploymentError);
+
 			if (parseError.message) {
 				addToast({
 					title: "Error",
@@ -163,6 +163,7 @@ export default function EmploymentFormComponent({ mode, defaultValues, employmen
 				description: "Please fill in all required fields",
 				color: "danger",
 			});
+
 			return;
 		}
 
@@ -172,6 +173,7 @@ export default function EmploymentFormComponent({ mode, defaultValues, employmen
 				description: "Please select start and end dates",
 				color: "danger",
 			});
+
 			return;
 		}
 		console.log("submit");
@@ -187,49 +189,49 @@ export default function EmploymentFormComponent({ mode, defaultValues, employmen
 
 	return (
 		<CustomForm
-			formId={mode === "create" ? "newEmploymentForm" : "updateEmploymentForm"}
 			className={"w-full flex flex-col gap-4 mb-4"}
+			formId={mode === "create" ? "newEmploymentForm" : "updateEmploymentForm"}
 			isLoading={isLoading}
-			onSubmit={handleSubmit}
 			loadingText={loadingText}
 			submitButtonText={buttonText}
+			onSubmit={handleSubmit}
 		>
 			{/* <Divider /> */}
 
 			<div className={"grid grid-cols-2 gap-4"}>
 				<Input
+					isRequired
 					label={"Title"}
 					labelPlacement={"outside"}
-					type={"text"}
-					value={employmentData.title}
 					name={"title"}
 					placeholder={"Enter title..."}
-					isRequired
-					onValueChange={(value) => setEmploymentData((prev) => ({ ...prev, title: value }))}
+					type={"text"}
+					value={employmentData.title}
 					variant={"bordered"}
+					onValueChange={(value) => setEmploymentData((prev) => ({ ...prev, title: value }))}
 				/>
 
 				<Input
+					isRequired
 					label={"Organization"}
 					labelPlacement={"outside"}
-					type={"text"}
-					value={employmentData.organization}
 					name={"organization"}
 					placeholder={"Enter organization..."}
-					isRequired
-					onValueChange={(value) => setEmploymentData((prev) => ({ ...prev, organization: value }))}
+					type={"text"}
+					value={employmentData.organization}
 					variant={"bordered"}
+					onValueChange={(value) => setEmploymentData((prev) => ({ ...prev, organization: value }))}
 				/>
 			</div>
 
 			<DateRangePicker
+				isRequired
+				aria-label={"Employment duration"}
 				label={"Employment Duration"}
 				labelPlacement={"outside"}
 				value={datePicked}
-				onChange={setDatePicked}
-				aria-label={"Employment duration"}
-				isRequired
 				variant={"bordered"}
+				onChange={setDatePicked}
 			/>
 		</CustomForm>
 	);

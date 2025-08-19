@@ -1,13 +1,15 @@
 "use client";
 
+import { addToast, Spinner } from "@heroui/react";
+import { useEffect, useState } from "react";
+
+import AchievementRow from "./achievement-row";
+
 import Container from "@/components/shared/container/container";
 import API_ROUTE from "@/configs/api";
 import { useFetch } from "@/hooks/useFetch";
 import { TCertification } from "@/types/certification";
 import { IAPIResponse } from "@/types/global";
-import { addToast, Spinner } from "@heroui/react";
-import { useEffect, useState } from "react";
-import AchievementRow from "./achievement-row";
 import { formatDate } from "@/utils/date";
 
 const CertificationSection = () => {
@@ -49,9 +51,9 @@ const CertificationSection = () => {
 					listCertification.map((_, index) => (
 						<AchievementRow
 							key={index}
-							title={_.title}
 							organization={_.issued_by}
 							time={formatDate(_.issued_date, "onlyDate")}
+							title={_.title}
 						/>
 					))
 				) : (

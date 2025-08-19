@@ -105,7 +105,7 @@ function SignInContent() {
       <button
         className={"w-96"}
         onClick={() => router.push(ROUTE_PATH.CLIENT.INDEX)}>
-        <Image alt="" className={"drop-shadow-2xl"} src="/logow_b.png" />
+        <Image alt="" className={"drop-shadow-2xl"} radius={"none"} src="/logow_b.png" />
       </button>
 
       <Container
@@ -155,7 +155,7 @@ function SignInContent() {
         <Divider />
         <div className={"flex items-center justify-between"}>
           <p className={"text-center"}>
-            Don't have an account yet?{" "}
+            Don&apos;t have an account yet?{" "}
             <button
               className={
                 "ml-2 text-primary-500 hover:text-primary-300 transition-colors duration-300"

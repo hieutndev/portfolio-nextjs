@@ -18,7 +18,6 @@ import {
 	useDisclosure,
 	ModalBody,
 } from "@heroui/react";
-import { useRouter } from "next/navigation";
 
 import Container from "@/components/shared/container/container";
 import AdminHeader from "@/components/shared/partials/admin-header";
@@ -35,7 +34,6 @@ import SearchInput from "@/components/shared/search/search-input";
 import CustomPagination from "@/components/shared/custom-pagination/custom-pagination";
 
 export default function EmploymentManagementPage() {
-	const router = useRouter();
 	const [listEmploymentHistory, setListEmploymentHistory] = useState<TEmployment[]>([]);
 	const [selectedEmployment, setSelectedEmployment] = useState<TEmployment | null>(null);
 	const [action, setAction] = useState<TDataAction>(null);
@@ -93,7 +91,7 @@ export default function EmploymentManagementPage() {
 	const {
 		data: softDeleteResult,
 		error: softDeleteError,
-		loading: softDeleting,
+		// loading: softDeleting,
 		fetch: softDeleteEmployment,
 	} = useFetch<IAPIResponse>(API_ROUTE.EMPLOYMENT.SOFT_DELETE(selectedEmployment?.id ?? -1), {
 		method: "PATCH",
@@ -128,7 +126,7 @@ export default function EmploymentManagementPage() {
 	const {
 		data: recoverResult,
 		error: recoverError,
-		loading: recovering,
+		// loading: recovering,
 		fetch: recoverEmployment,
 	} = useFetch<IAPIResponse>(API_ROUTE.EMPLOYMENT.RECOVER(selectedEmployment?.id ?? -1), {
 		method: "PATCH",
@@ -163,7 +161,7 @@ export default function EmploymentManagementPage() {
 	const {
 		data: deleteResult,
 		error: deleteError,
-		loading: deleting,
+		// loading: deleting,
 		fetch: deleteEmployment,
 	} = useFetch(API_ROUTE.EMPLOYMENT.DELETE(selectedEmployment?.id ?? -1), {
 		method: "DELETE",

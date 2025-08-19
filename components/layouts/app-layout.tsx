@@ -1,10 +1,12 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+
 import ClientLayout from "./client/client-layout";
-import { SITE_CONFIG } from "@/configs/site-config";
 import NonAuthLayout from "./non-auth/non-auth-layout";
 import AdminLayout from "./admin/admin-layout";
+
+import { SITE_CONFIG } from "@/configs/site-config";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname();

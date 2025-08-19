@@ -1,9 +1,9 @@
 "use client";
 
+import { Avatar, Divider, Image } from "@heroui/react";
+
 import Container from "@/components/shared/container/container";
-import { Avatar, Button, Divider, Image } from "@heroui/react";
 import { TProject } from "@/types/project";
-import ICON_CONFIG from "@/configs/icons";
 import { formatDate, getLastUpdatedTime } from "@/utils/date";
 
 interface ProjectBlogHeaderProps {
@@ -12,7 +12,7 @@ interface ProjectBlogHeaderProps {
 
 export default function ProjectBlogHeader({ project }: ProjectBlogHeaderProps) {
   return (
-    <Container className="!p-4 " orientation="vertical" gapSize={8}>
+    <Container className="!p-4 " gapSize={8} orientation="vertical">
       <div className={"flex flex-col gap-4"}>
         <h1
           className={
@@ -22,7 +22,7 @@ export default function ProjectBlogHeader({ project }: ProjectBlogHeaderProps) {
         </h1>
         <p className={"w-5/6 text-sm text-left"}>{project.short_description}</p>
         <div className={"flex items-center gap-4"}>
-          <Avatar src={"/avatar.jpg"} isBordered={true} size={"sm"} />
+          <Avatar isBordered={true} size={"sm"} src={"/avatar.jpg"} />
           <p className={"text-sm"}>Tran Ngoc Hieu</p>
           <Divider orientation="vertical" />
           {project.updated_at !== project.created_at && (
@@ -38,12 +38,12 @@ export default function ProjectBlogHeader({ project }: ProjectBlogHeaderProps) {
         </div>
       </div>
       <Image
+        isBlurred
+        alt={project.project_fullname}
+        className={"rounded-none border-0"}
+        shadow={"sm"}
         src={project.project_thumbnail}
         width={1920}
-        shadow={"sm"}
-        isBlurred
-        className={"rounded-none border-0"}
-        alt={project.project_fullname}
       />
     </Container>
   );
