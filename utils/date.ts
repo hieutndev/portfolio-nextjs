@@ -1,5 +1,6 @@
 
 export type TDateFormat = "fullDate" | "onlyDate" | "onlyMonthYear" | "onlyDateReverse" | "onlyTime";
+export type TTimeFormat = "fullTime" | "onlyHours" | "onlyMinutes" | "onlySeconds" | "onlyHourAndMinute" | "onlyMinuteAndSecond";
 
 export function formatDate(isoString: string | Date, format: TDateFormat = "fullDate") {
     const date = new Date(isoString);
@@ -72,5 +73,27 @@ export function getDiffTime(startTime: string, endTime: string): {
         hours: diffInHours % 24,
         minutes: diffInMinutes % 60,
         seconds: diffInSeconds % 60,
+    }
+}
+
+export function formatTime(seconds: number, format: TTimeFormat = "fullTime"): string {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+
+    // return based on format
+    switch (format) {
+        case "fullTime":
+            return `${hours > 0 ? `${hours}h ` : ""}${minutes > 0 ? `${minutes}m ` : ""}${remainingSeconds}s`;
+        case "onlyHours":
+            return `${hours}h`;
+        case "onlyMinutes":
+            return `${minutes}m`;
+        case "onlySeconds":
+            return `${remainingSeconds}s`;
+        case "onlyHourAndMinute":
+            return `${hours}h ${minutes}m`;
+        case "onlyMinuteAndSecond":
+            return `${minutes}m ${remainingSeconds}s`;
     }
 }

@@ -3,45 +3,67 @@
 import { Button } from "@heroui/button";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { Divider } from "@heroui/react";
+import { Divider, Tooltip } from "@heroui/react";
 import clsx from "clsx";
 
 import { SITE_CONFIG } from "@/configs/site-config";
+import useScreenSize from "@/hooks/useScreenSize";
+import { BREAK_POINT } from "@/configs/break-point";
 
 export default function AdminSidebar() {
 	const pathname = usePathname();
 
 	const router = useRouter();
 
+	const { width } = useScreenSize();
+
 	return (
-		<div className={"w-1/6 fixed h-full flex flex-col items-center gap-8 p-8 rounded-e-2xl border border-gray-300"}>
+		<div className={"min-w-24 2xl:w-1/6 fixed h-full flex flex-col items-center gap-4 2xl:gap-8 p-2 2xl:p-8 rounded-e-2xl border border-gray-300"}>
 			<div className={"h-max max-w-56"}>
 				<Image
 					alt={"logo"}
-					className={"w-full h-max object-contain cursor-pointer"}
+					className={"w-28 2xl:w-full h-max object-contain cursor-pointer"}
 					height={1200}
-					src={SITE_CONFIG.LOGO.FULL_BLACK}
+					src={width < BREAK_POINT.XXL ? SITE_CONFIG.LOGO.ONLY_ICON_BLACK : SITE_CONFIG.LOGO.FULL_BLACK}
 					width={1200}
 					onClick={() => router.push("/")}
 				/>
 			</div>
 			<Divider />
-			<div className={"w-full flex flex-col gap-4"}>
+			<div className={"w-full flex flex-col items-center 2xl:items-start gap-4"}>
 				{SITE_CONFIG.ADMIN_SIDEBAR_ITEMS.map((item) => (
-					<Button
-						key={item.href}
-						fullWidth
-						className={clsx("justify-start", {
-							// "text-default-400": !pathname.startsWith(item.href),
-						})}
-						color={pathname.startsWith(item.href) ? "primary" : "default"}
-						size={"lg"}
-						startContent={item.icon}
-						variant={pathname.startsWith(item.href) ? "flat" : "light"}
-						onPress={() => router.push(item.href)}
-					>
-						{item.label}
-					</Button>
+					width < BREAK_POINT.XXL
+						? <Tooltip key={item.href} content={item.label} showArrow={true} placement={"right"}>
+							<Button
+								className={clsx("2xl:justify-start", {
+									// "text-default-400": !pathname.startsWith(item.href),
+								})}
+								color={pathname.startsWith(item.href) ? "primary" : "default"}
+								fullWidth={width >= BREAK_POINT.XXL}
+								isIconOnly={width < BREAK_POINT.XXL}
+								size={"lg"}
+								startContent={item.icon}
+								variant={pathname.startsWith(item.href) ? "flat" : "light"}
+								onPress={() => router.push(item.href)}
+							>
+								{width < BREAK_POINT.XXL ? '' : item.label}
+							</Button>
+						</Tooltip>
+						: <Button
+							key={item.href}
+							className={clsx("2xl:justify-start", {
+								// "text-default-400": !pathname.startsWith(item.href),
+							})}
+							color={pathname.startsWith(item.href) ? "primary" : "default"}
+							fullWidth={width >= BREAK_POINT.XXL}
+							isIconOnly={width < BREAK_POINT.XXL}
+							size={"lg"}
+							startContent={item.icon}
+							variant={pathname.startsWith(item.href) ? "flat" : "light"}
+							onPress={() => router.push(item.href)}
+						>
+							{width < BREAK_POINT.XXL ? '' : item.label}
+						</Button>
 				))}
 			</div>
 		</div>
