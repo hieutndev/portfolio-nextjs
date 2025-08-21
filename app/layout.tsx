@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 
 import "./globals.css";
 import clsx from "clsx";
@@ -25,6 +26,20 @@ export default function RootLayout({
 			suppressHydrationWarning
 			lang="en"
 		>
+			<head>
+				<Script
+					src="https://www.googletagmanager.com/gtag/js?id=G-3EM49Q4VD8"
+					strategy="afterInteractive"
+				/>
+				<Script id="google-analytics" strategy="afterInteractive">
+					{`
+						window.dataLayer = window.dataLayer || [];
+						function gtag(){dataLayer.push(arguments);}
+						gtag('js', new Date());
+						gtag('config', 'G-3EM49Q4VD8');
+					`}
+				</Script>
+			</head>
 			<body className={clsx("w-screen min-h-screen")}>
 				<Providers themeProps={{ defaultTheme: "light" }}>
 					<AppLayout>{children}</AppLayout>

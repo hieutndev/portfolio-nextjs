@@ -36,11 +36,11 @@ export default function AdminLayout({
     }, [pathname, getCookie("refresh_token")]);
 
     return (
-        <div className={"w-screen h-screen flex justify-start items-start"}>
-            <div className={"w-1/6 h-screen"}>
+        <div className={"w-screen h-screen flex justify-start items-start gap-4"}>
+            <div className={"w-32 max-w-1/12 2xl:w-1/6 h-screen"}>
                 <AdminSidebar />
             </div>
-            <div className={"w-5/6 h-full overflow-auto p-4"}>{children}</div>
+            <div className={"w-full max-w-11/12 2xl:w-5/6 h-full overflow-auto p-4"}>{children}</div>
         </div>
     );
 }

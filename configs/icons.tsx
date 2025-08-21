@@ -18,7 +18,6 @@ import {
 import { MdDelete, MdDeleteForever, MdEdit } from "react-icons/md";
 import { LuGlobe } from "react-icons/lu";
 import { BsShieldLockFill } from "react-icons/bs";
-import { PiCertificateFill } from "react-icons/pi";
 import {
   HiChevronDoubleLeft,
   HiChevronDoubleRight,
@@ -34,7 +33,8 @@ import {
   FcTemplate,
   FcWorkflow,
 } from "react-icons/fc";
-import { LuLogIn } from "react-icons/lu";
+import { LuLogIn, LuMousePointerClick, LuTimer, LuEye } from "react-icons/lu";
+
 
 const ICON_CONFIG = {
   MENU: <FaBars />,
@@ -42,7 +42,7 @@ const ICON_CONFIG = {
   NEXT: <FaAngleRight />,
   NEW: <FaPlus />,
   EDIT: <MdEdit />,
-  VIEW: <FaEye />,
+  // VIEW: <FaEye />,
   EYE: <FaEye />,
   MORE: <FaEllipsisVertical />,
   SOFT_DELETE: <MdDelete />,
@@ -64,7 +64,7 @@ const ICON_CONFIG = {
   // EDUCATION: <FaGraduationCap />,
   EDUCATION: <FcGraduationCap size={24} />,
   // CERTIFICATION: <PiCertificateFill />,
-  CERTIFICATION: <FcDiploma1  size={24} />,
+  CERTIFICATION: <FcDiploma1 size={24} />,
   // EMPLOYMENT: <FaBuilding />,
   EMPLOYMENT: <FcDepartment size={24} />,
   // PROJECT: <FaFileCode />,
@@ -80,6 +80,9 @@ const ICON_CONFIG = {
   GITHUB: <FaGithub />,
   LIVE_DEMO: <LuGlobe />,
   LOGIN: <LuLogIn />,
+  MOUSE_CLICK: <LuMousePointerClick />,
+  TIMER: <LuTimer />,
+  VIEW: <LuEye />,
 };
 
 export default ICON_CONFIG;

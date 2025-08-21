@@ -66,6 +66,13 @@ const API_ROUTE = {
   S3: {
     UPLOAD_IMAGE: "/s3",
     GET_IMAGE: (key: string)=> `/s3?key=${key}`
+  },
+  ANALYTICS: {
+    GET_DASHBOARD: "/analytics/dashboard",
+    GET_TRAFFIC: "/analytics/traffic",
+    GET_REVIEW_INSIGHTS: "/analytics/review-insights",
+    GET_TOP_PAGES: "/analytics/top-pages",
+    GET_TOP_QUERIES: "/analytics/top-queries"
   }
 };
 
