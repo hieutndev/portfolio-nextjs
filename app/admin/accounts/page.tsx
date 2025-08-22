@@ -61,7 +61,7 @@ export default function AccountManagementPage() {
     },
     {
       method: "GET",
-    }
+    },
   );
 
   const {
@@ -74,7 +74,7 @@ export default function AccountManagementPage() {
     {
       method: "PATCH",
       skip: true,
-    }
+    },
   );
 
   // Handle fetch accounts result
@@ -184,7 +184,8 @@ export default function AccountManagementPage() {
     <Container
       shadow
       className={"border border-gray-200 rounded-2xl"}
-      orientation={"vertical"}>
+      orientation={"vertical"}
+    >
       <AdminHeader
         breadcrumbs={["Admin", "Account Management"]}
         title="Account Management"
@@ -196,7 +197,8 @@ export default function AccountManagementPage() {
             <Button
               color="primary"
               startContent={ICON_CONFIG.NEW}
-              onPress={() => mapAction(null, "create")}>
+              onPress={() => mapAction(null, "create")}
+            >
               Create Account
             </Button>
           </div>
@@ -213,18 +215,20 @@ export default function AccountManagementPage() {
           aria-label="Accounts table"
           classNames={{
             wrapper: "h-[60vh]",
-          }}>
+          }}
+        >
           <TableHeader columns={columns}>
             {(column) => (
               <TableColumn
                 key={column.key}
                 align={
                   ["action", "status", "role", "created_at"].includes(
-                    column.key
+                    column.key,
                   )
                     ? "center"
                     : "start"
-                }>
+                }
+              >
                 {column.label}
               </TableColumn>
             )}
@@ -233,7 +237,8 @@ export default function AccountManagementPage() {
             emptyContent="No accounts found"
             isLoading={fetchingAccounts}
             items={accounts}
-            loadingContent={<Spinner label="Loading accounts..." />}>
+            loadingContent={<Spinner label="Loading accounts..." />}
+          >
             {(account) => (
               <TableRow key={account.user_id}>
                 <TableCell>{account.username}</TableCell>
@@ -242,7 +247,8 @@ export default function AccountManagementPage() {
                   <Chip
                     color={account.role === 0 ? "success" : "danger"}
                     size="sm"
-                    variant="flat">
+                    variant="flat"
+                  >
                     {account.role === 0 ? "User" : "Admin"}
                   </Chip>
                 </TableCell>
@@ -253,19 +259,30 @@ export default function AccountManagementPage() {
                   <Chip
                     color={account.is_active === 1 ? "success" : "danger"}
                     size="sm"
-                    variant="flat">
+                    variant="flat"
+                  >
                     {account.is_active === 1 ? "Active" : "Blocked"}
                   </Chip>
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-center gap-2">
+                    <Button
+                      isIconOnly
+                      color="secondary"
+                      size="sm"
+                      variant="flat"
+                    >
+                      {ICON_CONFIG.PASSWORD}
+                    </Button>
+
                     {account.is_active === 1 ? (
                       <Button
                         isIconOnly
                         color="danger"
                         size="sm"
                         variant="flat"
-                        onPress={() => mapAction(account, "block")}>
+                        onPress={() => mapAction(account, "block")}
+                      >
                         {ICON_CONFIG.BLOCK}
                       </Button>
                     ) : (
@@ -274,7 +291,8 @@ export default function AccountManagementPage() {
                         color="success"
                         size="sm"
                         variant="flat"
-                        onPress={() => mapAction(account, "unblock")}>
+                        onPress={() => mapAction(account, "unblock")}
+                      >
                         {ICON_CONFIG.UNBLOCK}
                       </Button>
                     )}
@@ -302,7 +320,8 @@ export default function AccountManagementPage() {
         placement="top"
         scrollBehavior="inside"
         size="2xl"
-        onOpenChange={onOpenChange}>
+        onOpenChange={onOpenChange}
+      >
         <ModalContent>
           <ModalHeader>
             <h3 className="text-xl">Create account</h3>
