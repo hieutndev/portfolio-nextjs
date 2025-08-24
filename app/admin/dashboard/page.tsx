@@ -7,7 +7,6 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 import MetricCard from '@/components/shared/metric-card';
 import { formatTime } from '@/utils/date';
 import { listMetrics, listPeriods, TPeriod } from '@/types/analytics';
-import Container from '@/components/shared/container/container';
 
 export default function DashboardPage() {
   const {

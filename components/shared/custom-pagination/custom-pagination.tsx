@@ -43,19 +43,20 @@ export default function CustomPagination({
 					<div className="flex items-center gap-2 border-l pl-4 border-default-200">
 						<span className="text-tiny text-default-500">Show:</span>
 						<Select
-							size={"sm"}
-							radius={"lg"}
-							selectedKeys={[itemsPerPage.toString()]}
-							onSelectionChange={(keys) => {
-								const selectedValue = Array.from(keys)[0] as string;
-								onItemsPerPageChange(parseInt(selectedValue));
-							}}
 							className={"w-16"}
 							classNames={{
 								listboxWrapper: "min-w-max",
 								popoverContent: "p-0 rounded-lg"
 							}}
+							radius={"lg"}
+							selectedKeys={[itemsPerPage.toString()]}
+							size={"sm"}
 							variant={"underlined"}
+							onSelectionChange={(keys) => {
+								const selectedValue = Array.from(keys)[0] as string;
+
+								onItemsPerPageChange(parseInt(selectedValue));
+							}}
 						>
 							{itemsPerPageOptions.map((option) => (
 								<SelectItem key={option.toString()}>
@@ -70,13 +71,13 @@ export default function CustomPagination({
 			{/* HeroUI Pagination */}
 			{totalPages > 0 && (
 				<HeroUIPagination
-					total={totalPages}
-					page={currentPage}
-					onChange={onPageChange}
 					showControls
 					showShadow
 					color="primary"
+					page={currentPage}
 					size="sm"
+					total={totalPages}
+					onChange={onPageChange}
 				/>
 			)}
 		</div>

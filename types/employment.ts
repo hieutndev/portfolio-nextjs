@@ -3,7 +3,7 @@ export type TEmployment = {
   title: string;
   organization: string;
   time_start: string;
-  time_end: string;
+  time_end: string | null;
   created_at: string;
   updated_at: string;
   is_deleted: number;

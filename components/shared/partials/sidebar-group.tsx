@@ -24,7 +24,6 @@ const SidebarGroup = ({
   isCloseDefault,
   onItemClick,
 }: SidebarGroupProps) => {
-  const router = useRouter();
   const pathname = usePathname();
   const [isFold, setIsFold] = useState<boolean>(isCloseDefault);
 

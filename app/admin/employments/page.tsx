@@ -336,7 +336,7 @@ export default function EmploymentManagementPage() {
 								<TableCell>{employment.organization}</TableCell>
 								<TableCell>
 									{formatDate(employment.time_start, "onlyDate")} -{" "}
-									{formatDate(employment.time_end, "onlyDate")}
+									{employment.time_end ? formatDate(employment.time_end, "onlyDate") : "Present"}
 								</TableCell>
 								<TableCell>
 									<Chip

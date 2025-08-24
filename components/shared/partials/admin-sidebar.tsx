@@ -33,7 +33,7 @@ export default function AdminSidebar() {
 			<div className={"w-full flex flex-col items-center 2xl:items-start gap-4"}>
 				{SITE_CONFIG.ADMIN_SIDEBAR_ITEMS.map((item) => (
 					width < BREAK_POINT.XXL
-						? <Tooltip key={item.href} content={item.label} showArrow={true} placement={"right"}>
+						? <Tooltip key={item.href} content={item.label} placement={"right"} showArrow={true}>
 							<Button
 								className={clsx("2xl:justify-start", {
 									// "text-default-400": !pathname.startsWith(item.href),

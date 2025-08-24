@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { addToast, Input, DateRangePicker, RangeValue } from "@heroui/react";
+import { addToast, Input, DatePicker, Checkbox } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { DateValue, parseDate } from "@internationalized/date";
 import moment from "moment";
@@ -33,14 +33,15 @@ export default function EmploymentFormComponent({ mode, defaultValues, employmen
 		time_end: "",
 	});
 
-	const [datePicked, setDatePicked] = useState<RangeValue<DateValue> | null>(
-		mode === "create"
-			? {
-					start: parseDate(moment().format("YYYY-MM-DD")),
-					end: parseDate(moment().add(1, "month").format("YYYY-MM-DD")),
-			  }
-			: null
+	const [startDate, setStartDate] = useState<DateValue | undefined>(
+		mode === "create" ? parseDate(moment().format("YYYY-MM-DD")) : undefined
 	);
+
+	const [endDate, setEndDate] = useState<DateValue | undefined>(
+		mode === "create" ? parseDate(moment().add(1, "month").format("YYYY-MM-DD")) : undefined
+	);
+
+	const [isCurrentlyWorking, setIsCurrentlyWorking] = useState<boolean>(false);
 
 	/* HANDLE FETCH EMPLOYMENT DETAILS (for edit mode) */
 	const {
@@ -66,34 +67,32 @@ export default function EmploymentFormComponent({ mode, defaultValues, employmen
 	useEffect(() => {
 		if (mode === "update" && fetchEmploymentResult && fetchEmploymentResult.results) {
 			const employment = fetchEmploymentResult.results;
+
 			const formattedData = {
 				title: employment.title,
 				organization: employment.organization,
 				time_start: formatDate(employment.time_start, "onlyDateReverse"),
-				time_end: formatDate(employment.time_end, "onlyDateReverse"),
+				time_end: employment.time_end ? formatDate(employment.time_end, "onlyDateReverse") : null,
 			};
 
 			setEmploymentData(formattedData);
 
-			// Set date picker values
-			setDatePicked({
-				start: parseDate(formattedData.time_start),
-				end: parseDate(formattedData.time_end),
-			});
+			// Set individual date picker values
+			setStartDate(parseDate(formattedData.time_start));
+			setEndDate(formattedData.time_end ? parseDate(formattedData.time_end) : undefined);
 		} else if (mode === "create" && defaultValues) {
-			// If we have default values for create mode
+
 			const formattedData = {
 				title: defaultValues.title,
 				organization: defaultValues.organization,
 				time_start: formatDate(defaultValues.time_start, "onlyDateReverse"),
-				time_end: formatDate(defaultValues.time_end, "onlyDateReverse"),
+				time_end: defaultValues.time_end ? formatDate(defaultValues.time_end, "onlyDateReverse") : null,
 			};
 
 			setEmploymentData(formattedData);
-			setDatePicked({
-				start: parseDate(formattedData.time_start),
-				end: parseDate(formattedData.time_end),
-			});
+
+			setStartDate(parseDate(formattedData.time_start));
+			setEndDate(formattedData.time_end ? parseDate(formattedData.time_end) : undefined);
 		}
 
 		if (fetchEmploymentError) {
@@ -144,16 +143,23 @@ export default function EmploymentFormComponent({ mode, defaultValues, employmen
 		}
 	}, [submitResult, submitError, mode, router, onSuccess]);
 
-	// Update employment data when date range changes
+	// Update employment data when dates change
 	useEffect(() => {
-		if (datePicked?.start && datePicked?.end) {
-			setEmploymentData((prev) => ({
-				...prev,
-				time_start: datePicked.start.toString(),
-				time_end: datePicked.end.toString(),
-			}));
+		setEmploymentData((prev) => ({
+			...prev,
+			time_start: startDate ? startDate.toString() : "",
+			time_end: isCurrentlyWorking ? null : (endDate ? endDate.toString() : ""),
+		}));
+	}, [startDate, endDate, isCurrentlyWorking]);
+
+	// Handle currently working checkbox change
+	const handleCurrentlyWorkingChange = (isSelected: boolean) => {
+		setIsCurrentlyWorking(isSelected);
+
+		if (isSelected) {
+			setEndDate(undefined);
 		}
-	}, [datePicked]);
+	};
 
 	const handleSubmit = () => {
 		// Validate required fields
@@ -167,16 +173,26 @@ export default function EmploymentFormComponent({ mode, defaultValues, employmen
 			return;
 		}
 
-		if (!datePicked?.start || !datePicked?.end) {
+		if (!startDate) {
 			addToast({
 				title: "Error",
-				description: "Please select start and end dates",
+				description: "Please select a start date",
 				color: "danger",
 			});
 
 			return;
 		}
-		console.log("submit");
+
+		// Only validate end date if not currently working
+		if (!isCurrentlyWorking && !endDate) {
+			addToast({
+				title: "Error",
+				description: "Please select an end date or check 'Currently working here'",
+				color: "danger",
+			});
+
+			return;
+		}
 
 		submitEmployment({
 			body: employmentData,
@@ -224,15 +240,38 @@ export default function EmploymentFormComponent({ mode, defaultValues, employmen
 				/>
 			</div>
 
-			<DateRangePicker
-				isRequired
-				aria-label={"Employment duration"}
-				label={"Employment Duration"}
-				labelPlacement={"outside"}
-				value={datePicked}
-				variant={"bordered"}
-				onChange={setDatePicked}
-			/>
+			<div className={"grid grid-cols-2 gap-4"}>
+				<DatePicker
+					isRequired
+					label={"Start Date"}
+					labelPlacement={"outside"}
+					name={"time_start"}
+					value={startDate}
+					variant={"bordered"}
+					onChange={(value) => setStartDate(value || undefined)}
+				/>
+
+				<DatePicker
+					isDisabled={isCurrentlyWorking}
+					isRequired={!isCurrentlyWorking}
+					label={"End Date"}
+					labelPlacement={"outside"}
+					name={"time_end"}
+					value={endDate}
+					variant={"bordered"}
+					onChange={(value) => setEndDate(value || undefined)}
+				/>
+			</div>
+
+			<div className="flex justify-end">
+				<Checkbox
+					isSelected={isCurrentlyWorking}
+					name="isCurrentlyWorking"
+					onValueChange={handleCurrentlyWorkingChange}
+				>
+					Currently working here?
+				</Checkbox>
+			</div>
 		</CustomForm>
 	);
 }

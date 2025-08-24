@@ -54,10 +54,10 @@ const EmploymentSection = () => {
 						<AchievementRow
 							key={index}
 							organization={_.organization}
-							time={`${formatDate(_.time_start, "onlyMonthYear")} - ${formatDate(
+							time={`${formatDate(_.time_start, "onlyMonthYear")} - ${_.time_end ? formatDate(
 								_.time_end,
 								"onlyMonthYear"
-							)}`}
+							) : "Present"}`}
 							title={_.title}
 						/>
 					))
