@@ -7,7 +7,7 @@ import Container from "@/components/shared/container/container";
 
 const SkillIconBlock = ({ iconPath }: { iconPath: string }) => (
 	<div className={clsx("h-12 w-12", "xl:w-14 xl:h-14", "lg:w-12 lg:h-12", "")}>
-		<Image src={iconPath} />
+		<Image className="w-full h-full" radius="none" src={iconPath} />
 	</div>
 );
 
