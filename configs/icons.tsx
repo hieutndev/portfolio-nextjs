@@ -17,7 +17,8 @@ import {
   FaUserGroup,
   FaUserLarge,
   FaUsers,
-  FaUser
+  FaUser,
+  FaWandMagicSparkles
 } from "react-icons/fa6";
 import { MdDelete, MdDeleteForever, MdEdit, MdSupervisorAccount } from "react-icons/md";
 import { BsShieldLockFill } from "react-icons/bs";
@@ -90,6 +91,7 @@ const ICON_CONFIG = {
   VISITORS: <LuUsers />,
   NEW_VISITORS: <LuUserPlus />,
   USER_SESSIONS: <LuUserRoundCog  />,
+  GENERATE: <FaWandMagicSparkles />
 };
 
 export default ICON_CONFIG;

@@ -162,12 +162,16 @@ export default function ProjectManagement() {
 			return;
 		}
 
+		console.log(fetchProjectResult?.results)
+		console.log(fetchProjectResult?.results?.find(item => item.id == selectedId))
+		console.log(fetchProjectResult?.results?.find(item => item.id == selectedId)?.slug)
+
 		switch (tableAction) {
 			case "view":
-				window.open(ROUTE_PATH.CLIENT.PROJECT.DETAILS(selectedId));
+				window.open(ROUTE_PATH.CLIENT.PROJECT.DETAILS(fetchProjectResult?.results?.find(item => item.id == selectedId)?.slug ?? -1));
 				break;
 			case "edit":
-				router.push(ROUTE_PATH.ADMIN.PROJECT.EDIT(selectedId));
+				router.push(ROUTE_PATH.ADMIN.PROJECT.EDIT(fetchProjectResult?.results?.find(item => item.id == selectedId)?.slug ?? -1));
 				break;
 			case "softdel":
 				deleteProject();

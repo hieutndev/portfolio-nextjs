@@ -8,7 +8,8 @@ import ProjectFormMarkDownComponent from "@/components/pages/projects/project-fo
 export default function NewProjectPage() {
 	return (
 		<Container
-			className={"gap-4 h-max"}
+			shadow
+			className={"border border-default-200 rounded-2xl h-max"}
 			orientation={"vertical"}
 		>
 			<AdminHeader

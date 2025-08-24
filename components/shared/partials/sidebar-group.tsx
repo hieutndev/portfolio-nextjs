@@ -67,8 +67,10 @@ const SidebarGroup = ({
           }
         )}
         onClick={onItemClick}>
-        {groupItems.map((item) => (
-          <Link
+        {groupItems.map((item) => {
+          console.log("🚀 ~ item:", item)
+          
+          return <Link
             key={item.href}
             className={
               clsx("text-left relative w-full cursor-pointer group hover:pl-2 transition-all duration-300 group", {
@@ -92,7 +94,7 @@ const SidebarGroup = ({
               {item.title}
             </p>
           </Link>
-        ))}
+        })}
       </button>
     </div>
   );

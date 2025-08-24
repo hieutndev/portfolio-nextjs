@@ -17,7 +17,7 @@ import {
   useDisclosure,
   Image,
 } from "@heroui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { DateValue, parseDate } from "@internationalized/date";
 import moment from "moment";
@@ -38,6 +38,7 @@ import {
   TUpdateProject,
 } from "@/types/project";
 import { formatDate } from "@/utils/date";
+import { generateSlug, isValidSlug } from "@/utils/slug";
 import { SAMPLE_MARKDOWN } from "@/utils/sample-data/markdown-editor";
 
 // Dynamic import for MDXEditor with SSR disabled
@@ -138,6 +139,7 @@ export default function ProjectFormMarkDownComponent({
   >({
     project_fullname: "",
     project_shortname: "",
+    slug: "",
     start_date: "",
     end_date: "",
     project_thumbnail: null,
@@ -208,7 +210,7 @@ export default function ProjectFormMarkDownComponent({
     fetch: fetchProjectDetail,
   } = useFetch<IAPIResponse<TProjectResponse>>(
     mode === "edit" && projectId
-      ? API_ROUTE.PROJECT.GET_ONE(parseInt(projectId))
+      ? API_ROUTE.PROJECT.GET_ONE(projectId)
       : "",
     {
       skip: mode === "create" || !projectId,
@@ -304,7 +306,7 @@ export default function ProjectFormMarkDownComponent({
   } = useFetch(
     mode === "create"
       ? API_ROUTE.PROJECT.NEW
-      : API_ROUTE.PROJECT.UPDATE_PROJECT(parseInt(projectId!)),
+      : API_ROUTE.PROJECT.UPDATE_PROJECT(projectId!),
     {
       method: mode === "create" ? "POST" : "PATCH",
       skip: true,
@@ -357,11 +359,23 @@ export default function ProjectFormMarkDownComponent({
     if (
       !projectDetails.project_fullname ||
       !projectDetails.project_shortname ||
+      !projectDetails.slug ||
       !projectDetails.short_description
     ) {
       addToast({
         title: "Error",
         description: "Please fill in all required fields",
+        color: "danger",
+      });
+
+      return;
+    }
+
+    // Validate slug format
+    if (!isValidSlug(projectDetails.slug)) {
+      addToast({
+        title: "Error",
+        description: "Please provide a valid slug (lowercase letters, numbers, and hyphens only)",
         color: "danger",
       });
 
@@ -382,7 +396,7 @@ export default function ProjectFormMarkDownComponent({
 
     // Handle file uploads
     if (mode === "create" && !projectDetails.project_thumbnail) {
-       addToast({
+      addToast({
         title: "Error",
         description: "Please upload a project thumbnail",
         color: "danger",
@@ -420,6 +434,7 @@ export default function ProjectFormMarkDownComponent({
       "project_shortname",
       projectDetails.project_shortname
     );
+    submitFormData.append("slug", projectDetails.slug);
     submitFormData.append(
       "short_description",
       projectDetails.short_description
@@ -623,29 +638,101 @@ export default function ProjectFormMarkDownComponent({
     }
   };
 
+  // Optimized callback handlers to prevent re-renders
+  const handleProjectFullNameChange = useCallback((value: string) => {
+    setProjectDetails((prev) => ({ ...prev, project_fullname: value }));
+  }, []);
+
+  const handleProjectShortNameChange = useCallback((value: string) => {
+    setProjectDetails((prev) => ({ ...prev, project_shortname: value }));
+  }, []);
+
+  const handleDescriptionChange = useCallback((value: string) => {
+    setProjectDetails((prev) => ({ ...prev, short_description: value }));
+  }, []);
+
+  const handleGithubLinkChange = useCallback((value: string) => {
+    setProjectDetails((prev) => ({ ...prev, github_link: value }));
+  }, []);
+
+  const handleDemoLinkChange = useCallback((value: string) => {
+    setProjectDetails((prev) => ({ ...prev, demo_link: value }));
+  }, []);
+
+  const handleGroupSelection = useCallback((keys: any) => {
+    const selectedKey = Array.from(keys)[0] as string;
+
+    setProjectDetails((prev) => ({
+      ...prev,
+      group_id: selectedKey ? parseInt(selectedKey) : null,
+    }));
+  }, []);
+
+  // Effect to auto-generate slug from project name with debouncing
   useEffect(() => {
-    setProjectDetails((prev) => ({ ...prev, article_body: convertText }));
+    if (projectDetails.project_fullname) {
+      const debounceTimer = setTimeout(() => {
+        const generatedSlug = generateSlug(projectDetails.project_fullname);
+
+        setProjectDetails((prev) => ({
+          ...prev,
+          slug: generatedSlug,
+        }));
+      }, 300); // 300ms debounce
+
+      return () => clearTimeout(debounceTimer);
+    }
+  }, [projectDetails.project_fullname]);
+
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      setProjectDetails((prev) => ({ ...prev, article_body: convertText }));
+    }, 500); // 500ms debounce for markdown content
+
+    return () => clearTimeout(debounceTimer);
   }, [convertText]);
+
+  // Memoized values to prevent unnecessary re-calculations
+  const selectedGroupKeys = useMemo(
+    () => (projectDetails.group_id ? [projectDetails.group_id.toString()] : []),
+    [projectDetails.group_id]
+  );
+
+  // Memoized editor to prevent unnecessary re-renders
+  const MemoizedEditor = useMemo(
+    () => (
+      <ForwardRefEditor
+        key={`mdx-editor-${mode}-${projectId || "new"}-${convertText ? "with-content" : "empty"}`}
+        ref={mdxEditorRef}
+        className="min-h-[400px] w-full"
+        imageUploadHandler={handleUploadImage}
+        markdown={convertText}
+        placeholder="Write your project article here using Markdown..."
+        onChange={setConvertText}
+        onEditorReady={() => setIsEditorReady(true)}
+      />
+    ),
+    [mode, projectId, convertText, handleUploadImage]
+  );
 
   const isLoading = submitting || (mode === "edit" && fetchingProjectDetail);
 
   return (
-    <div
-      className={
-        "w-full border border-default-200 bg-white rounded-2xl shadow-lg p-4 flex flex-col gap-4"
-      }>
+    <div>
       <CustomForm
-        className={"w-full flex flex-col gap-4"}
+        className={"w-full h-max flex flex-col gap-4"}
         formId={`${mode}ProjectForm`}
         isLoading={isLoading}
         useCtrlSKey={true}
         useEnterKey={false}
-        onSubmit={handleSubmit}>
-        <div className={"w-full flex flex-col gap-2"}>
+        onSubmit={handleSubmit}
+      >
+        <div className={"w-full h-max flex flex-col gap-4"}>
           <h3 className={"text-xl font-semibold"}>Project Information</h3>
           <div className={"w-full grid grid-cols-3 gap-4"}>
             <Input
               isRequired
+              className={"col-span-3"}
               label={"Full Project Name"}
               labelPlacement={"outside"}
               name={"project_fullname"}
@@ -653,12 +740,7 @@ export default function ProjectFormMarkDownComponent({
               type={"text"}
               value={projectDetails.project_fullname}
               variant={"bordered"}
-              onValueChange={(value) =>
-                setProjectDetails((prev) => ({
-                  ...prev,
-                  project_fullname: value,
-                }))
-              }
+              onValueChange={handleProjectFullNameChange}
             />
             <Input
               isRequired
@@ -669,9 +751,18 @@ export default function ProjectFormMarkDownComponent({
               type={"text"}
               value={projectDetails.project_shortname}
               variant={"bordered"}
-              onValueChange={(e) =>
-                setProjectDetails((prev) => ({ ...prev, project_shortname: e }))
-              }
+              onValueChange={handleProjectShortNameChange}
+            />
+            <Input
+              isReadOnly
+              isRequired
+              label={"Slug"}
+              labelPlacement={"outside"}
+              name={"slug"}
+              placeholder={"URL-friendly version (auto-generated)"}
+              type={"text"}
+              value={projectDetails.slug}
+              variant={"bordered"}
             />
             <Select
               isLoading={fetchingProjectGroups}
@@ -679,20 +770,9 @@ export default function ProjectFormMarkDownComponent({
               label={"Select group"}
               labelPlacement={"outside"}
               placeholder={"Select project group"}
-              selectedKeys={
-                projectDetails.group_id
-                  ? [projectDetails.group_id.toString()]
-                  : []
-              }
+              selectedKeys={selectedGroupKeys}
               variant={"bordered"}
-              onSelectionChange={(keys) => {
-                const selectedKey = Array.from(keys)[0] as string;
-
-                setProjectDetails((prev) => ({
-                  ...prev,
-                  group_id: selectedKey ? parseInt(selectedKey) : null,
-                }));
-              }}>
+              onSelectionChange={handleGroupSelection}>
               {(item) => (
                 <SelectItem key={item.group_id}>{item.group_title}</SelectItem>
               )}
@@ -710,12 +790,7 @@ export default function ProjectFormMarkDownComponent({
                 }
                 value={projectDetails.short_description}
                 variant={"bordered"}
-                onValueChange={(e) =>
-                  setProjectDetails((prev) => ({
-                    ...prev,
-                    short_description: e,
-                  }))
-                }
+                onValueChange={handleDescriptionChange}
               />
             </div>
             <DateRangePicker
@@ -735,12 +810,7 @@ export default function ProjectFormMarkDownComponent({
               type={"text"}
               value={projectDetails.github_link || ""}
               variant={"bordered"}
-              onValueChange={(e) =>
-                setProjectDetails((prev) => ({
-                  ...prev,
-                  github_link: e,
-                }))
-              }
+              onValueChange={handleGithubLinkChange}
             />
             <Input
               label={"Demo"}
@@ -750,12 +820,7 @@ export default function ProjectFormMarkDownComponent({
               type={"text"}
               value={projectDetails.demo_link || ""}
               variant={"bordered"}
-              onValueChange={(e) =>
-                setProjectDetails((prev) => ({
-                  ...prev,
-                  demo_link: e,
-                }))
-              }
+              onValueChange={handleDemoLinkChange}
             />
             <div className={"col-span-3 grid grid-cols-2 gap-4"}>
               <Input
@@ -810,7 +875,7 @@ export default function ProjectFormMarkDownComponent({
           (currentThumbnail || listCurrentImages.length > 0) && (
             <>
               <Divider />
-              <div className={"w-full flex flex-col gap-2"}>
+              <div className={"w-full flex flex-col gap-4"}>
                 <h3 className={"text-lg font-semibold"}>Project Images</h3>
                 <div className={"w-full grid grid-cols-6 gap-4"}>
                   {/* Current Thumbnail */}
@@ -858,23 +923,14 @@ export default function ProjectFormMarkDownComponent({
             </>
           )}
         <Divider />
-        <div className={"w-full flex flex-col gap-2"}>
+        <div className={"w-full flex flex-col gap-4"}>
           <h3 className={"text-lg font-semibold"}>Project Article</h3>
           <div className="w-full">
             <p className="text-sm text-foreground pb-1.5 block">
               Article Content
             </p>
             <div className="border border-default-200 rounded-lg overflow-hidden bg-white shadow-sm">
-              <ForwardRefEditor
-                key={`mdx-editor-${mode}-${projectId || "new"}-${convertText ? "with-content" : "empty"}`}
-                ref={mdxEditorRef}
-                className="min-h-[400px] w-full"
-                imageUploadHandler={handleUploadImage}
-                markdown={convertText}
-                placeholder="Write your project article here using Markdown..."
-                onChange={setConvertText}
-                onEditorReady={() => setIsEditorReady(true)}
-              />
+              {MemoizedEditor}
             </div>
             <p className="text-xs text-gray-500 mt-1">
               Use Markdown syntax to format your content. You can switch to

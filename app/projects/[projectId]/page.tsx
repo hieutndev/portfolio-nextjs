@@ -16,17 +16,10 @@ interface ProjectBlogPageProps {
 // Generate metadata for SEO
 export async function generateMetadata({ params }: ProjectBlogPageProps): Promise<Metadata> {
     const { projectId } = await params;
-    const numericProjectId = parseInt(projectId, 10);
-
-    if (isNaN(numericProjectId)) {
-        return {
-            title: "Project Not Found",
-            description: "The requested project could not be found.",
-        };
-    }
-
+    
+    // Try to fetch project by ID or slug
     const response = await nonAuthFetch<TProject>(
-        API_ROUTE.PROJECT.GET_ONE(numericProjectId),
+        API_ROUTE.PROJECT.GET_ONE(projectId),
         {
             revalidate: 3600,
         }
@@ -55,16 +48,9 @@ export async function generateMetadata({ params }: ProjectBlogPageProps): Promis
 export default async function ProjectBlogPage({ params }: ProjectBlogPageProps) {
     const { projectId } = await params;
 
-    // Convert projectId to number since the API expects a number
-    const numericProjectId = parseInt(projectId, 10);
-
-    if (isNaN(numericProjectId)) {
-        notFound();
-    }
-
-    // Fetch project data on the server
+    // Fetch project data on the server (handles both ID and slug)
     const response = await nonAuthFetch<TProject>(
-        API_ROUTE.PROJECT.GET_ONE(numericProjectId),
+        API_ROUTE.PROJECT.GET_ONE(projectId),
         {
             // Revalidate every hour to keep data fresh
             revalidate: 3600,

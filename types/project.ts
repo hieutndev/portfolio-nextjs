@@ -2,6 +2,7 @@ export type TProject = {
   id: number;
   project_fullname: string;
   project_shortname: string;
+  slug: string;
   start_date: string;
   end_date: string;
   short_description: string;
@@ -40,6 +41,7 @@ export type TNewProject = Pick<
   TProjectResponse,
   | "project_fullname"
   | "project_shortname"
+  | "slug"
   | "start_date"
   | "end_date"
   | "short_description"

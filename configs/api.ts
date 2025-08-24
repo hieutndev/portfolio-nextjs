@@ -9,7 +9,7 @@ const API_ROUTE = {
   PROJECT: {
     GET_ALL: "/projects",
     GET_TOP_VIEWED: "/projects/top-viewed",
-    GET_ONE: (projectId: TProject["id"]) => `/projects/${projectId}`,
+    GET_ONE: (projectId: TProject["id"] | string) => `/projects/${projectId}`,
     NEW: "/projects",
     GET_ALL_GROUP: "/projects/groups",
     NEW_GROUP: "/projects/groups",
@@ -21,9 +21,9 @@ const API_ROUTE = {
       `/projects/groups/${groupId}/recover`,
     DELETE_GROUP: (groupId: TProjectGroup["group_id"]) =>
       `/projects/groups/${groupId}`,
-    UPDATE_PROJECT: (projectId: TProjectGroup["group_id"]) =>
+    UPDATE_PROJECT: (projectId: TProject["id"] | string) =>
       `/projects/${projectId}`,
-    DELETE_PROJECT: (projectId: TProjectGroup["group_id"]) =>
+    DELETE_PROJECT: (projectId: TProject["id"] | string) =>
       `/projects/${projectId}`,
   },
   EDUCATION: {

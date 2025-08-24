@@ -36,6 +36,7 @@ import { useFetch } from "@/hooks/useFetch";
 import { IAPIResponse } from "@/types/global";
 import { TProjectGroup, TProjectImage, TProjectResponse, TNewProject, TUpdateProject } from "@/types/project";
 import { formatDate } from "@/utils/date";
+import { generateSlug, isValidSlug } from "@/utils/slug";
 
 
 import "@writergate/quill-image-uploader-nextjs/dist/quill.imageUploader.min.css";
@@ -90,7 +91,7 @@ const ReactQuill = dynamic(
 interface ProjectFormQuillProps {
 	mode: "create" | "edit";
 	defaultValues?: TProjectResponse;
-	projectId?: number;
+	projectId?: number | string;
 }
 
 export default function ProjectFormQuillComponent({ mode, defaultValues, projectId }: ProjectFormQuillProps) {
@@ -100,6 +101,7 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 	const [projectDetails, setProjectDetails] = useState<TNewProject | TUpdateProject>({
 		project_fullname: "",
 		project_shortname: "",
+		slug: "",
 		start_date: "",
 		end_date: "",
 		project_thumbnail: null,
@@ -135,6 +137,18 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 	useEffect(() => {
 		fetchProjectGroups();
 	}, []);
+
+	// Effect to auto-generate slug from project name
+	useEffect(() => {
+		if (projectDetails.project_fullname) {
+			const generatedSlug = generateSlug(projectDetails.project_fullname);
+
+			setProjectDetails((prev) => ({
+				...prev,
+				slug: generatedSlug,
+			}));
+		}
+	}, [projectDetails.project_fullname]);
 
 	useEffect(() => {
 		if (fetchProjectGroupsResult && fetchProjectGroupsResult.results) {
@@ -263,11 +277,23 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 		if (
 			!projectDetails.project_fullname ||
 			!projectDetails.project_shortname ||
+			!projectDetails.slug ||
 			!projectDetails.short_description
 		) {
 			addToast({
 				title: "Error",
 				description: "Please fill in all required fields",
+				color: "danger",
+			});
+
+			return;
+		}
+
+		// Validate slug format
+		if (!isValidSlug(projectDetails.slug)) {
+			addToast({
+				title: "Error",
+				description: "Please provide a valid slug (lowercase letters, numbers, and hyphens only)",
 				color: "danger",
 			});
 
@@ -289,6 +315,7 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 		// Append basic project information
 		submitFormData.append("project_fullname", projectDetails.project_fullname);
 		submitFormData.append("project_shortname", projectDetails.project_shortname);
+		submitFormData.append("slug", projectDetails.slug);
 		submitFormData.append("short_description", projectDetails.short_description);
 		submitFormData.append("github_link", projectDetails.github_link || "");
 		submitFormData.append("demo_link", projectDetails.demo_link || "");
@@ -506,6 +533,17 @@ export default function ProjectFormQuillComponent({ mode, defaultValues, project
 							value={projectDetails.project_shortname}
 							variant={"bordered"}
 							onValueChange={(e) => setProjectDetails((prev) => ({ ...prev, project_shortname: e }))}
+						/>
+						<Input
+							isReadOnly
+							isRequired
+							label={"Slug"}
+							labelPlacement={"outside"}
+							name={"slug"}
+							placeholder={"URL-friendly version (auto-generated)"}
+							type={"text"}
+							value={projectDetails.slug}
+							variant={"bordered"}
 						/>
 						<Select
 							isLoading={fetchingProjectGroups}

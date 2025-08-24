@@ -14,7 +14,8 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
 
 	return (
 		<Container
-			className={"gap-4"}
+			shadow
+			className={"border border-default-200 rounded-2xl h-max"}
 			orientation={"vertical"}
 		>
 			<AdminHeader
