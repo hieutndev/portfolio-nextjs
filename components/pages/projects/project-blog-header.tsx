@@ -5,6 +5,7 @@ import { Avatar, Divider, Image } from "@heroui/react";
 import Container from "@/components/shared/container/container";
 import { TProject } from "@/types/project";
 import { formatDate, getLastUpdatedTime } from "@/utils/date";
+import ICON_CONFIG from "@/configs/icons";
 
 interface ProjectBlogHeaderProps {
   project: TProject;
@@ -35,6 +36,11 @@ export default function ProjectBlogHeader({ project }: ProjectBlogHeaderProps) {
               Posted on {formatDate(project.created_at, "onlyDate")}
             </p>
           )}
+          <Divider orientation="vertical" />
+          <div className={"flex items-center justify-start gap-1 text-gray-400"}>
+            {ICON_CONFIG.VIEW}
+            <p>{project.views}</p>
+          </div>
         </div>
       </div>
       <Image

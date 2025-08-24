@@ -1,14 +1,15 @@
-import { Card, CardBody, CardHeader } from '@heroui/react';
+import { Card, CardBody } from '@heroui/react';
 import React from 'react';
 
 interface TMetricCardProps {
   title: string;
   value: number | string;
-  previousValue?: number;
+  diffValue?: number | string;
   changePercentage?: number;
   changeType?: 'increase' | 'decrease' | 'neutral';
   icon?: React.ReactNode;
   suffix?: string;
+  description: string;
   className?: string;
 }
 
@@ -26,11 +27,12 @@ const formatNumber = (num: number): string => {
 export default function MetricCard({
   title,
   value,
-  previousValue,
+  diffValue,
   changePercentage,
   changeType,
   icon,
   suffix,
+  description,
   className
 }: TMetricCardProps) {
   const getChangeColor = () => {
@@ -51,6 +53,7 @@ export default function MetricCard({
     return formatNumber(val) + (suffix ?? '');
   };
 
+
   return (
     <Card className={className}>
       <CardBody className="p-4 gap-4">
@@ -58,15 +61,26 @@ export default function MetricCard({
           {icon && <div className="text-default-400 text-xl">{icon}</div>}
           <small className="text-sm text-default-500 font-medium">{title}</small>
         </div>
-        <p className={`${getChangeColor()} text-4xl font-bold`}>{formatValue(value)}</p>
-        {changePercentage !== undefined && (
+        <div className={'flex flex-row gap-2 items-end'}>
+          <p className={`${getChangeColor()} text-4xl font-bold`}>{formatValue(value)}</p>
+        </div>
+        {(
           <div className="flex items-center mt-2">
             <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getChangeBgColor()} ${getChangeColor()}`}>
+              {changeType === 'increase'
+                ? '+'
+                : changeType === 'decrease'
+                  ? '-'
+                  : ''
+              }
+              {isNaN(Math.abs(Number(diffValue))) ? diffValue : Math.abs(Number(diffValue)) ?? '0'}
+              {" ("}
               {changeType === 'increase' ? '+' : changeType === 'decrease' ? '-' : ''}
-              {Math.abs(changePercentage).toFixed(1)}%
+              {changePercentage ? Math.abs(changePercentage).toFixed(1) + '%' : '0%'}
+              {")"}
             </span>
             <span className="text-xs text-gray-500 ml-2">
-              more vs last month
+              {description}
             </span>
           </div>
         )}

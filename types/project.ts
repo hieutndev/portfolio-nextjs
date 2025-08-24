@@ -7,6 +7,7 @@ export type TProject = {
   short_description: string;
   project_thumbnail: string;
   article_body: string;
+  views: number;
   created_at: string;
   updated_at: string;
   is_deleted: number;

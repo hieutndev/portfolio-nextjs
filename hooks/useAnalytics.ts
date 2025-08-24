@@ -4,11 +4,10 @@ import { useFetch } from './useFetch';
 
 import { IAPIResponse } from '@/types/global';
 import API_ROUTE from '@/configs/api';
-import { TAnalyticsDashboard, TAnalyticsResponse } from '@/types/analytics';
+import { TAnalyticsDashboard, TTopViewedArticle } from '@/types/analytics';
 
 export const useAnalytics = () => {
-  const [period, setPeriod] = useState<'7days' | '30days' | '12months' | '24hours'>('30days');
-  const [metric, setMetric] = useState<'views' | 'clicks'>('views');
+  const [period, setPeriod] = useState<'7days' | '30days' | '12months' | '24hours'>('24hours');
 
   // Fetch dashboard data
   const {
@@ -22,37 +21,45 @@ export const useAnalytics = () => {
     { method: 'GET' }
   );
 
-  const refetchAll = useCallback(() => {
+  // Fetch top viewed articles
+  const {
+    data: topViewedArticlesData,
+    loading: topViewedArticlesLoading,
+    error: topViewedArticlesError,
+    fetch: refetchTopViewedArticles
+  } = useFetch<IAPIResponse<TTopViewedArticle[]>>(
+    API_ROUTE.PROJECT.GET_TOP_VIEWED,
+    { method: 'GET' }
+  );
+
+  const refreshDashboardData = useCallback(() => {
     refetchDashboard();
   }, [refetchDashboard]);
 
+  const refreshTopViewedArticles = useCallback(() => {
+    refetchTopViewedArticles();
+  }, [refetchTopViewedArticles]);
+
+  const refetchAll = useCallback(() => {
+    refreshDashboardData();
+    refreshTopViewedArticles();
+  }, [refreshDashboardData, refreshTopViewedArticles]);
+
   // Refetch when period changes
   useEffect(() => {
-    refetchAll();
+    refreshDashboardData();
   }, [period]);
 
-  const isLoading = dashboardLoading;
-  const hasError = dashboardError;
+  const isLoading = dashboardLoading || topViewedArticlesLoading;
+  const hasError = dashboardError || topViewedArticlesError;
 
   return {
-    // Data
     dashboardData: dashboardData?.results,
-
-    // State
+    topViewedArticles: topViewedArticlesData?.results || [],
     period,
-    metric,
-
-    // Actions
     setPeriod,
-    setMetric,
-    refetchAll,
-
-    // Loading states
-    isLoading,
-    dashboardLoading,
-
-    // Errors
     hasError,
-    dashboardError,
+    refetchAll,
+    isLoading,
   };
 };

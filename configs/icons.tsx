@@ -14,9 +14,12 @@ import {
   FaUserShield,
   FaXmark,
   FaGithub,
+  FaUserGroup,
+  FaUserLarge,
+  FaUsers,
+  FaUser
 } from "react-icons/fa6";
-import { MdDelete, MdDeleteForever, MdEdit } from "react-icons/md";
-import { LuGlobe } from "react-icons/lu";
+import { MdDelete, MdDeleteForever, MdEdit, MdSupervisorAccount } from "react-icons/md";
 import { BsShieldLockFill } from "react-icons/bs";
 import {
   HiChevronDoubleLeft,
@@ -33,8 +36,8 @@ import {
   FcTemplate,
   FcWorkflow,
 } from "react-icons/fc";
-import { LuLogIn, LuMousePointerClick, LuTimer, LuEye } from "react-icons/lu";
-
+import { LuGlobe, LuLogIn, LuMousePointerClick, LuTimer, LuEye, LuUserPlus, LuUsers, LuUserRoundCog } from "react-icons/lu";
+import { TbPasswordUser } from "react-icons/tb";
 
 const ICON_CONFIG = {
   MENU: <FaBars />,
@@ -83,6 +86,10 @@ const ICON_CONFIG = {
   MOUSE_CLICK: <LuMousePointerClick />,
   TIMER: <LuTimer />,
   VIEW: <LuEye />,
+  PASSWORD: <TbPasswordUser />,
+  VISITORS: <LuUsers />,
+  NEW_VISITORS: <LuUserPlus />,
+  USER_SESSIONS: <LuUserRoundCog  />,
 };
 
 export default ICON_CONFIG;
