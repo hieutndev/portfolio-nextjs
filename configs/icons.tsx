@@ -34,6 +34,7 @@ import {
   FcDiploma1,
   FcGraduationCap,
   FcOpenedFolder,
+  FcSupport,
   FcTemplate,
   FcWorkflow,
 } from "react-icons/fc";
@@ -91,7 +92,9 @@ const ICON_CONFIG = {
   VISITORS: <LuUsers />,
   NEW_VISITORS: <LuUserPlus />,
   USER_SESSIONS: <LuUserRoundCog  />,
-  GENERATE: <FaWandMagicSparkles />
+  GENERATE: <FaWandMagicSparkles />,
+  SETTING: <FcSupport />
+
 };
 
 export default ICON_CONFIG;

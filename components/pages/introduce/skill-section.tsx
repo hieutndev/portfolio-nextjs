@@ -1,47 +1,34 @@
-"use client";
-
 import clsx from "clsx";
-import { Image } from "@heroui/react";
+import Image from "next/image";
 
 import Container from "@/components/shared/container/container";
+import { TSetting } from "@/types/settings";
+import { nonAuthFetch } from "@/utils/non-auth-fetch";
+import API_ROUTE from "@/configs/api";
 
 const SkillIconBlock = ({ iconPath }: { iconPath: string }) => (
 	<div className={clsx("h-12 w-12", "xl:w-14 xl:h-14", "lg:w-12 lg:h-12", "")}>
-		<Image className="w-full h-full" radius="none" src={iconPath} />
+		<Image alt={iconPath} className="w-full h-full" height={48} src={iconPath} width={48} />
 	</div>
 );
 
-const SkillSection = () => {
-	const listTechStacks = [
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg",
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg",
+export default async function SkillSection() {
 
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg",
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original-wordmark.svg",
+	let listSkills: TSetting['skills'] = {
+		techstacks: [],
+		development_tools: [],
+		design_tools: [],
+	};
 
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original-wordmark.svg",
+	try {
+		const response = await nonAuthFetch<TSetting>(API_ROUTE.SETTINGS.GET_SETTINGS, { cache: "force-cache", revalidate: 60 });
 
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/express/express-original-wordmark.svg",
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original-wordmark.svg",
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original-wordmark.svg",
-	];
-
-	const listTools = [
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original-wordmark.svg",
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg",
-
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/phpstorm/phpstorm-original.svg",
-	];
-
-	const listDesignTools = [
-		"https://img.icons8.com/?size=100&id=pGHcje298xSl&format=png&color=000000",
-		"https://img.icons8.com/?size=100&id=UECmBSgBOvPT&format=png&color=000000",
-		"https://img.icons8.com/?size=100&id=ifP93G7BXUhU&format=png&color=000000",
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/photoshop/photoshop-original.svg",
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/illustrator/illustrator-original.svg",
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/figma/figma-original.svg",
-		"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/canva/canva-original.svg",
-	];
+		if (response && response.status === "success" && response.results && typeof response.results.introduce === "string") {
+			listSkills = response.results.skills || listSkills;
+		}
+	} catch (e) {
+		console.error("Failed to load settings.introduce on server via nonAuthFetch:", e);
+	}
 
 	return (
 		<Container orientation={"vertical"}>
@@ -57,7 +44,7 @@ const SkillSection = () => {
 					</div>
 
 					<div className={"flex flex-wrap items-center gap-8"}>
-						{listTechStacks.map((_v, index) => (
+						{listSkills.techstacks.map((_v, index) => (
 							<SkillIconBlock
 								key={index}
 								iconPath={_v}
@@ -75,7 +62,7 @@ const SkillSection = () => {
 					</div>
 
 					<div className={"flex flex-wrap items-center gap-8"}>
-						{listTools.map((_v, index) => (
+						{listSkills.development_tools.map((_v, index) => (
 							<SkillIconBlock
 								key={index}
 								iconPath={_v}
@@ -93,7 +80,7 @@ const SkillSection = () => {
 					</div>
 
 					<div className={"flex flex-wrap items-center gap-8"}>
-						{listDesignTools.map((_v, index) => (
+						{listSkills.design_tools.map((_v, index) => (
 							<SkillIconBlock
 								key={index}
 								iconPath={_v}
@@ -105,5 +92,3 @@ const SkillSection = () => {
 		</Container>
 	);
 };
-
-export default SkillSection;

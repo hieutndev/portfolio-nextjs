@@ -29,6 +29,7 @@ import API_ROUTE from "@/configs/api";
 import { MAP_MESSAGE } from "@/configs/response-message";
 import ROUTE_PATH from "@/configs/route-path";
 import { useFetch } from "@/hooks/useFetch";
+import { useS3Upload } from "@/hooks/useS3Upload";
 import { IAPIResponse } from "@/types/global";
 import {
   TProjectGroup,
@@ -40,29 +41,22 @@ import {
 import { formatDate } from "@/utils/date";
 import { generateSlug, isValidSlug } from "@/utils/slug";
 import { SAMPLE_MARKDOWN } from "@/utils/sample-data/markdown-editor";
+import InitMDXEditor from "@/components/shared/mdx-editor/mdx-init-html";
+import { sanitizeMarkdown } from "@/utils/mdx";
 
-// Dynamic import for MDXEditor with SSR disabled
-const Editor = dynamic(() => import("./mdx-editor-initialized"), {
+const Editor = dynamic(() => import("@/components/shared/mdx-editor/mdx-editor-initialized"), {
   ssr: false,
-  loading: () => (
-    <div className="h-[400px] border border-default-200 rounded-lg flex items-center justify-center">
-      <div className="text-default-500">Initialize editor...</div>
-    </div>
-  ),
+  loading: () => <InitMDXEditor />
 });
 
-// Forward ref editor component with ready state handling
 const ForwardRefEditor = forwardRef<
   MDXEditorMethods,
-  MDXEditorProps & {
-    onEditorReady?: () => void;
-    imageUploadHandler?: (file: File) => Promise<string>;
-  }
+  MDXEditorProps & { onEditorReady?: () => void; imageUploadHandler?: (file: File) => Promise<string>; }
 >((props, ref) => {
+
   const { onEditorReady, imageUploadHandler, ...editorProps } = props;
 
   useEffect(() => {
-    // Mark editor as ready after a short delay to ensure it's fully mounted
     const timer = setTimeout(() => {
       onEditorReady?.();
     }, 100);
@@ -81,62 +75,20 @@ const ForwardRefEditor = forwardRef<
 
 ForwardRefEditor.displayName = "ForwardRefEditor";
 
-// Function to sanitize markdown content to prevent parsing errors
-const sanitizeMarkdown = (content: string): string => {
-  if (!content) return "";
-
-  try {
-    // Fix common markdown parsing issues
-    let sanitized = content;
-
-    // Fix code blocks without language specification
-    sanitized = sanitized.replace(/```(\s*\n)/g, "```txt$1");
-
-    // Fix malformed code blocks
-    sanitized = sanitized.replace(
-      /```(\w*)\s*\n([\s\S]*?)```/g,
-      (match, lang, code) => {
-        const cleanLang = lang || "txt";
-
-        return `\`\`\`${cleanLang}\n${code}\`\`\``;
-      }
-    );
-
-    // Remove any problematic characters that might cause parsing issues
-    sanitized = sanitized.replace(
-      /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g,
-      ""
-    );
-
-    return sanitized;
-  } catch (error) {
-    console.error("Error sanitizing markdown:", error);
-
-    // Return a safe fallback
-    return "# Content Error\n\nThere was an issue loading the content. Please edit in source mode to fix any formatting issues.";
-  }
-};
-
 interface ProjectFormMarkDownProps {
   mode: "create" | "edit";
-  defaultValues?: TProjectResponse;
   projectId?: string;
 }
 
-export default function ProjectFormMarkDownComponent({
-  mode,
-  defaultValues,
-  projectId,
-}: ProjectFormMarkDownProps) {
+export default function ProjectFormMarkDownComponent({ mode, projectId }: ProjectFormMarkDownProps) {
+
   const router = useRouter();
   const mdxEditorRef = useRef<MDXEditorMethods>(null);
   const [initArticle, setInitArticle] = useState("");
   const [convertText, setConvertText] = useState<string>("");
   const [isEditorReady, setIsEditorReady] = useState(false);
   const [pendingContent, setPendingContent] = useState<string>("");
-  const [projectDetails, setProjectDetails] = useState<
-    TNewProject | TUpdateProject
-  >({
+  const [projectDetails, setProjectDetails] = useState<TNewProject | TUpdateProject>({
     project_fullname: "",
     project_shortname: "",
     slug: "",
@@ -151,34 +103,16 @@ export default function ProjectFormMarkDownComponent({
     project_images: null,
   });
 
-  const [listProjectGroups, setListProjectGroups] = useState<TProjectGroup[]>(
-    []
-  );
+  const [listProjectGroups, setListProjectGroups] = useState<TProjectGroup[]>([]);
   const [currentThumbnail, setCurrentThumbnail] = useState<string>("");
-  const [listCurrentImages, setListCurrentImages] = useState<TProjectImage[]>(
-    []
-  );
+  const [listCurrentImages, setListCurrentImages] = useState<TProjectImage[]>([]);
   const [listRemoveImages, setListRemoveImages] = useState<string[]>([]);
 
-  // Modal state for image management
-  const {
-    isOpen: isImageModalOpen,
-    onOpen: onImageModalOpen,
-    onClose: onImageModalClose,
-  } = useDisclosure();
-  const [selectedImage, setSelectedImage] = useState<{
-    url: string;
-    name: string;
-    type: "thumbnail" | "image";
-  } | null>(null);
+  const { isOpen: isImageModalOpen, onOpen: onImageModalOpen, onClose: onImageModalClose } = useDisclosure();
+  const [selectedImage, setSelectedImage] = useState<{ url: string; name: string; type: "thumbnail" | "image"; } | null>(null);
 
   /* HANDLE FETCH PROJECT GROUPS */
-  const {
-    data: fetchProjectGroupsResult,
-    error: fetchProjectGroupsError,
-    loading: fetchingProjectGroups,
-    fetch: fetchProjectGroups,
-  } = useFetch<IAPIResponse<TProjectGroup[]>>(API_ROUTE.PROJECT.GET_ALL_GROUP);
+  const { data: fetchProjectGroupsResult, error: fetchProjectGroupsError, loading: fetchingProjectGroups, fetch: fetchProjectGroups, } = useFetch<IAPIResponse<TProjectGroup[]>>(API_ROUTE.PROJECT.GET_ALL_GROUP);
 
   useEffect(() => {
     fetchProjectGroups();
@@ -209,9 +143,7 @@ export default function ProjectFormMarkDownComponent({
     loading: fetchingProjectDetail,
     fetch: fetchProjectDetail,
   } = useFetch<IAPIResponse<TProjectResponse>>(
-    mode === "edit" && projectId
-      ? API_ROUTE.PROJECT.GET_ONE(projectId)
-      : "",
+    mode === "edit" && projectId ? API_ROUTE.PROJECT.GET_ONE(projectId) : "",
     {
       skip: mode === "create" || !projectId,
     }
@@ -224,11 +156,7 @@ export default function ProjectFormMarkDownComponent({
   }, [mode, projectId]);
 
   useEffect(() => {
-    if (
-      mode === "edit" &&
-      fetchProjectDetailResult &&
-      fetchProjectDetailResult.results
-    ) {
+    if (mode === "edit" && fetchProjectDetailResult && fetchProjectDetailResult.results) {
       const projectData = fetchProjectDetailResult.results;
 
       setProjectDetails({
@@ -255,24 +183,6 @@ export default function ProjectFormMarkDownComponent({
         start: parseDate(formatDate(projectData.start_date, "onlyDateReverse")),
         end: parseDate(formatDate(projectData.end_date, "onlyDateReverse")),
       });
-    } else if (mode === "create" && defaultValues) {
-
-      setProjectDetails({
-        ...defaultValues,
-        project_thumbnail: null,
-        project_images: null,
-      });
-
-      const content = sanitizeMarkdown(
-        defaultValues.article_body || SAMPLE_MARKDOWN
-      );
-
-      setPendingContent(content);
-
-      if (isEditorReady) {
-        setConvertText(content);
-      }
-
     } else if (mode === "create") {
       // For completely new projects, use sample markdown
       const content = sanitizeMarkdown(SAMPLE_MARKDOWN);
@@ -293,7 +203,7 @@ export default function ProjectFormMarkDownComponent({
         })
       }
     }
-  }, [mode, fetchProjectDetailResult, fetchProjectDetailError, defaultValues, isEditorReady]);
+  }, [mode, fetchProjectDetailResult, fetchProjectDetailError, isEditorReady]);
 
   /* HANDLE SUBMIT */
   const [formData, setFormData] = useState<FormData | null>(null);
@@ -304,9 +214,7 @@ export default function ProjectFormMarkDownComponent({
     loading: submitting,
     fetch: submitForm,
   } = useFetch(
-    mode === "create"
-      ? API_ROUTE.PROJECT.NEW
-      : API_ROUTE.PROJECT.UPDATE_PROJECT(projectId!),
+    mode === "create" ? API_ROUTE.PROJECT.NEW : API_ROUTE.PROJECT.UPDATE_PROJECT(projectId!),
     {
       method: mode === "create" ? "POST" : "PATCH",
       skip: true,
@@ -317,11 +225,10 @@ export default function ProjectFormMarkDownComponent({
     if (submitResult) {
       addToast({
         title: "Success",
-        description:
-          submitResult.message ||
-          `Project ${mode === "create" ? "created" : "updated"} successfully`,
+        description: MAP_MESSAGE[submitResult.message],
         color: "success",
       });
+
       if (mode === "create") {
         router.push(ROUTE_PATH.ADMIN.PROJECT.INDEX);
       } else {
@@ -350,6 +257,7 @@ export default function ProjectFormMarkDownComponent({
           removeContentType: true,
         },
       });
+
       setFormData(null);
     }
   }, [formData]);
@@ -357,10 +265,10 @@ export default function ProjectFormMarkDownComponent({
   const handleSubmit = () => {
     // Validate required fields
     if (
-      !projectDetails.project_fullname ||
-      !projectDetails.project_shortname ||
-      !projectDetails.slug ||
-      !projectDetails.short_description
+      !projectDetails.project_fullname
+      || !projectDetails.project_shortname
+      || !projectDetails.slug
+      || !projectDetails.short_description
     ) {
       addToast({
         title: "Error",
@@ -403,14 +311,9 @@ export default function ProjectFormMarkDownComponent({
       });
 
       return;
-    } else if (
-      projectDetails.project_thumbnail &&
-      projectDetails.project_thumbnail.length > 0
-    ) {
-      submitFormData.append(
-        "project_thumbnail",
-        projectDetails.project_thumbnail[0]
-      );
+    } else if (projectDetails.project_thumbnail && projectDetails.project_thumbnail.length > 0) {
+      submitFormData.append("project_thumbnail", projectDetails.project_thumbnail[0]);
+
       if (mode === "edit") {
         submitFormData.append("is_change_thumbnail", "true");
       }
@@ -430,22 +333,13 @@ export default function ProjectFormMarkDownComponent({
 
     // Append basic project information
     submitFormData.append("project_fullname", projectDetails.project_fullname);
-    submitFormData.append(
-      "project_shortname",
-      projectDetails.project_shortname
-    );
+    submitFormData.append("project_shortname", projectDetails.project_shortname);
     submitFormData.append("slug", projectDetails.slug);
-    submitFormData.append(
-      "short_description",
-      projectDetails.short_description
-    );
+    submitFormData.append("short_description", projectDetails.short_description);
     submitFormData.append("github_link", projectDetails.github_link || "");
     submitFormData.append("demo_link", projectDetails.demo_link || "");
     submitFormData.append("article_body", convertText);
-    submitFormData.append(
-      "group_id",
-      projectDetails.group_id?.toString() || "null"
-    );
+    submitFormData.append("group_id", projectDetails.group_id?.toString() || "null");
 
     // Handle dates from date picker
     if (datePicked?.start && datePicked?.end) {
@@ -453,14 +347,8 @@ export default function ProjectFormMarkDownComponent({
       submitFormData.append("end_date", datePicked.end.toString());
     }
 
-
-
-    // Handle edit-specific fields
     if (mode === "edit") {
-      submitFormData.append(
-        "is_change_article",
-        projectDetails.article_body !== initArticle ? "true" : "false"
-      );
+      submitFormData.append("is_change_article", projectDetails.article_body !== initArticle ? "true" : "false");
       submitFormData.append("remove_images", JSON.stringify(listRemoveImages));
     }
 
@@ -482,12 +370,7 @@ export default function ProjectFormMarkDownComponent({
     }
   };
 
-  // Modal handlers
-  const handleOpenImageModal = (
-    url: string,
-    name: string,
-    type: "thumbnail" | "image"
-  ) => {
+  const handleOpenImageModal = (url: string, name: string, type: "thumbnail" | "image") => {
     setSelectedImage({ url, name, type });
     onImageModalOpen();
   };
@@ -497,7 +380,6 @@ export default function ProjectFormMarkDownComponent({
     onImageModalClose();
   };
 
-  // Handle editor ready state and set pending content
   useEffect(() => {
     if (isEditorReady && pendingContent) {
       console.log("Setting editor content:", {
@@ -512,14 +394,13 @@ export default function ProjectFormMarkDownComponent({
         setPendingContent(""); // Clear pending content after setting
       } catch (error) {
         console.error("Error setting editor content:", error);
-        // Fallback to empty content if there's an error
+
         setConvertText("");
         setPendingContent("");
       }
     }
   }, [isEditorReady, pendingContent]);
 
-  // Fallback: Force set content after a delay if editor is loaded but content is still empty
   useEffect(() => {
     if (mode === "edit" && isEditorReady && !convertText && initArticle) {
       console.log("Fallback: Setting content from initArticle:", initArticle);
@@ -538,107 +419,19 @@ export default function ProjectFormMarkDownComponent({
     }
   }, [mode, isEditorReady, convertText, initArticle]);
 
-  // Image upload functionality for MDX Editor
-  const {
-    data: uploadImageResult,
-    error: uploadImageError,
-    // loading: uploadingImage,
-    fetch: uploadImage,
-  } = useFetch(API_ROUTE.S3.UPLOAD_IMAGE, {
-    method: "POST",
-    skip: true,
-    options: {
-      removeContentType: true,
+  const { uploadImage: handleUploadImage } = useS3Upload({
+    showToasts: true,
+    onUploadStart: (file) => {
+      console.log("Starting upload for:", file.name);
+    },
+    onUploadSuccess: (imageUrl, file) => {
+      console.log("Upload successful:", { imageUrl, fileName: file.name });
+    },
+    onUploadError: (error, file) => {
+      console.error("Upload failed:", { error, fileName: file.name });
     },
   });
 
-  const uploadImageResultRef = useRef(uploadImageResult);
-  const uploadImageErrorRef = useRef(uploadImageError);
-
-  useEffect(() => {
-    if (uploadImageResult) {
-      uploadImageResultRef.current = uploadImageResult;
-    }
-
-    if (uploadImageError) {
-      uploadImageErrorRef.current = uploadImageError;
-    }
-  }, [uploadImageResult, uploadImageError]);
-
-  const handleUploadImage = async (file: File): Promise<string> => {
-    try {
-      // Show upload toast
-      addToast({
-        title: "Uploading Image",
-        description: `Uploading ${file.name}...`,
-        color: "primary",
-      });
-
-      const formData = new FormData();
-
-      formData.append("image", file);
-      await uploadImage({ body: formData });
-
-      return new Promise<string>((resolve, reject) => {
-        let retry = 20;
-        const checkResult = () => {
-          const result = uploadImageResultRef.current;
-          const error = uploadImageErrorRef.current;
-
-          console.log("Image upload result:", result);
-          console.log("Image upload error:", error);
-
-          if (!error && result && result.results && result.results.imageKey) {
-            const imageUrl =
-              process.env.NEXT_PUBLIC_BASE_API_URL +
-              API_ROUTE.S3.GET_IMAGE(result.results.imageKey);
-
-            // Show success toast
-            addToast({
-              title: "Image Uploaded",
-              description: "Image uploaded successfully!",
-              color: "success",
-            });
-
-            resolve(imageUrl);
-          } else if (error) {
-            // Show error toast
-            addToast({
-              title: "Upload Failed",
-              description: "Failed to upload image. Please try again.",
-              color: "danger",
-            });
-            reject(error);
-          } else if (retry > 0) {
-            retry--;
-            setTimeout(checkResult, 250);
-          } else {
-            // Show timeout error toast
-            addToast({
-              title: "Upload Timeout",
-              description: "Image upload timed out. Please try again.",
-              color: "danger",
-            });
-            reject(new Error("Image upload timed out."));
-          }
-        };
-
-        checkResult();
-      }).finally(() => {
-        uploadImageResultRef.current = null;
-      });
-    } catch (error) {
-      // Show general error toast
-      addToast({
-        title: "Upload Error",
-        description: "An error occurred while uploading the image.",
-        color: "danger",
-      });
-      throw error;
-    }
-  };
-
-  // Optimized callback handlers to prevent re-renders
   const handleProjectFullNameChange = useCallback((value: string) => {
     setProjectDetails((prev) => ({ ...prev, project_fullname: value }));
   }, []);
@@ -692,7 +485,6 @@ export default function ProjectFormMarkDownComponent({
     return () => clearTimeout(debounceTimer);
   }, [convertText]);
 
-  // Memoized values to prevent unnecessary re-calculations
   const selectedGroupKeys = useMemo(
     () => (projectDetails.group_id ? [projectDetails.group_id.toString()] : []),
     [projectDetails.group_id]

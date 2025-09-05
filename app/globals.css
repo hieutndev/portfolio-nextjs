@@ -118,6 +118,7 @@ body {
     @apply font-sans;
   }
 
+
   .mdxeditor-toolbar {
     @apply border-b border-gray-200 bg-gray-50 p-2;
   }
@@ -368,6 +369,6 @@ body {
 
   /* Focus states for better accessibility */
   .mdxeditor [contenteditable="true"]:focus {
-    @apply outline-none ring-2 ring-blue-500 ring-opacity-50;
+    @apply outline-none;
   }
 }

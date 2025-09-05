@@ -90,6 +90,10 @@ const API_ROUTE = {
     GET_TOP_PAGES: "/analytics/top-pages",
     GET_TOP_QUERIES: "/analytics/top-queries",
   },
+  SETTINGS: {
+    GET_SETTINGS : "/settings",
+    UPDATE_SETTINGS : "/settings",
+  }
 };
 
 export default API_ROUTE;

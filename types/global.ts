@@ -88,3 +88,10 @@ export interface IDataTable<T> {
 export type TContentType = "application/json" | "multipart/form-data";
 
 export type TDataAction = 'softDelete' | 'recover' | 'permanentDelete' |'create' | 'update' | 'block' | 'unblock' | null
+
+export type TMenu = {
+    label: string[];
+    key: string;
+    urls?: string[];
+    icon?: React.ReactNode;
+};

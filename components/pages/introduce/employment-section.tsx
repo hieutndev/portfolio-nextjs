@@ -1,64 +1,40 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { addToast, Spinner } from "@heroui/react";
+"use server"
 
 import AchievementRow from "./achievement-row";
 
 import API_ROUTE from "@/configs/api";
-import { useFetch } from "@/hooks/useFetch";
+import { nonAuthFetch } from "@/utils/non-auth-fetch";
 import { TEmployment } from "@/types/employment";
-import { IAPIResponse } from "@/types/global";
 import { formatDate } from "@/utils/date";
 import Container from "@/components/shared/container/container";
 
-// interface EmploymentSectionProps {}
+export default async function EmploymentSection() {
+	let listEmployment: TEmployment[] = [];
 
-const EmploymentSection = () => {
-	const [listEmployment, setListEmployment] = useState<TEmployment[]>([]);
+	try {
+		const response = await nonAuthFetch<TEmployment[]>(API_ROUTE.EMPLOYMENT.GET_ALL, { cache: "force-cache", revalidate: 60 });
 
-	const {
-		data: fetchEmploymentResult,
-		error: fetchEmploymentError,
-		loading: fetchingEmployment,
-	} = useFetch<IAPIResponse<TEmployment[]>>(API_ROUTE.EMPLOYMENT.GET_ALL);
-
-	useEffect(() => {
-		if (fetchEmploymentResult) {
-			setListEmployment(fetchEmploymentResult.results ?? []);
+		if (response && response.status === "success" && Array.isArray(response.results)) {
+			listEmployment = response.results as TEmployment[];
 		}
-
-		if (fetchEmploymentError) {
-			const parseError = JSON.parse(fetchEmploymentError);
-
-			if (parseError.message) {
-				addToast({
-					title: "Error",
-					description: parseError.message,
-					color: "danger",
-				});
-			}
-		}
-	}, [fetchEmploymentResult, fetchEmploymentError]);
+	} catch (e) {
+		console.error("Failed to fetch employment list on server:", e);
+	}
 
 	return (
 		<Container orientation={"vertical"}>
 			<h2 className={"section-title"}>🏢 Employment History</h2>
 			<ul className={"flex flex-col gap-8 list-disc"}>
-				{fetchingEmployment ? (
-					<div className={"ml-12"}>
-						<Spinner size={"md"} />
-					</div>
-				) : listEmployment.length > 0 ? (
-					listEmployment.map((_, index) => (
+				{listEmployment.length > 0 ? (
+					listEmployment.map((item, index) => (
 						<AchievementRow
 							key={index}
-							organization={_.organization}
-							time={`${formatDate(_.time_start, "onlyMonthYear")} - ${_.time_end ? formatDate(
-								_.time_end,
+							organization={item.organization}
+							time={`${formatDate(item.time_start, "onlyMonthYear")} - ${item.time_end ? formatDate(
+								item.time_end,
 								"onlyMonthYear"
 							) : "Present"}`}
-							title={_.title}
+							title={item.title}
 						/>
 					))
 				) : (
@@ -67,6 +43,4 @@ const EmploymentSection = () => {
 			</ul>
 		</Container>
 	);
-};
-
-export default EmploymentSection;
+}
