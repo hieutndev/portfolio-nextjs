@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import BlockQuote from "@/components/shared/block-quote";
 
@@ -8,19 +8,33 @@ interface AnimatedQuoteProps {
 	renderText: string;
 }
 
-const AnimatedQuote = ({ renderText }: AnimatedQuoteProps) => {
+export default function AnimatedQuote({ renderText }: AnimatedQuoteProps) {
 	const [currentText, setCurrentText] = useState<string>("|");
-
-	const renderAnimated = useCallback(async () => {
-		for (let i = 0; i < renderText.length; i++) {
-			await new Promise((resolve) => setTimeout(resolve, 50));
-			setCurrentText(() => `${renderText.slice(0, i + 1)}${i + 1 !== renderText.length ? "|" : ""}`);
-		}
-	}, [renderText]);
+	const mounted = useRef(true);
 
 	useEffect(() => {
-		renderAnimated();
-	}, []);
+		mounted.current = true;
+		setCurrentText("|");
+
+		const typingSpeed = 50;
+		let idx = 0;
+
+		const id = setInterval(() => {
+			if (!mounted.current) return;
+			idx += 1;
+			const showing = renderText.slice(0, idx);
+
+			setCurrentText(showing + (idx < renderText.length ? "|" : ""));
+			if (idx >= renderText.length) {
+				clearInterval(id);
+			}
+		}, typingSpeed);
+
+		return () => {
+			mounted.current = false;
+			clearInterval(id);
+		};
+	}, [renderText]);
 
 	return (
 		<BlockQuote
@@ -30,6 +44,5 @@ const AnimatedQuote = ({ renderText }: AnimatedQuoteProps) => {
 			{currentText}
 		</BlockQuote>
 	);
-};
-
-export default AnimatedQuote;
+}
+ 

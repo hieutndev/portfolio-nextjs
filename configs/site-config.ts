@@ -47,6 +47,11 @@ export const SITE_CONFIG = {
             label: "Applications",
             href: "/admin/applications",
             icon: ICON_CONFIG.APP
+        },
+        {
+            label: "Settings",
+            href: "/admin/settings",
+            icon: ICON_CONFIG.SETTING
         }
     ],
     nonAuthUrls: ["/sign-in", "/sign-up", "/forgot-password"],
@@ -54,9 +59,3 @@ export const SITE_CONFIG = {
 
 export type TSiteConfig = typeof SITE_CONFIG;
 
-export type TSettingMenu = {
-    label: string[];
-    key: string;
-    urls: string[];
-    icon: React.ReactNode;
-};
