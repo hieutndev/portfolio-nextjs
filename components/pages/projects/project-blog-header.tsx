@@ -4,7 +4,7 @@ import { Avatar, Divider, Image } from "@heroui/react";
 
 import Container from "@/components/shared/container/container";
 import { TProject } from "@/types/project";
-import { formatDate, getLastUpdatedTime } from "@/utils/date";
+import { formatDate, getLastTimeString } from "@/utils/date";
 import ICON_CONFIG from "@/configs/icons";
 
 interface ProjectBlogHeaderProps {
@@ -13,7 +13,7 @@ interface ProjectBlogHeaderProps {
 
 export default function ProjectBlogHeader({ project }: ProjectBlogHeaderProps) {
   return (
-    <Container className="!p-4 " gapSize={8} orientation="vertical">
+    <Container gapSize={8} orientation="vertical">
       <div className={"flex flex-col gap-4"}>
         <h1
           className={
@@ -28,7 +28,7 @@ export default function ProjectBlogHeader({ project }: ProjectBlogHeaderProps) {
           <Divider orientation="vertical" />
           {project.updated_at !== project.created_at && (
             <p className={"text-sm"}>
-              Updated at {getLastUpdatedTime(project.updated_at)}
+              Updated at {getLastTimeString(project.updated_at)}
             </p>
           )}
           {project.updated_at === project.created_at && (

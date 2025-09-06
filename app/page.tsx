@@ -31,34 +31,26 @@ export default async function HomePage() {
 
 	return (
 		<Container
-			className={"p-4"}
+			shadow
+			className={"p-4 shadow-2xl"}
 			gapSize={4}
 			orientation={"vertical"}
 		>
-			<div className={"flex flex-col gap-8"}>
+			<Container className={""} gapSize={8} orientation={"vertical"}>
 				{/* Render markdown from settings.introduce when available, otherwise fall back to default text */}
-				{introduceMarkdown ? (
-					<article className="prose max-w-none prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-headings:text-gray-900 prose-p:text-lg prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-gray-900 prose-code:text-red-600 prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded">
-						<MDXRemote
-							options={{ mdxOptions: { remarkPlugins: [remarkGfm], rehypePlugins: [rehypeHighlight] } }}
-							source={introduceMarkdown}
-						/>
-					</article>
-				) : (
-					<>
-						<h2 className={"text-3xl font-semibold"}>👋 Hey there!</h2>
-						<p className={"text-xl text-justify"}>My name is Tran Ngoc Hieu,</p>
-						<p className={"text-xl"}>
-							I have just graduated with a{" "}
-							<strong>Bachelor&apos;s degree in Information Technology - majoring in Website Development</strong>
-						</p>
-						<p className={"text-xl"}>
-							I am looking for an opportunity for a position as a <strong>Website Developer Intern</strong>{" "}
-						</p>
-					</>
-				)}
+				<article className="prose max-w-none prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-headings:text-gray-900 prose-p:text-lg prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-gray-900 prose-code:text-red-600 prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded">
+					<MDXRemote
+						options={{
+							mdxOptions: {
+								remarkPlugins: [remarkGfm],
+								rehypePlugins: [rehypeHighlight]
+							}
+						}}
+						source={introduceMarkdown}
+					/>
+				</article>
 				<AnimatedQuote renderText={animatedQuote} />
-			</div>
+			</Container>
 
 			<Divider />
 

@@ -32,9 +32,14 @@ const ClientHeader = () => {
 
 	const headerConfig = [
 		{
+			path: ROUTE_PATH.CLIENT.PROJECT.INDEX,
+			label: "📰 Blogs",
+		},
+		{
 			path: ROUTE_PATH.CLIENT.MY_APPS,
 			label: "🧑‍💻 My apps",
 		},
+		
 	];
 
 	const [isOpenMiniHeader, setIsOpenMiniHeader] = useState<boolean>(false);
@@ -43,7 +48,7 @@ const ClientHeader = () => {
 	return (
 		<div
 			className={clsx(
-				"fixed bg-white flex justify-center w-full top-0 left-0 z-50 transition-all duration-300 ease-in-out lg:px-8 px-4 shadow-sm",
+				"fixed bg-white flex justify-center w-full top-0 left-0 z-50 transition-all duration-300 ease-in-out lg:px-8 px-4 shadow-md",
 				{
 					"lg:py-16 py-4": scrollPosition.top < 100,
 					"lg:py-8 py-4 lg:shadow-xl shadow-md": scrollPosition.top >= 100,

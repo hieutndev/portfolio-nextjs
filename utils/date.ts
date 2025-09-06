@@ -31,10 +31,11 @@ export function formatDate(isoString: string | Date, format: TDateFormat = "full
 
 export function getMonthYearName(isoString: string) {
     const date = new Date(isoString);
+
     return date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
 }
 
-export function getLastUpdatedTime(isoString: string): string {
+export function getLastTimeString(isoString: string): string {
     const lastUpdatedTime = new Date(isoString);
     const currentTime = new Date();
 

@@ -81,7 +81,7 @@ function SignInContent() {
         description: MAP_MESSAGE[signInResponse.message],
         color: "success",
       });
-      router.push(ROUTE_PATH.ADMIN.ACCOUNT.INDEX);
+      router.push(ROUTE_PATH.ADMIN.DASHBOARD.INDEX);
     }
 
     if (signInError) {
