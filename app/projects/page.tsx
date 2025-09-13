@@ -40,7 +40,7 @@ export default function ProjectsPage() {
                         return (
                             <button key={project.id}
                                 className={"col-span-12 lg:col-span-12 lg:row-span-1 h-full overflow-hidden bg-white/0 grid grid-cols-12"}
-                                onClick={() => router.push(ROUTE_PATH.CLIENT.PROJECT.DETAILS(project.id))}
+                                onClick={() => router.push(ROUTE_PATH.CLIENT.PROJECT.DETAILS(project.slug))}
                             >
                                 <div className={"col-span-8 w-full"}>
                                     <Image
