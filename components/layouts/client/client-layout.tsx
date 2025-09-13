@@ -1,6 +1,5 @@
 import Container from "@/components/shared/container/container";
 import ClientHeader from "@/components/shared/partials/client-header";
-import Sidebar from "@/components/shared/partials/sidebar";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
 	return (
