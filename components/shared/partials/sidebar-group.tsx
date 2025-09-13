@@ -3,7 +3,7 @@
 import { FaChevronUp } from "react-icons/fa6";
 import { useState } from "react";
 import clsx from "clsx";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 
