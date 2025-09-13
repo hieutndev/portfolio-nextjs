@@ -1,7 +1,8 @@
 "use client";
 
-import { Avatar, Image } from "@heroui/react";
+import { Image } from "@heroui/react";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 import Container from "@/components/shared/container/container";
 import ICON_CONFIG from "@/configs/icons";
@@ -11,7 +12,6 @@ import { IAPIResponse } from "@/types/global";
 import { TProjectResponse } from "@/types/project";
 import API_ROUTE from "@/configs/api";
 import { sliceText } from "@/utils/string";
-import { useRouter } from "next/navigation";
 import ROUTE_PATH from "@/configs/route-path";
 
 
