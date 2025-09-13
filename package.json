@@ -1,13 +1,14 @@
 {
 	"name": "portfolio-nextjs",
-	"version": "0.8.0",
+	"version": "0.9.0",
 	"private": true,
 	"scripts": {
 		"dev": "next dev --turbopack",
 		"build:local": "next build",
 		"build": "NODE_OPTIONS=\"--max-old-space-size=4096\" next build",
 		"start": "next start",
-		"lint": "next lint"
+		"lint": "next lint",
+		"postbuild": "next-sitemap"
 	},
 	"dependencies": {
 		"@heroui/react": "^2.7.11",
