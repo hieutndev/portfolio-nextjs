@@ -1,12 +1,12 @@
 "use server"
 
-import AchievementRow from "./achievement-row";
+import SectionHeader from "./section-header";
+import Timeline from "./timeline";
 
 import Container from "@/components/shared/container/container";
 import API_ROUTE from "@/configs/api";
 import { nonAuthFetch } from "@/utils/non-auth-fetch";
 import { TEducation } from "@/types/education";
-import { formatDate } from "@/utils/date";
 
 export default async function EducationSection() {
 	let listEducation: TEducation[] = [];
@@ -23,23 +23,16 @@ export default async function EducationSection() {
 
 	return (
 		<Container orientation={"vertical"}>
-			<h2 className={"section-title"}>🎓 Education</h2>
-			<ul className={"flex flex-col gap-8 list-disc"}>
-				{listEducation.length > 0 ? (
-					listEducation.map((item, index) => (
-						<AchievementRow
-							key={index}
-							organization={item.organization}
-							time={`${formatDate(item.time_start, "onlyMonthYear")} - ${
-								item.time_end ? formatDate(item.time_end, "onlyMonthYear") : "Present"
-							}`}
-							title={item.title}
-						/>
-					))
-				) : (
-					<p className={"ml-12 italic"}>No educational background.</p>
-				)}
-			</ul>
+			<SectionHeader iconAlt={"My Education"} iconSrc={"/assets/gif/education.gif"} title={"My Education"} />
+			<div className={"w-full pl-20"}>
+				<Timeline items={
+					listEducation.length > 0 ? listEducation.map((item) => ({
+						date: item.time_end ? `${new Date(item.time_start).getFullYear()} - ${new Date(item.time_end).getFullYear()}` : `${new Date(item.time_start).getFullYear()} - Present`,
+						title: item.title,
+						description: item.organization,
+					})) : []
+				} />
+			</div>
 		</Container>
 	);
 }

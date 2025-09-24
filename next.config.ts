@@ -18,6 +18,16 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "img.icons8.com",
         pathname: "**"
+      },
+      {
+        protocol: "https",
+        hostname: "github-readme-stats.vercel.app",
+        pathname: "/api/**"
+      },
+      {
+        protocol: "https",
+        hostname: "github-readme-activity-graph.vercel.app",
+        pathname: "/**"
       }
     ]
   }

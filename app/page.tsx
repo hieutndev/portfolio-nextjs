@@ -11,8 +11,8 @@ import SkillSection from "@/components/pages/introduce/skill-section";
 import Container from "@/components/shared/container/container";
 import API_ROUTE from "@/configs/api";
 import { nonAuthFetch } from "@/utils/non-auth-fetch";
-import "./intro.css";
 import { TSetting } from "@/types/settings";
+import ActivitiesSection from "@/components/pages/introduce/activities-section";
 
 export default async function HomePage() {
 	let introduceMarkdown = "";
@@ -67,6 +67,10 @@ export default async function HomePage() {
 			<Divider />
 
 			<SkillSection />
+
+			<Divider />
+
+			<ActivitiesSection />
 		</Container>
 	);
 }

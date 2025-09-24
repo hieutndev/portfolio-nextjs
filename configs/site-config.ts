@@ -9,7 +9,8 @@ export const SITE_CONFIG = {
         ONLY_ICON_WHITE: "/1x1w.png",
         ONLY_ICON_BLACK: "/1x1b.png",
         FULL_WHITE: "/logow_w.png",
-        FULL_BLACK: "/logow_b.png",
+        // FULL_BLACK: "/logow_b.png",
+        FULL_BLACK: "/hieudev.png",
     },
     FAVICON: "/portfolio_fav.ico",
     ADMIN_SIDEBAR_ITEMS: [

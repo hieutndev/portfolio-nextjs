@@ -168,7 +168,7 @@ export default function ProjectManagement() {
 
 		switch (tableAction) {
 			case "view":
-				window.open(ROUTE_PATH.CLIENT.PROJECT.DETAILS(fetchProjectResult?.results?.find(item => item.id == selectedId)?.slug ?? -1));
+				window.open(ROUTE_PATH.CLIENT.PROJECTS.DETAILS(fetchProjectResult?.results?.find(item => item.id == selectedId)?.slug ?? -1));
 				break;
 			case "edit":
 				router.push(ROUTE_PATH.ADMIN.PROJECT.EDIT(fetchProjectResult?.results?.find(item => item.id == selectedId)?.slug ?? -1));

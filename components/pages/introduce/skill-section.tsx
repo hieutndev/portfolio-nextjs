@@ -1,6 +1,8 @@
 import clsx from "clsx";
 import Image from "next/image";
 
+import SectionHeader from "./section-header";
+
 import Container from "@/components/shared/container/container";
 import { TSetting } from "@/types/settings";
 import { nonAuthFetch } from "@/utils/non-auth-fetch";
@@ -32,18 +34,18 @@ export default async function SkillSection() {
 
 	return (
 		<Container orientation={"vertical"}>
-			<h2 className={"section-title"}>🤹🏼 My Skills</h2>
+			<SectionHeader iconAlt={"Skills"} iconSrc={"/assets/gif/skill.gif"} title={"My Skills"} />
 			<div className={"flex flex-col gap-8"}>
-				<div className={"ml-12 flex flex-col gap-2"}>
+				<div className={"pl-20 flex flex-col gap-4"}>
 					<div
 						className={
-							"before:content-[''] before:bg-black before:-ml-4 before:h-1.5 before:w-1.5 before:rounded-full flex items-center gap-2"
+							"before:-ms-1.5 before:content-[''] before:bg-primary before:size-3 before:rounded-full flex items-center gap-4"
 						}
 					>
-						<h4 className={"section-subtitle"}>Techstacks</h4>
+						<h3 className={"text-xl font-bold tracking-wide"}>Techstacks</h3>
 					</div>
 
-					<div className={"flex flex-wrap items-center gap-8"}>
+					<div className={"pl-8 flex flex-wrap items-center gap-8"}>
 						{listSkills.techstacks.map((_v, index) => (
 							<SkillIconBlock
 								key={index}
@@ -52,16 +54,16 @@ export default async function SkillSection() {
 						))}
 					</div>
 				</div>
-				<div className={"ml-12 flex flex-col gap-2"}>
+				<div className={"pl-20 flex flex-col gap-4"}>
 					<div
 						className={
-							"before:content-[''] before:bg-black before:-ml-4 before:h-1.5 before:w-1.5 before:rounded-full flex items-center gap-2"
+							"before:-ms-1.5 before:content-[''] before:bg-primary before:size-3 before:rounded-full flex items-center gap-4"
 						}
 					>
-						<h4 className={"section-subtitle"}>Development Tools</h4>
+						<h3 className={"text-xl font-bold tracking-wide"}>Development Tools</h3>
 					</div>
 
-					<div className={"flex flex-wrap items-center gap-8"}>
+					<div className={"pl-8 flex flex-wrap items-center gap-8"}>
 						{listSkills.development_tools.map((_v, index) => (
 							<SkillIconBlock
 								key={index}
@@ -70,16 +72,16 @@ export default async function SkillSection() {
 						))}
 					</div>
 				</div>
-				<div className={"ml-12 flex flex-col gap-4"}>
+				<div className={"pl-20 flex flex-col gap-4"}>
 					<div
 						className={
-							"before:content-[''] before:bg-black before:-ml-4 before:h-1.5 before:w-1.5 before:rounded-full flex items-center gap-2"
+							"before:-ms-1.5 before:content-[''] before:bg-primary before:size-3 before:rounded-full flex items-center gap-4"
 						}
 					>
-						<h4 className={"section-subtitle"}>Office & Design Tools</h4>
+						<h3 className={"text-xl font-bold tracking-wide"}>Office & Design Tools</h3>
 					</div>
 
-					<div className={"flex flex-wrap items-center gap-8"}>
+					<div className={"pl-8 flex flex-wrap items-center gap-8"}>
 						{listSkills.design_tools.map((_v, index) => (
 							<SkillIconBlock
 								key={index}
@@ -89,6 +91,6 @@ export default async function SkillSection() {
 					</div>
 				</div>
 			</div>
-		</Container>
+		</Container >
 	);
 };

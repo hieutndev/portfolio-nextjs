@@ -110,7 +110,7 @@ export default function Sidebar() {
 									.filter((item) => item.group_id === group.group_id)
 									.map((_v) => ({
 										title: _v.project_shortname,
-										href: ROUTE_PATH.CLIENT.PROJECT.DETAILS(_v.slug),
+										href: ROUTE_PATH.CLIENT.PROJECTS.DETAILS(_v.slug),
 									}))}
 								isCloseDefault={
 									listProjects.filter((item) => item.group_id === group.group_id).length <= 0
@@ -145,7 +145,7 @@ export default function Sidebar() {
 									.filter((item) => item.group_id === group.group_id)
 									.map((_v) => ({
 										title: _v.project_shortname,
-										href: ROUTE_PATH.CLIENT.PROJECT.DETAILS(_v.slug),
+										href: ROUTE_PATH.CLIENT.PROJECTS.DETAILS(_v.slug),
 									}))}
 								isCloseDefault={
 									listProjects.filter((item) => item.group_id === group.group_id).length <= 0

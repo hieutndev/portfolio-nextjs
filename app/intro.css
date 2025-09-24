@@ -1,9 +1,0 @@
-.section-title {
-	@apply text-3xl;
-	@apply font-bold;
-}
-
-.section-subtitle {
-	@apply text-xl;
-	@apply font-bold;
-}

@@ -30,10 +30,16 @@ const ClientHeader = () => {
 		router.push(ROUTE_PATH.AUTH.SIGN_IN);
 	};
 
+    // icon ♾️🗃️📂📁💻
+
 	const headerConfig = [
+        // {
+        //     path: ROUTE_PATH.CLIENT.BLOGS.INDEX,
+        //     label: "📰 Blogs",
+        // },
 		{
-			path: ROUTE_PATH.CLIENT.PROJECT.INDEX,
-			label: "📰 Blogs",
+			path: ROUTE_PATH.CLIENT.PROJECTS.INDEX,
+			label: "🗂️ Projects",
 		},
 		{
 			path: ROUTE_PATH.CLIENT.MY_APPS,
@@ -66,9 +72,10 @@ const ClientHeader = () => {
 					onClick={() => router.push(ROUTE_PATH.CLIENT.INDEX)}
 				>
 					<Image
-						className={"cursor-pointer"}
+						className={"cursor-pointer max-h-12"}
 						radius={"none"}
 						src={SITE_CONFIG.LOGO.FULL_BLACK}
+
 
 					/>
 				</button>
@@ -91,30 +98,6 @@ const ClientHeader = () => {
 					>
 						📮 Email Me
 					</Button>
-
-					{/* <Button
-						size={"lg"}
-						variant={"light"}
-						isIconOnly
-						onPress={() =>
-							router.push(
-								hasCookie("refresh_token") ? ROUTE_PATH.ADMIN.ACCOUNT.INDEX : ROUTE_PATH.AUTH.SIGN_IN
-							)
-						}
-					>
-						{hasCookie("refresh_token") ? ICON_CONFIG.AUTH : ICON_CONFIG.UNAUTH}
-					</Button>
-					{hasCookie("refresh_token") && (
-						<Button
-							size={"lg"}
-							variant={"light"}
-							color={"danger"}
-							isIconOnly
-							onPress={handleSignOut}
-						>
-							{ICON_CONFIG.LOG_OUT}
-						</Button>
-					)} */}
 				</div>
 				<div
 					className={clsx("mobile-up lg:hidden", {

@@ -36,10 +36,14 @@ const ROUTE_PATH = {
     CLIENT: {
         INDEX: "/",
         MY_APPS: "/my-apps",
-        PROJECT: {
+        PROJECTS: {
             INDEX: "/projects",
             DETAILS: (projectId: string | number) => `/projects/${projectId}`,
         },
+        BLOGS: {
+            INDEX: "/blogs",
+            DETAILS: (blogId: string | number) => `/blogs/${blogId}`,
+        }
     },
     AUTH: {
         SIGN_IN: "/sign-in",
