@@ -37,8 +37,7 @@ export default async function HomePage() {
 			orientation={"vertical"}
 		>
 			<Container className={""} gapSize={8} orientation={"vertical"}>
-				{/* Render markdown from settings.introduce when available, otherwise fall back to default text */}
-				<article className="prose max-w-none prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-headings:text-gray-900 prose-p:text-lg prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-gray-900 prose-code:text-red-600 prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded">
+				<article className="prose max-w-none prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-headings:text-gray-900 prose-p:text-lg prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:font-bold prose-strong:text-gray-900 prose-code:text-red-600 prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded">
 					<MDXRemote
 						options={{
 							mdxOptions: {

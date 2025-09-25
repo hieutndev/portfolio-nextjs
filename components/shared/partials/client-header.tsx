@@ -68,7 +68,7 @@ const ClientHeader = () => {
 				})}
 			>
 				<button
-					className={"lg:max-w-80 max-w-40"}
+					className={"lg:max-w-80 max-w-40 outline-none"}
 					onClick={() => router.push(ROUTE_PATH.CLIENT.INDEX)}
 				>
 					<Image
