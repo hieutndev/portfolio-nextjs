@@ -20,7 +20,7 @@ export default function SettingsPage() {
         <SettingMenu onSelect={(key) => setCurrentSelectedMenu(key)} />
       </div>
       <div className={"col-span-10"}>
-        {currentSelectedMenu === "introduce"
+        {currentSelectedMenu === "homepage"
           ? <ContentComponent />
           : currentSelectedMenu === "my-skills"
             ? <MySkillsComponent />

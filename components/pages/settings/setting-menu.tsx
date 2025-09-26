@@ -11,13 +11,13 @@ interface SettingMenuProps {
 
 export const settingMenuItems: TMenu[] = [
     {
-        label: ["Introduce Section"],
-        key: "introduce",
+        label: ["Homepage Content"],
+        key: "homepage",
     },
-    {
-        label: ["Skills Section"],
-        key: "my-skills",
-    }
+    // {
+    //     label: ["Skills Section"],
+    //     key: "my-skills",
+    // }
 ]
 
 export default function SettingMenu({ onSelect }: SettingMenuProps) {
