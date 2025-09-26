@@ -3,11 +3,11 @@
 import { Image } from "@heroui/react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useFetch } from "nextage-toolkit/hooks";
+import { getTimeAgoString } from "nextage-toolkit/utils";
 
 import Container from "@/components/shared/container/container";
 import ICON_CONFIG from "@/configs/icons";
-import { getLastTimeString } from "@/utils/date";
-import { useFetch } from "@/hooks/useFetch";
 import { IAPIResponse } from "@/types/global";
 import { TProjectResponse } from "@/types/project";
 import API_ROUTE from "@/configs/api";
@@ -39,7 +39,7 @@ export default function ProjectsPage() {
                     if (index === 0) {
                         return (
                             <button key={project.id}
-                                className={"col-span-12 lg:col-span-12 lg:row-span-1 h-full overflow-hidden bg-gray-100/75 p-1 grid grid-cols-12 hover:shadow-md transition-shadow duration-200"}
+                                className={"col-span-12 lg:col-span-12 lg:row-span-1 h-full overflow-hidden bg-gray-100/75 grid grid-cols-12 hover:scale-105 transition-all duration-200"}
                                 onClick={() => router.push(ROUTE_PATH.CLIENT.PROJECTS.DETAILS(project.slug))}
                             >
                                 <div className={"col-span-8 w-full"}>
@@ -62,7 +62,7 @@ export default function ProjectsPage() {
                                                 {ICON_CONFIG.VIEW}
                                                 <p className={"text-sm"}>{project.views}</p>
                                             </div>
-                                            <p className={"text-xs text-gray-400"}>{getLastTimeString(project.created_at)}</p>
+                                            <p className={"text-xs text-gray-400"}>{getTimeAgoString(project.created_at)}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -73,7 +73,7 @@ export default function ProjectsPage() {
                     return (
                         <button
                             key={project.id}
-                            className={"col-span-12 lg:col-span-4 w-full h-auto flex flex-col justify-between gap-2 bg-gray-100/75 p-1 hover:shadow-md transition-shadow duration-200"}
+                            className={"col-span-12 lg:col-span-4 w-full h-auto flex flex-col justify-between gap-2 bg-gray-100/75 hover:scale-105 transition-all duration-200"}
                             onClick={() => router.push(ROUTE_PATH.CLIENT.PROJECTS.DETAILS(project.id))}
                         >
                             <div className={"w-full h-auto flex flex-col gap-4"}>
@@ -94,7 +94,7 @@ export default function ProjectsPage() {
                                     {ICON_CONFIG.VIEW}
                                     <p className={"text-left text-sm"}>{project.views}</p>
                                 </div>
-                                <p className={"text-left text-xs text-gray-400"}>{getLastTimeString(project.created_at)}</p>
+                                <p className={"text-left text-xs text-gray-400"}>{getTimeAgoString(project.created_at)}</p>
                             </div>
                         </button>
                     )

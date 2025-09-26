@@ -2,6 +2,7 @@ import { Divider } from "@heroui/react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
+import { serverFetch } from "nextage-toolkit";
 
 import AnimatedQuote from "@/components/pages/introduce/animated-quote";
 import CertificationSection from "@/components/pages/introduce/certification-section";
@@ -10,23 +11,19 @@ import EmploymentSection from "@/components/pages/introduce/employment-section";
 import SkillSection from "@/components/pages/introduce/skill-section";
 import Container from "@/components/shared/container/container";
 import API_ROUTE from "@/configs/api";
-import { nonAuthFetch } from "@/utils/non-auth-fetch";
 import { TSetting } from "@/types/settings";
 import ActivitiesSection from "@/components/pages/introduce/activities-section";
+import { IAPIResponse } from "@/types/global";
 
 export default async function HomePage() {
 	let introduceMarkdown = "";
 	let animatedQuote = "";
+	
+	const response = await serverFetch<IAPIResponse<TSetting>>(API_ROUTE.SETTINGS.GET_SETTINGS, { cache: "force-cache", revalidate: 60 });
 
-	try {
-		const response = await nonAuthFetch<TSetting>(API_ROUTE.SETTINGS.GET_SETTINGS, { cache: "force-cache", revalidate: 60 });
-
-		if (response && response.status === "success" && response.results && typeof response.results.introduce === "string") {
-			introduceMarkdown = response.results.introduce;
-			animatedQuote = response.results.animated_quote;
-		}
-	} catch (e) {
-		console.error("Failed to load settings.introduce on server via nonAuthFetch:", e);
+	if (response && response.status === "success" && response.results && typeof response.results.introduce === "string") {
+		introduceMarkdown = response.results.introduce;
+		animatedQuote = response.results.animated_quote;
 	}
 
 	return (

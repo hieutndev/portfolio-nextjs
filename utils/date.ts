@@ -35,7 +35,7 @@ export function getMonthYearName(isoString: string) {
     return date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
 }
 
-export function getLastTimeString(isoString: string): string {
+export function getTimeAgoString(isoString: string): string {
     const lastUpdatedTime = new Date(isoString);
     const currentTime = new Date();
 

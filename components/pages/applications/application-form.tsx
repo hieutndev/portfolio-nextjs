@@ -5,7 +5,7 @@ import { Input, addToast } from "@heroui/react";
 import Image from "next/image";
 
 import CustomForm from "@/components/shared/forms/custom-form";
-import { useFetch } from "@/hooks/useFetch";
+import { useFetch } from "nextage-toolkit";
 import API_ROUTE from "@/configs/api";
 import { TApp, TNewApp, TUpdateApp } from "@/types/application";
 import { IAPIResponse } from "@/types/global";

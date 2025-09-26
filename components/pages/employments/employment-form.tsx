@@ -7,7 +7,7 @@ import { DateValue, parseDate } from "@internationalized/date";
 import moment from "moment";
 
 import CustomForm from "@/components/shared/forms/custom-form";
-import { useFetch } from "@/hooks/useFetch";
+import { useFetch } from "nextage-toolkit";
 import { IAPIResponse } from "@/types/global";
 import { TEmployment, TNewEmployment } from "@/types/employment";
 import API_ROUTE from "@/configs/api";

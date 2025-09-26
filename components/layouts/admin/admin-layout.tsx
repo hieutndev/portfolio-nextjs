@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 import AdminSidebar from "@/components/shared/partials/admin-sidebar";
 import API_ROUTE from "@/configs/api";
-import { useFetch } from "@/hooks/useFetch";
+import { useFetch } from "nextage-toolkit";
 
 
 export default function AdminLayout({

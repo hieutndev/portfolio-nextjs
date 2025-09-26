@@ -17,7 +17,7 @@ import {
 	useDisclosure,
 } from "@heroui/react";
 
-import { useFetch } from "@/hooks/useFetch";
+import { useFetch } from "nextage-toolkit";
 import AdminHeader from "@/components/shared/partials/admin-header";
 import CertificationForm from "@/components/pages/certifications/certification-form";
 import API_ROUTE from "@/configs/api";

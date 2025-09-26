@@ -1,22 +1,23 @@
 "use server";
 
-import Image from "next/image";
 
-import AchievementRow from "./achievement-row";
+
+import { serverFetch } from "nextage-toolkit";
+
+import SectionHeader from "./section-header";
+import Timeline from "./timeline";
 
 import Container from "@/components/shared/container/container";
 import API_ROUTE from "@/configs/api";
-import { nonAuthFetch } from "@/utils/non-auth-fetch";
 import { TCertification } from "@/types/certification";
 import { formatDate } from "@/utils/date";
-import SectionHeader from "./section-header";
-import Timeline from "./timeline";
+import { IAPIResponse } from "@/types/global";
 
 export default async function CertificationSection() {
 	let listCertification: TCertification[] = [];
 
 	try {
-		const response = await nonAuthFetch<TCertification[]>(
+		const response = await serverFetch<IAPIResponse<TCertification[]>>(
 			API_ROUTE.CERTIFICATION.GET_ALL,
 			{ cache: "force-cache", revalidate: 60 }
 		);

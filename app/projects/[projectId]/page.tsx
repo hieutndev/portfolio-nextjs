@@ -1,13 +1,15 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import { serverFetch } from "nextage-toolkit";
 
 import { TProject } from "@/types/project";
-import { nonAuthFetch } from "@/utils/non-auth-fetch";
 import API_ROUTE from "@/configs/api";
 import ProjectBlogHeader from "@/components/pages/projects/project-blog-header";
 import ProjectBlogContent from "@/components/pages/projects/project-blog-content";
 import ProjectBlogFooter from "@/components/pages/projects/project-blog-footer";
 import Container from "@/components/shared/container/container";
+
+import { IAPIResponse } from "@/types/global";
 
 interface ProjectBlogPageProps {
     params: Promise<{ projectId: string }>;
@@ -16,9 +18,9 @@ interface ProjectBlogPageProps {
 // Generate metadata for SEO
 export async function generateMetadata({ params }: ProjectBlogPageProps): Promise<Metadata> {
     const { projectId } = await params;
-    
+
     // Try to fetch project by ID or slug
-    const response = await nonAuthFetch<TProject>(
+    const response = await serverFetch<IAPIResponse<TProject>>(
         API_ROUTE.PROJECT.GET_ONE(projectId),
         {
             revalidate: 3600,
@@ -49,7 +51,7 @@ export default async function ProjectBlogPage({ params }: ProjectBlogPageProps) 
     const { projectId } = await params;
 
     // Fetch project data on the server (handles both ID and slug)
-    const response = await nonAuthFetch<TProject>(
+    const response = await serverFetch<IAPIResponse<TProject>>(
         API_ROUTE.PROJECT.GET_ONE(projectId),
         {
             // Revalidate every hour to keep data fresh

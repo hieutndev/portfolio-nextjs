@@ -28,7 +28,7 @@ import CustomForm from "@/components/shared/forms/custom-form";
 import API_ROUTE from "@/configs/api";
 import { MAP_MESSAGE } from "@/configs/response-message";
 import ROUTE_PATH from "@/configs/route-path";
-import { useFetch } from "@/hooks/useFetch";
+import { useFetch } from "nextage-toolkit";
 import { useS3Upload } from "@/hooks/useS3Upload";
 import { IAPIResponse } from "@/types/global";
 import {

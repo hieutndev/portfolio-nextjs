@@ -5,13 +5,11 @@ import { useState } from "react";
 import { useReactiveCookiesNext } from "cookies-next/client";
 import { useRouter } from "next/navigation";
 import { Button, Image } from "@heroui/react";
-
-import useScroll from "../../../hooks/useScroll";
+import { useScroll, useWindowSize } from "nextage-toolkit";
 
 import ICON_CONFIG from "@/configs/icons";
 import ROUTE_PATH from "@/configs/route-path";
 import { SITE_CONFIG } from "@/configs/site-config";
-import useScreenSize from "@/hooks/useScreenSize";
 import { BREAK_POINT } from "@/configs/break-point";
 
 // interface HeaderProps {}
@@ -49,7 +47,7 @@ const ClientHeader = () => {
 	];
 
 	const [isOpenMiniHeader, setIsOpenMiniHeader] = useState<boolean>(false);
-	const { width } = useScreenSize();
+	const { width } = useWindowSize();
 
 	return (
 		<div

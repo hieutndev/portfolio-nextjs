@@ -1,9 +1,9 @@
 "use client";
 
 import clsx from "clsx";
+import { useWindowSize } from "nextage-toolkit";
 
 import { BREAK_POINT } from "@/configs/break-point";
-import useScreenSize from "@/hooks/useScreenSize";
 
 interface ContainerProps {
 	orientation?: "horizontal" | "vertical";
@@ -25,7 +25,7 @@ export default function Container({
 		vertical: "flex flex-col",
 	};
 
-	const { width } = useScreenSize();
+	const { width } = useWindowSize();
 
 	const WrapperGapClass: string = `gap-${gapSize}`;
 

@@ -1,22 +1,22 @@
 "use server"
 
-import Image from "next/image";
 
-import AchievementRow from "./achievement-row";
+import { serverFetch } from "nextage-toolkit";
+
 import SectionHeader from "./section-header";
+import Timeline from "./timeline";
 
 import API_ROUTE from "@/configs/api";
-import { nonAuthFetch } from "@/utils/non-auth-fetch";
 import { TEmployment } from "@/types/employment";
 import { formatDate } from "@/utils/date";
 import Container from "@/components/shared/container/container";
-import Timeline from "./timeline";
+import { IAPIResponse } from "@/types/global";
 
 export default async function EmploymentSection() {
 	let listEmployment: TEmployment[] = [];
 
 	try {
-		const response = await nonAuthFetch<TEmployment[]>(API_ROUTE.EMPLOYMENT.GET_ALL, { cache: "force-cache", revalidate: 60 });
+		const response = await serverFetch<IAPIResponse<TEmployment[]>>(API_ROUTE.EMPLOYMENT.GET_ALL, { cache: "force-cache", revalidate: 60 });
 
 		if (response && response.status === "success" && Array.isArray(response.results)) {
 			listEmployment = response.results as TEmployment[];

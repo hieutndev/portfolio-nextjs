@@ -18,9 +18,9 @@ import {
   ModalContent,
   ModalHeader,
 } from "@heroui/react";
+import { useFetch } from "nextage-toolkit";
 
 import AdminHeader from "@/components/shared/partials/admin-header";
-import { useFetch } from "@/hooks/useFetch";
 import API_ROUTE from "@/configs/api";
 import { TAccount } from "@/types/account";
 import { IAPIResponse, TDataAction } from "@/types/global";

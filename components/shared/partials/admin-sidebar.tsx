@@ -5,9 +5,9 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Divider, Tooltip } from "@heroui/react";
 import clsx from "clsx";
+import { useWindowSize } from "nextage-toolkit";
 
 import { SITE_CONFIG } from "@/configs/site-config";
-import useScreenSize from "@/hooks/useScreenSize";
 import { BREAK_POINT } from "@/configs/break-point";
 
 export default function AdminSidebar() {
@@ -15,7 +15,7 @@ export default function AdminSidebar() {
 
 	const router = useRouter();
 
-	const { width } = useScreenSize();
+	const { width } = useWindowSize();
 
 	return (
 		<div className={"min-w-24 2xl:w-1/6 fixed h-full flex flex-col items-center gap-4 2xl:gap-8 p-2 2xl:p-8 rounded-e-2xl border border-gray-300"}>

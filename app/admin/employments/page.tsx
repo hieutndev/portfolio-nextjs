@@ -22,7 +22,7 @@ import {
 import Container from "@/components/shared/container/container";
 import AdminHeader from "@/components/shared/partials/admin-header";
 import ICON_CONFIG from "@/configs/icons";
-import { useFetch } from "@/hooks/useFetch";
+import { useFetch } from "nextage-toolkit";
 import { IAPIResponse, TDataAction } from "@/types/global";
 import { TEmployment } from "@/types/employment";
 import API_ROUTE from "@/configs/api";

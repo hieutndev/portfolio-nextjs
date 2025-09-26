@@ -5,16 +5,15 @@ import { useReactiveCookiesNext } from "cookies-next";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import clsx from "clsx";
+import { useFetch, useWindowSize } from "nextage-toolkit";
 
 import Container from "@/components/shared/container/container";
 import CustomForm from "@/components/shared/forms/custom-form";
 import API_ROUTE from "@/configs/api";
 import { MAP_MESSAGE } from "@/configs/response-message";
 import ROUTE_PATH from "@/configs/route-path";
-import { useFetch } from "@/hooks/useFetch";
 import { IAPIResponse } from "@/types/global";
 import { BREAK_POINT } from "@/configs/break-point";
-import useScreenSize from "@/hooks/useScreenSize";
 import { TSignIn, TSignInResponse } from "@/types/auth";
 
 function SignInContent() {
@@ -95,7 +94,8 @@ function SignInContent() {
     }
   }, [signInResponse, signInError]);
 
-  const { width } = useScreenSize();
+  const { width } = useWindowSize();
+  
 
   return (
     <div

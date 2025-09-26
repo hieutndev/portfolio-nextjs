@@ -1,7 +1,6 @@
 import { useRef, useCallback } from "react";
 import { addToast } from "@heroui/react";
-
-import { useFetch } from "./useFetch";
+import { useFetch } from "nextage-toolkit";
 
 import API_ROUTE from "@/configs/api";
 import { IAPIResponse } from "@/types/global";

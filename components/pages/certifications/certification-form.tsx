@@ -7,7 +7,7 @@ import moment from "moment";
 import Image from "next/image";
 
 import CustomForm from "@/components/shared/forms/custom-form";
-import { useFetch } from "@/hooks/useFetch";
+import { useFetch } from "nextage-toolkit";
 import API_ROUTE from "@/configs/api";
 import { TCertification, TNewCertification, TUpdateCertification } from "@/types/certification";
 import { IAPIResponse } from "@/types/global";

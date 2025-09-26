@@ -8,7 +8,7 @@ import { Accordion, AccordionItem, addToast, Input, Button } from "@heroui/react
 import InitMDXEditor from "@/components/shared/mdx-editor/mdx-init-html";
 import CustomForm from "@/components/shared/forms/custom-form";
 import Container from "@/components/shared/container/container";
-import { useFetch } from "@/hooks/useFetch";
+import { useFetch } from "nextage-toolkit";
 import API_ROUTE from "@/configs/api";
 import { IAPIResponse } from "@/types/global";
 import { TSetting } from "@/types/settings";

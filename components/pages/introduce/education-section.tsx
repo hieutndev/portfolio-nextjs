@@ -1,18 +1,20 @@
 "use server"
 
+import { serverFetch } from "nextage-toolkit";
+
 import SectionHeader from "./section-header";
 import Timeline from "./timeline";
 
 import Container from "@/components/shared/container/container";
 import API_ROUTE from "@/configs/api";
-import { nonAuthFetch } from "@/utils/non-auth-fetch";
 import { TEducation } from "@/types/education";
+import { IAPIResponse } from "@/types/global";
 
 export default async function EducationSection() {
 	let listEducation: TEducation[] = [];
 
 	try {
-		const response = await nonAuthFetch<TEducation[]>(API_ROUTE.EDUCATION.GET_ALL, { cache: "force-cache", revalidate: 60 });
+		const response = await serverFetch<IAPIResponse<TEducation[]>>(API_ROUTE.EDUCATION.GET_ALL, { cache: "force-cache", revalidate: 60 });
 
 		if (response && response.status === "success" && Array.isArray(response.results)) {
 			listEducation = response.results as TEducation[];

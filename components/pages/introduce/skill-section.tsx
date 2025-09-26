@@ -1,12 +1,13 @@
 import clsx from "clsx";
 import Image from "next/image";
+import { serverFetch } from "nextage-toolkit";
 
 import SectionHeader from "./section-header";
 
 import Container from "@/components/shared/container/container";
 import { TSetting } from "@/types/settings";
-import { nonAuthFetch } from "@/utils/non-auth-fetch";
 import API_ROUTE from "@/configs/api";
+import { IAPIResponse } from "@/types/global";
 
 const SkillIconBlock = ({ iconPath }: { iconPath: string }) => (
 	<div className={clsx("h-12 w-12", "xl:w-14 xl:h-14", "lg:w-12 lg:h-12", "")}>
@@ -22,14 +23,10 @@ export default async function SkillSection() {
 		design_tools: [],
 	};
 
-	try {
-		const response = await nonAuthFetch<TSetting>(API_ROUTE.SETTINGS.GET_SETTINGS, { cache: "force-cache", revalidate: 60 });
+	const response = await serverFetch<IAPIResponse<TSetting>>(API_ROUTE.SETTINGS.GET_SETTINGS, { cache: "force-cache", revalidate: 60 });
 
-		if (response && response.status === "success" && response.results && typeof response.results.introduce === "string") {
-			listSkills = response.results.skills || listSkills;
-		}
-	} catch (e) {
-		console.error("Failed to load settings.introduce on server via nonAuthFetch:", e);
+	if (response && response.status === "success" && response.results && typeof response.results.introduce === "string") {
+		listSkills = response.results.skills || listSkills;
 	}
 
 	return (

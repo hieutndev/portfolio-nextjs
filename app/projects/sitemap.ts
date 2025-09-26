@@ -1,15 +1,17 @@
 // app/products/sitemap.ts
 import type { MetadataRoute } from 'next'
 
+import { serverFetch } from 'nextage-toolkit';
+
 import API_ROUTE from '@/configs/api';
 import { TProjectResponse } from '@/types/project';
-import { nonAuthFetch } from '@/utils/non-auth-fetch';
+import { IAPIResponse } from '@/types/global';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
 // Step 1: Tell Next.js how many sitemaps to generate
 export async function generateSitemaps() {
 
-    const response = await nonAuthFetch<TProjectResponse[]>(API_ROUTE.PROJECT.GET_ALL);
+    const response = await serverFetch<IAPIResponse<TProjectResponse[]>>(API_ROUTE.PROJECT.GET_ALL);
 
     const listProjects = response.results || [];
 
@@ -22,7 +24,7 @@ export async function generateSitemaps() {
 export default async function sitemap({ id }: { id: number }): Promise<MetadataRoute.Sitemap> {
     const start = id * 50000
     const end = start + 50000
-    const response = await nonAuthFetch<TProjectResponse[]>(API_ROUTE.PROJECT.GET_ALL);
+    const response = await serverFetch<IAPIResponse<TProjectResponse[]>>(API_ROUTE.PROJECT.GET_ALL);
 
 
     const listProjects = response.results?.slice(start, end) || [];

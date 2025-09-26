@@ -19,7 +19,7 @@ import {
 	Chip,
 } from "@heroui/react";
 
-import { useFetch } from "@/hooks/useFetch";
+import { useFetch } from "nextage-toolkit";
 import AdminHeader from "@/components/shared/partials/admin-header";
 import EducationForm from "@/components/pages/educations/education-form";
 import API_ROUTE from "@/configs/api";

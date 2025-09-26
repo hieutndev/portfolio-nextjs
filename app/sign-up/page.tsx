@@ -4,16 +4,15 @@ import { addToast, Divider, Image, Input } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
+import { useFetch, useWindowSize } from "nextage-toolkit";
 
 import Container from "@/components/shared/container/container";
 import CustomForm from "@/components/shared/forms/custom-form";
 import API_ROUTE from "@/configs/api";
 import { MAP_MESSAGE } from "@/configs/response-message";
 import ROUTE_PATH from "@/configs/route-path";
-import { useFetch } from "@/hooks/useFetch";
 import { IAPIResponse } from "@/types/global";
 import { BREAK_POINT } from "@/configs/break-point";
-import useScreenSize from "@/hooks/useScreenSize";
 import { TSignInResponse, TSignUp } from "@/types/auth";
 
 // interface SignInProps {}
@@ -73,7 +72,7 @@ export default function SignUpPage() {
 		}
 	}, [signUpResponse, signUpError]);
 
-	const { width } = useScreenSize();
+	const { width } = useWindowSize();
 
 	return (
 		<div className={"bg-light w-screen h-screen flex flex-col justify-center items-center gap-8 px-4"}>
