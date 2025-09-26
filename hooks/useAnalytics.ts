@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-
-import { useFetch } from './useFetch';
+import { useFetch } from 'nextage-toolkit';
 
 import { IAPIResponse } from '@/types/global';
 import API_ROUTE from '@/configs/api';
