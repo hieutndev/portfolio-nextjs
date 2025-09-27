@@ -1,6 +1,8 @@
 import Container from "@/components/shared/container/container";
 import ClientHeader from "@/components/shared/partials/client-header";
 
+import packageJson from "../../../package.json";
+
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<div className={"relative"}>
@@ -10,7 +12,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 					{/* <Sidebar /> */}
 					{children}
 				</Container>
+
 			</div>
+			<p className="w-full text-center absolute left-0 bottom-4 text-xs text-gray-500">
+				v{packageJson.version}
+			</p>
 		</div>
 	);
 }

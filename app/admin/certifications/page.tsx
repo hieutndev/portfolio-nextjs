@@ -10,14 +10,10 @@ import {
 	TableColumn,
 	TableRow,
 	TableCell,
-	Modal,
-	ModalContent,
-	ModalHeader,
-	ModalBody,
 	useDisclosure,
 } from "@heroui/react";
-
 import { useFetch } from "hieutndev-toolkit";
+
 import AdminHeader from "@/components/shared/partials/admin-header";
 import CertificationForm from "@/components/pages/certifications/certification-form";
 import API_ROUTE from "@/configs/api";
@@ -30,6 +26,7 @@ import { formatDate } from "@/utils/date";
 import { MAP_MESSAGE } from "@/configs/response-message";
 import SearchInput from "@/components/shared/search/search-input";
 import CustomPagination from "@/components/shared/custom-pagination/custom-pagination";
+import CustomModal from "@/components/shared/custom-modal/custom-modal";
 
 export default function CertificationListPage() {
 	const [modalMode, setModalMode] = useState<"create" | "update">("create");
@@ -213,7 +210,7 @@ export default function CertificationListPage() {
 			className={"border border-default-200 rounded-2xl"}
 			orientation={"vertical"}
 		>
-			<AdminHeader breadcrumbs={["Admin", "Certification Management"]} title="Certification Management"/>
+			<AdminHeader breadcrumbs={["Admin", "Certification Management"]} title="Certification Management" />
 			<div className={"flex flex-col gap-4"}>
 				<div className="flex items-center justify-between gap-4">
 					<div className="flex items-center gap-4">
@@ -282,28 +279,18 @@ export default function CertificationListPage() {
 					onPageChange={handlePageChange}
 				/>
 			</div>
-			<Modal
-				hideCloseButton
-				isOpen={isOpen}
-				placement={"top"}
-				size="xl"
+
+			<CustomModal isOpen={isOpen}
+				title={modalMode === "create" ? "Add New Certification" : "Update Certification"}
 				onOpenChange={onOpenChange}
 			>
-				<ModalContent>
-					<ModalHeader>
-						<h3 className="text-xl font-semibold">
-							{modalMode === "create" ? "Add New Certification" : "Update Certification"}
-						</h3>
-					</ModalHeader>
-					<ModalBody>
-						<CertificationForm
-							certificationId={selectedCert?.id ?? -1}
-							mode={modalMode}
-							onSuccess={handleModalSuccess}
-						/>
-					</ModalBody>
-				</ModalContent>
-			</Modal>
-		</Container>
+
+				<CertificationForm
+					certificationId={selectedCert?.id ?? -1}
+					mode={modalMode}
+					onSuccess={handleModalSuccess}
+				/>
+			</CustomModal>
+		</Container >
 	);
 }

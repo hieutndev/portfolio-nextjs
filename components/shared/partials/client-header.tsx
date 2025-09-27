@@ -62,7 +62,7 @@ const ClientHeader = () => {
 			<div
 				className={clsx("w-full flex items-center justify-between max-w-full", {
 					"px-32": width >= BREAK_POINT.XXL,
-					"px-8": width >= BREAK_POINT.M && width < BREAK_POINT.XL,
+					"px-8": width >= BREAK_POINT.MD && width < BREAK_POINT.XL,
 				})}
 			>
 				<button
@@ -93,8 +93,9 @@ const ClientHeader = () => {
 					<Button
 						className={"px-4 bg-black text-white"}
 						size={"lg"}
+						onClick={() => window.open("https://github.com/hieutndev", "_blank")}
 					>
-						📮 Email Me
+						{ICON_CONFIG.GITHUB}@hieutndev
 					</Button>
 				</div>
 				<div

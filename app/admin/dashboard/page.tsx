@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Card, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
+import { Card, Select, SelectItem, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 
 import { useAnalytics } from '@/hooks/useAnalytics';
 import MetricCard from '@/components/shared/metric-card';
@@ -12,42 +12,17 @@ export default function DashboardPage() {
   const {
     dashboardData,
     topViewedArticles,
-    hasError,
-    refetchAll,
     period,
     setPeriod
   } = useAnalytics();
-
-  if (hasError) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-            <h2 className="text-lg font-semibold text-red-800 mb-2">
-              Error Loading Analytics
-            </h2>
-            <p className="text-red-600 mb-4">
-              Unable to load analytics data. Please try again.
-            </p>
-            <button
-              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
-              onClick={refetchAll}
-            >
-              Retry
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div
       className="flex flex-col gap-4"
     >
       <Card className={"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4"}>
-        <div className={"col-span-1 md:col-span-2 lg:col-span-3 flex items-center justify-between"}>
-          <h3 className={"text-xl font-semibold"}>Google Analytics Overview</h3>
+        <div className={"col-span-1 md:col-span-2 lg:col-span-3 flex flex-col md:flex-row gap-4 items-center justify-between flex-wrap"}>
+          <h3 className={"md:text-left text-center text-xl font-bold"}>Google Analytics Overview</h3>
           <Select
             className="max-w-xs"
             items={listPeriods}
@@ -87,10 +62,10 @@ export default function DashboardPage() {
       </Card>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className={"flex flex-col gap-4 p-4 h-full"}>
-          <h3 className="text-lg font-semibold ">
+          <h3 className="md:text-left text-center text-lg font-bold ">
             Google Analytics Page Metrics
           </h3>
-          <Table removeWrapper>
+          <Table removeWrapper className={"overflow-x-auto"}>
             <TableHeader>
               <TableColumn>Top Pages</TableColumn>
               <TableColumn align={"start"}>Engagement Time</TableColumn>
@@ -113,10 +88,10 @@ export default function DashboardPage() {
         <Card
           className={"flex flex-col gap-4 p-4 h-full"}
         >
-          <h3 className="text-lg font-semibold">
+          <h3 className="md:text-left text-lg text-center font-bold">
             Top View Articles
           </h3>
-          <Table removeWrapper>
+          <Table removeWrapper className={"overflow-x-auto"}>
             <TableHeader>
               <TableColumn>Article Title</TableColumn>
               <TableColumn align={"center"}>View Count</TableColumn>

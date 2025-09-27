@@ -15,7 +15,7 @@ export default function NewProjectPage() {
 			<AdminHeader
 				backButton={{
 					color: "default",
-					size: "lg",
+					size: "md",
 					variant: "solid",
 					startContent: ICON_CONFIG.BACK,
 					text: "Back",

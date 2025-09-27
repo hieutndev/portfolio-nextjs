@@ -32,23 +32,7 @@ export default function ModalCreateUpdateProjectGroup({
 					<h6 className={"text-xl"}>{title}</h6>
 				</ModalHeader>
 				<ModalBody>
-					<CustomForm
-						className={"flex flex-col gap-4 pb-4"}
-						formId={"crudForm"}
-						onSubmit={onSubmit}
-					>
-						<Input
-							isRequired={true}
-							label={"Group Title"}
-							labelPlacement={"outside"}
-							name={"group_title"}
-							placeholder={"Enter project group title"}
-							type={"text"}
-							value={defaultValue}
-							variant={"bordered"}
-							onValueChange={onUpdateValue}
-						/>
-					</CustomForm>
+					
 				</ModalBody>
 			</ModalContent>
 		</Modal>

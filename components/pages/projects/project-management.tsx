@@ -185,7 +185,7 @@ export default function ProjectManagement() {
 
 	return (
 		<div className={"flex flex-col gap-4"}>
-			<div className="flex items-center justify-between gap-4">
+			<div className="flex items-center flex-wrap justify-between gap-4">
 				<Button
 					className={"w-max"}
 					color={"primary"}

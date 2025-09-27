@@ -32,6 +32,7 @@ import TableCellAction from "@/components/shared/tables/table-cell-action";
 import EmploymentFormComponent from "@/components/pages/employments/employment-form";
 import SearchInput from "@/components/shared/search/search-input";
 import CustomPagination from "@/components/shared/custom-pagination/custom-pagination";
+import CustomModal from "@/components/shared/custom-modal/custom-modal";
 
 export default function EmploymentManagementPage() {
 	const [listEmploymentHistory, setListEmploymentHistory] = useState<TEmployment[]>([]);
@@ -373,28 +374,19 @@ export default function EmploymentManagementPage() {
 					onPageChange={handlePageChange}
 				/>
 			</div>
-			<Modal
-				hideCloseButton={true}
-				isOpen={isOpen}
-				placement={"top"}
-				size={"xl"}
-				onOpenChange={onOpenChange}
 
-				>
-				<ModalContent>
-					<ModalHeader>
-						<h3 className={"text-xl font-semibold"}>Employment History Information</h3>
-					</ModalHeader>
-					<ModalBody>
-						<EmploymentFormComponent
-							defaultValues={selectedEmployment ?? undefined}
-							employmentId={selectedEmployment?.id ?? undefined}
-							mode={modalMode}
-							onSuccess={onModalSuccess}
-						/>
-					</ModalBody>
-				</ModalContent>
-			</Modal>
+			<CustomModal isOpen={isOpen}
+				title={"Employment History Information"}
+				onOpenChange={onOpenChange}
+			>
+				<EmploymentFormComponent
+					defaultValues={selectedEmployment ?? undefined}
+					employmentId={selectedEmployment?.id ?? undefined}
+					mode={modalMode}
+					onSuccess={onModalSuccess}
+
+				/>
+			</CustomModal>
 		</Container>
 	);
 }

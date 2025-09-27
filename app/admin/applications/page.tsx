@@ -32,6 +32,7 @@ import { MAP_MESSAGE } from "@/configs/response-message";
 import { formatDate } from "@/utils/date";
 import SearchInput from "@/components/shared/search/search-input";
 import CustomPagination from "@/components/shared/custom-pagination/custom-pagination";
+import CustomModal from "@/components/shared/custom-modal/custom-modal";
 
 export default function ApplicationManagementPage() {
   const [modalMode, setModalMode] = useState<"create" | "update">("create");
@@ -308,43 +309,25 @@ export default function ApplicationManagementPage() {
         />
       </div>
 
-      {/* Modal for Create/Edit */}
-      <Modal
-        hideCloseButton
-        isOpen={isOpen}
-        placement={"top"}
-        scrollBehavior="inside"
-        size="xl"
+      <CustomModal isOpen={isOpen}
+        title={modalMode === "create"
+          ? "Add New Application"
+          : "Edit Application"}
         onOpenChange={onOpenChange}
-        >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader>
-                <h3 className={"text-xl font-semibold"}>
-                  {modalMode === "create"
-                    ? "Add New Application"
-                    : "Edit Application"}
-                </h3>
-              </ModalHeader>
-              <ModalBody className={"mb-4"}>
-                <ApplicationForm
-                  applicationId={
-                    selectedApplication?.app_id
-                      ? Number(selectedApplication.app_id)
-                      : undefined
-                  }
-                  mode={modalMode}
-                  onSuccess={() => {
-                    fetchApplications();
-                    onClose();
-                  }}
-                />
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-    </Container>
+      >
+        <ApplicationForm
+          applicationId={
+            selectedApplication?.app_id
+              ? Number(selectedApplication.app_id)
+              : undefined
+          }
+          mode={modalMode}
+          onSuccess={() => {
+            fetchApplications();
+
+          }}
+        />
+      </CustomModal>
+    </Container >
   );
 }

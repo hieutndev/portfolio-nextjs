@@ -9,10 +9,10 @@ export const SITE_CONFIG = {
         ONLY_ICON_WHITE: "/1x1w.png",
         ONLY_ICON_BLACK: "/1x1b.png",
         FULL_WHITE: "/logow_w.png",
-        FULL_BLACK: "/logow_b.png",
+        FULL_BLACK: "/black_full_board.png",
         // FULL_BLACK: "/hdev.png",
     },
-    FAVICON: "/portfolio_fav.ico",
+    FAVICON: "/favicon.ico",
     ADMIN_SIDEBAR_ITEMS: [
         {
             label: "Dashboard",

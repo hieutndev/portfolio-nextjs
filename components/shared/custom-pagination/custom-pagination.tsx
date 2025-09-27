@@ -33,14 +33,13 @@ export default function CustomPagination({
 	}
 
 	return (
-		<div className={`flex items-center justify-between gap-4 ${className}`}>
-			{/* Items info and per page selector */}
-			<div className="flex items-center gap-4">
+		<div className={`flex items-center flex-wrap justify-center md:justify-between gap-4 ${className}`}>
+			<div className="flex items-center flex-wrap gap-4">
 				<span className="text-tiny text-default-500">
 					Showing {startItem} to {endItem} of {totalItems} entries
 				</span>
 				{showItemsPerPage && (
-					<div className="flex items-center gap-2 border-l pl-4 border-default-200">
+					<div className="flex items-center gap-2 md:border-l md:pl-4 border-default-200">
 						<span className="text-tiny text-default-500">Show:</span>
 						<Select
 							className={"w-16"}

@@ -7,6 +7,8 @@ import { Divider, Tooltip } from "@heroui/react";
 import clsx from "clsx";
 import { useWindowSize } from "hieutndev-toolkit";
 
+import packageJson from "../../../package.json";
+
 import { SITE_CONFIG } from "@/configs/site-config";
 import { BREAK_POINT } from "@/configs/break-point";
 
@@ -18,7 +20,12 @@ export default function AdminSidebar() {
 	const { width } = useWindowSize();
 
 	return (
-		<div className={"min-w-24 2xl:w-1/6 fixed h-full flex flex-col items-center gap-4 2xl:gap-8 p-2 2xl:p-8 rounded-e-2xl border border-gray-300"}>
+		<div
+			className={clsx("relative top-0 left-0 h-full px-4 py-8 flex flex-col gap-8 items-center shadow-lg", {
+				"w-full": width > BREAK_POINT.XL,
+				"w-max": width <= BREAK_POINT.XL,
+			})}
+		>
 			<div className={"h-max max-w-56"}>
 				<Image
 					alt={"logo"}
@@ -66,6 +73,9 @@ export default function AdminSidebar() {
 						</Button>
 				))}
 			</div>
+			<p className="w-full text-center absolute left-0 bottom-8 text-xs text-gray-500">
+				v{packageJson.version}
+			</p>
 		</div>
 	);
 }

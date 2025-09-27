@@ -32,6 +32,7 @@ import { formatDate } from "@/utils/date";
 import { MAP_MESSAGE } from "@/configs/response-message";
 import SearchInput from "@/components/shared/search/search-input";
 import CustomPagination from "@/components/shared/custom-pagination/custom-pagination";
+import CustomModal from "@/components/shared/custom-modal/custom-modal";
 
 export default function EducationManagementPage() {
 	const [modalMode, setModalMode] = useState<"create" | "edit">("create");
@@ -298,37 +299,18 @@ export default function EducationManagementPage() {
 				/>
 			</div>
 
-			{/* Modal for Create/Edit */}
-			<Modal
-				hideCloseButton
-				isOpen={isOpen}
-				placement={"top"}
-				scrollBehavior="inside"
-				size="xl"
-				onOpenChange={onOpenChange}
-			>
-				<ModalContent>
-					{(onClose) => (
-						<>
-							<ModalHeader>
-								<h3 className={"text-xl font-semibold"}>
-									{modalMode === "create" ? "Add New Education" : "Update Education"}
-								</h3>
-							</ModalHeader>
-							<ModalBody className="mb-4">
-								<EducationForm
-									educationId={selectedEducation?.id ? Number(selectedEducation.id) : undefined}
-									mode={modalMode}
-									onSuccess={() => {
-										fetchEducations();
-										onClose();
-									}}
-								/>
-							</ModalBody>
-						</>
-					)}
-				</ModalContent>
-			</Modal>
+
+
+			<CustomModal title={modalMode === "create" ? "Add New Education" : "Edit Education"} isOpen={isOpen} onOpenChange={onOpenChange}>
+				<EducationForm
+					educationId={selectedEducation?.id ? Number(selectedEducation.id) : undefined}
+					mode={modalMode}
+					onSuccess={() => {
+						fetchEducations();
+						onOpenChange();
+					}}
+				/>
+			</CustomModal>
 		</Container>
 	);
 }

@@ -11,6 +11,7 @@ import {
 	TableColumn,
 	Spinner,
 	useDisclosure,
+	Input,
 } from "@heroui/react";
 import { useState, useEffect } from "react";
 
@@ -25,6 +26,8 @@ import { useFetch } from "hieutndev-toolkit";
 import { IAPIResponse } from "@/types/global";
 import { TProjectGroup } from "@/types/project";
 import { TTableAction } from "@/types/table";
+import CustomModal from "@/components/shared/custom-modal/custom-modal";
+import CustomForm from "@/components/shared/forms/custom-form";
 
 export default function ProjectGroupsManagement() {
 	const listColumns = [
@@ -343,14 +346,30 @@ export default function ProjectGroupsManagement() {
 					)}
 				</TableBody>
 			</Table>
-			<ModalCreateUpdateProjectGroup
-				defaultValue={groupTitle}
-				isOpen={isOpen}
+
+
+			<CustomModal isOpen={isOpen}
 				title={currentEditing ? "Edit Project Group" : "New Project Group"}
 				onOpenChange={onOpenChange}
-				onSubmit={currentEditing ? updateProjectGroup : createProjectGroup}
-				onUpdateValue={setGroupTitle}
-			/>
+			>
+				<CustomForm
+					className={"flex flex-col gap-4 pb-4"}
+					formId={"crudForm"}
+					onSubmit={currentEditing ? updateProjectGroup : createProjectGroup}
+				>
+					<Input
+						isRequired={true}
+						label={"Group Title"}
+						labelPlacement={"outside"}
+						name={"group_title"}
+						placeholder={"Enter project group title"}
+						type={"text"}
+						value={groupTitle}
+						variant={"bordered"}
+						onValueChange={setGroupTitle}
+					/>
+				</CustomForm>
+			</CustomModal>
 		</div>
 	);
 }

@@ -13,12 +13,8 @@ import {
   TableCell,
   addToast,
   useDisclosure,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
 } from "@heroui/react";
-import { useFetch } from "hieutndev-toolkit";
+import { useFetch, useWindowSize } from "hieutndev-toolkit";
 
 import AdminHeader from "@/components/shared/partials/admin-header";
 import API_ROUTE from "@/configs/api";
@@ -31,12 +27,15 @@ import { MAP_MESSAGE } from "@/configs/response-message";
 import Container from "@/components/shared/container/container";
 import SearchInput from "@/components/shared/search/search-input";
 import CustomPagination from "@/components/shared/custom-pagination/custom-pagination";
+import CustomModal from "@/components/shared/custom-modal/custom-modal";
 
 export default function AccountManagementPage() {
+  const { width } = useWindowSize();
+
   const [accounts, setAccounts] = useState<TAccount[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<TAccount | null>(null);
   const [action, setAction] = useState<TDataAction>(null);
-  // const [mode, setMode] = useState<"create" | "update">("create");
+
 
   // Search and pagination state
   const [searchTerm, setSearchTerm] = useState("");
@@ -314,23 +313,9 @@ export default function AccountManagementPage() {
         />
       </div>
 
-      <Modal
-        hideCloseButton
-        isOpen={isOpen}
-        placement="top"
-        scrollBehavior="inside"
-        size="2xl"
-        onOpenChange={onOpenChange}
-      >
-        <ModalContent>
-          <ModalHeader>
-            <h3 className="text-xl">Create account</h3>
-          </ModalHeader>
-          <ModalBody className="mb-4">
-            <AccountForm onSuccess={() => onModalSuccess()} />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      <CustomModal isOpen={isOpen} title={"Create New Account"} onOpenChange={onOpenChange}>
+        <AccountForm onSuccess={() => onModalSuccess()} />
+      </CustomModal>
     </Container>
   );
 }

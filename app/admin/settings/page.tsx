@@ -16,16 +16,16 @@ export default function SettingsPage() {
 
   return (
     <div className={"grid grid-cols-12"}>
-      <div className="col-span-2 pt-4 pr-4 border-r border-gray-200">
+      {/* <div className="col-span-2 pt-4 pr-4 border-r border-gray-200">
         <SettingMenu onSelect={(key) => setCurrentSelectedMenu(key)} />
-      </div>
-      <div className={"col-span-10"}>
-        {currentSelectedMenu === "homepage"
-          ? <ContentComponent />
+      </div> */}
+      <div className={"col-span-12"}>
+        <ContentComponent />
+        {/* {currentSelectedMenu === "homepage"
           : currentSelectedMenu === "my-skills"
             ? <MySkillsComponent />
             : null
-        }
+        } */}
       </div>
     </div>
   );

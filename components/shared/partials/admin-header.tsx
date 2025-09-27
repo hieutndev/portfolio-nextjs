@@ -19,26 +19,28 @@ export default function AdminHeader({ title, backButton, customElement, breadcru
 	const router = useRouter();
 
 	return (
-		<div className={"w-full flex flex-col gap-4"}>
-			<div className={"w-full flex items-center justify-between"}>
-				<h1 className={"text-4xl font-bold text-primary-500"}>{title}</h1>
-				<div className={"flex items-center gap-2"}>
-					{customElement}
-					{backButton && (
-						<Button
-							color={backButton.color}
-							endContent={backButton.endContent}
-							size={backButton.size}
-							startContent={backButton.startContent}
-							onPress={() => router.push(backButton.href)}
-						>
-							{backButton.text}
-						</Button>
-					)}
-				</div>
+		<div className={"w-full flex flex-col lg:items-start items-center gap-4"}>
+			<div className={"w-full flex lg:flex-row flex-col gap-4 items-center justify-between"}>
+				<h1 className={"w-full text-4xl font-extrabold text-primary-500 lg:text-left text-center"}>{title}</h1>
+				{customElement || backButton && (
+					<div className={"flex items-center gap-2"}>
+						{customElement}
+						{backButton && (
+							<Button
+								color={backButton.color}
+								endContent={backButton.endContent}
+								size={backButton.size}
+								startContent={backButton.startContent}
+								onPress={() => router.push(backButton.href)}
+							>
+								{backButton.text}
+							</Button>
+						)}
+					</div>
+				)}
 			</div>
 			{breadcrumbs && (
-				<Breadcrumbs>
+				<Breadcrumbs >
 					{breadcrumbs.map((label, index) => (
 						<BreadcrumbItem key={index}>{label}</BreadcrumbItem>
 					))}

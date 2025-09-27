@@ -173,7 +173,7 @@ export default function ContentComponent() {
 
 
 
-    return <Container className={"w-full py-2"} orientation={"vertical"}>
+    return (
         <CustomForm
             className={"w-full flex flex-col gap-4"}
             formId={"introduce-section-form"}
@@ -211,8 +211,8 @@ export default function ContentComponent() {
                     title={<h4 className={"text-xl font-semibold"}>Animated Quote Section</h4>}
                 >
                     <div className={"flex flex-col gap-4"}>
-                    <Input value={settings.animated_quote} onValueChange={(value) => setSettings((prev) => ({ ...prev, animated_quote: value }))} />
-                    <AnimatedQuote renderText={settings.animated_quote} />
+                        <Input value={settings.animated_quote} onValueChange={(value) => setSettings((prev) => ({ ...prev, animated_quote: value }))} />
+                        <AnimatedQuote renderText={settings.animated_quote} />
                     </div>
                 </AccordionItem>
                 <AccordionItem
@@ -248,5 +248,5 @@ export default function ContentComponent() {
                 </AccordionItem>
             </Accordion>
         </CustomForm>
-    </Container>;
+    );
 }
