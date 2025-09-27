@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useReactiveCookiesNext } from "cookies-next/client";
 import { useRouter } from "next/navigation";
 import { Button, Image } from "@heroui/react";
-import { useScroll, useWindowSize } from "nextage-toolkit";
+import { useScroll, useWindowSize } from "hieutndev-toolkit";
 
 import ICON_CONFIG from "@/configs/icons";
 import ROUTE_PATH from "@/configs/route-path";

@@ -2,7 +2,7 @@ import { Divider } from "@heroui/react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
-import { serverFetch } from "nextage-toolkit";
+import { serverFetch } from "hieutndev-toolkit";
 
 import AnimatedQuote from "@/components/pages/introduce/animated-quote";
 import CertificationSection from "@/components/pages/introduce/certification-section";

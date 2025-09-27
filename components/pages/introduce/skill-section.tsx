@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import Image from "next/image";
-import { serverFetch } from "nextage-toolkit";
+import { serverFetch } from "hieutndev-toolkit";
 
 import SectionHeader from "./section-header";
 

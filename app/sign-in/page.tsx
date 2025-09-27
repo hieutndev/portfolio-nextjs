@@ -5,7 +5,7 @@ import { useReactiveCookiesNext } from "cookies-next";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import clsx from "clsx";
-import { useFetch, useWindowSize } from "nextage-toolkit";
+import { useFetch, useWindowSize } from "hieutndev-toolkit";
 
 import Container from "@/components/shared/container/container";
 import CustomForm from "@/components/shared/forms/custom-form";

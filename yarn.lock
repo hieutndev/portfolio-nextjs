@@ -5488,6 +5488,13 @@ hast-util-whitespace@^3.0.0:
   dependencies:
     "@types/hast" "^3.0.0"
 
+hieutndev-toolkit@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/hieutndev-toolkit/-/hieutndev-toolkit-0.1.0.tgz#240309ef1bd605982ddb0ae6f967bf3eeaef09c9"
+  integrity sha512-YbtxHK5ui/6x5xqsvMxUSflxDDmKQP1AXcIsigcvlZaf8gIe93CLUZpC8tMiSVxewPrcBAcdmshG//EqxCX2lw==
+  dependencies:
+    cookies-next "^6.0.0"
+
 highlight.js@~11.11.0:
   version "11.11.1"
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-11.11.1.tgz#fca06fa0e5aeecf6c4d437239135fabc15213585"
@@ -6781,13 +6788,6 @@ next@15.0.4:
     "@next/swc-win32-arm64-msvc" "15.0.4"
     "@next/swc-win32-x64-msvc" "15.0.4"
     sharp "^0.33.5"
-
-nextage-toolkit@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/nextage-toolkit/-/nextage-toolkit-0.0.7.tgz#2b904d7b5135db9e8be062203a7b3d273223e44a"
-  integrity sha512-MJ9U5uHlH0kYFzbcdve05q95b5NUPifyLlxjfqyYtTDwJpZtcFFVlSiG9KweesZomrILHxNAi8t5vAwjMd1Pvg==
-  dependencies:
-    cookies-next "^6.0.0"
 
 normalize-path@^3.0.0, normalize-path@~3.0.0:
   version "3.0.0"

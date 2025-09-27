@@ -3,8 +3,8 @@
 import { Image } from "@heroui/react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useFetch } from "nextage-toolkit/hooks";
-import { getTimeAgoString } from "nextage-toolkit/utils";
+import { useFetch } from "hieutndev-toolkit";
+import { getTimeAgoString } from "hieutndev-toolkit";
 
 import Container from "@/components/shared/container/container";
 import ICON_CONFIG from "@/configs/icons";

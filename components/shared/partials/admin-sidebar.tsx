@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Divider, Tooltip } from "@heroui/react";
 import clsx from "clsx";
-import { useWindowSize } from "nextage-toolkit";
+import { useWindowSize } from "hieutndev-toolkit";
 
 import { SITE_CONFIG } from "@/configs/site-config";
 import { BREAK_POINT } from "@/configs/break-point";

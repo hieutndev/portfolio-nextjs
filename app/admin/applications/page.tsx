@@ -19,7 +19,7 @@ import {
   Switch,
 } from "@heroui/react";
 
-import { useFetch } from "nextage-toolkit";
+import { useFetch } from "hieutndev-toolkit";
 import AdminHeader from "@/components/shared/partials/admin-header";
 import ApplicationForm from "@/components/pages/applications/application-form";
 import API_ROUTE from "@/configs/api";

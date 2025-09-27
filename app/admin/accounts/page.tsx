@@ -18,7 +18,7 @@ import {
   ModalContent,
   ModalHeader,
 } from "@heroui/react";
-import { useFetch } from "nextage-toolkit";
+import { useFetch } from "hieutndev-toolkit";
 
 import AdminHeader from "@/components/shared/partials/admin-header";
 import API_ROUTE from "@/configs/api";

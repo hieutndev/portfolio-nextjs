@@ -1,7 +1,7 @@
 // app/products/sitemap.ts
 import type { MetadataRoute } from 'next'
 
-import { serverFetch } from 'nextage-toolkit';
+import { serverFetch } from 'hieutndev-toolkit';
 
 import API_ROUTE from '@/configs/api';
 import { TProjectResponse } from '@/types/project';

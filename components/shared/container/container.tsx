@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { useWindowSize } from "nextage-toolkit";
+import { useWindowSize } from "hieutndev-toolkit";
 
 import { BREAK_POINT } from "@/configs/break-point";
 

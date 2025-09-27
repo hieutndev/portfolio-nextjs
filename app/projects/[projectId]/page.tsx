@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { serverFetch } from "nextage-toolkit";
+import { serverFetch } from "hieutndev-toolkit";
 
 import { TProject } from "@/types/project";
 import API_ROUTE from "@/configs/api";
