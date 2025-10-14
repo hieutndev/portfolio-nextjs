@@ -15,8 +15,8 @@ export default function Timeline({ items }: TimelineProps) {
             {
                 items.length > 0 ? (
                     items.map((item, index) => (
-                        <li key={index} className="relative -ms-1.5 flex items-start gap-4">
-                            <span className="size-3 shrink-0 rounded-full bg-primary" />
+                        <li key={index} className="relative -ms-1.5 flex items-start gap-4 group duration-300 ease-in-out">
+                            <span className="size-3 shrink-0 rounded-full bg-gray-300 group-hover:bg-primary duration-300 ease-in-out" />
 
                             <div className="flex flex-col gap-2 -mt-1">
                                 <time className="tracking-widest text-sm font-bold text-gray-500">{item.date}</time>

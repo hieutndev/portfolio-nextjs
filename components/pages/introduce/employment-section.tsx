@@ -28,25 +28,7 @@ export default async function EmploymentSection() {
 	return (
 		<Container orientation={"vertical"}>
 			<SectionHeader iconAlt={"Employment"} iconSrc={"/assets/gif/job.gif"} title={"Employment History"} />
-			{/* <ul className={"flex flex-col gap-8 list-disc"}>
-				{listEmployment.length > 0 ? (
-					listEmployment.map((item, index) => (
-						<AchievementRow
-							key={index}
-							organization={item.organization}
-							time={`${formatDate(item.time_start, "onlyMonthYear")} - ${item.time_end ? formatDate(
-								item.time_end,
-								"onlyMonthYear"
-							) : "Present"}`}
-							title={item.title}
-						/>
-					))
-				) : (
-					<p className={"ml-12 italic"}>No work experience.</p>
-				)}
-			</ul> */}
-
-			<div className={"w-full pl-20"}>
+			<div className={"w-full lg:pl-20 pl-6"}>
 				<Timeline items={listEmployment.length > 0 ? listEmployment.map((item) => ({
 					date: `${formatDate(item.time_start, "onlyMonthYear")} - ${item.time_end ? formatDate(item.time_end, "onlyMonthYear") : "Present"}`,
 					title: item.title,

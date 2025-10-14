@@ -33,10 +33,10 @@ export default async function SkillSection() {
 		<Container orientation={"vertical"}>
 			<SectionHeader iconAlt={"Skills"} iconSrc={"/assets/gif/skill.gif"} title={"My Skills"} />
 			<div className={"flex flex-col gap-8"}>
-				<div className={"pl-20 flex flex-col gap-4"}>
+				<div className={"lg:pl-20 pl-6 flex flex-col gap-4"}>
 					<div
 						className={
-							"before:-ms-1.5 before:content-[''] before:bg-primary before:size-3 before:rounded-full flex items-center gap-4"
+							"before:-ms-1.5 before:content-[''] before:bg-gray-300 before:size-3 before:rounded-full flex items-center gap-4"
 						}
 					>
 						<h3 className={"text-xl font-bold tracking-wide"}>Techstacks</h3>
@@ -51,10 +51,10 @@ export default async function SkillSection() {
 						))}
 					</div>
 				</div>
-				<div className={"pl-20 flex flex-col gap-4"}>
+				<div className={"lg:pl-20 pl-6 flex flex-col gap-4"}>
 					<div
 						className={
-							"before:-ms-1.5 before:content-[''] before:bg-primary before:size-3 before:rounded-full flex items-center gap-4"
+							"before:-ms-1.5 before:content-[''] before:bg-gray-300 before:size-3 before:rounded-full flex items-center gap-4"
 						}
 					>
 						<h3 className={"text-xl font-bold tracking-wide"}>Development Tools</h3>
@@ -69,10 +69,10 @@ export default async function SkillSection() {
 						))}
 					</div>
 				</div>
-				<div className={"pl-20 flex flex-col gap-4"}>
+				<div className={"lg:pl-20 pl-6 flex flex-col gap-4"}>
 					<div
 						className={
-							"before:-ms-1.5 before:content-[''] before:bg-primary before:size-3 before:rounded-full flex items-center gap-4"
+							"before:-ms-1.5 before:content-[''] before:bg-gray-300 before:size-3 before:rounded-full flex items-center gap-4"
 						}
 					>
 						<h3 className={"text-xl font-bold tracking-wide"}>Office & Design Tools</h3>

@@ -14,7 +14,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 				</Container>
 
 			</div>
-			<p className="w-full text-center absolute left-0 bottom-4 text-xs text-gray-500">
+			<p className="w-full text-center absolute left-0 lg:bottom-4 bottom-2 text-xs text-gray-500">
 				v{packageJson.version}
 			</p>
 		</div>

@@ -36,29 +36,14 @@ export default async function CertificationSection() {
 	return (
 		<Container orientation={"vertical"}>
 			<SectionHeader iconAlt={"Certification"} iconSrc={"/assets/gif/certificate.gif"} title={"My Certificates"} />
-			{/* <ul className={"flex flex-col gap-8 list-disc"}>
-				{listCertification.length > 0 ? (
-					listCertification.map((item, index) => (
-						<AchievementRow
-							key={index}
-							organization={item.issued_by}
-							time={formatDate(item.issued_date, "onlyDate")}
-							title={item.title}
-						/>
-					))
-				) : (
-					<p className={"ml-12 italic"}>No educational background.</p>
-				)}
-			</ul> */}
-
-			<div className={"w-full pl-20"}>
+			<div className={"w-full lg:pl-20 pl-6"}>
 				<Timeline items={
 					listCertification.length > 0 ? listCertification.map((item) => ({
 						date: formatDate(item.issued_date, "onlyDate"),
 						title: item.title,
 						description: item.issued_by,
 					})) : []
-				} />
+				} />	
 			</div>
 		</Container>
 	);

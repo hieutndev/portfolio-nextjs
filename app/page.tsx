@@ -29,7 +29,7 @@ export default async function HomePage() {
 	return (
 		<Container
 			shadow
-			className={"p-4 shadow-2xl"}
+			className={"md:p-4 !p-1 shadow-2xl"}
 			gapSize={4}
 			orientation={"vertical"}
 		>

@@ -13,23 +13,23 @@ export default function ActivitiesSection() {
     return (
         <Container orientation={"vertical"}>
             <SectionHeader iconAlt={"Activities"} iconSrc={"/assets/gif/activities.gif"} title={"Activities"}/>
-            <div className={"pl-20 flex flex-col gap-8 w-full"}>
+            <div className={"lg:pl-20 pl-6 flex flex-col gap-8 w-full"}>
                 <div className="flex flex-col">
                     <div
                         className={
-                            "before:-ms-1.5 before:content-[''] before:bg-primary before:size-3 before:rounded-full flex items-center gap-4"
+                            "min-w-max before:-ms-1.5 before:content-[''] before:bg-gray-300 before:size-3 before:rounded-full flex items-center gap-4"
                         }
                     >
-                        <h3 className={"text-xl font-bold tracking-wide"}>Top 10 Languages All Times by WakaTime</h3>
+                        <h3 className={"max-w-screen-sm break-all text-xl font-bold tracking-wide"}>Top Languages by WakaTime</h3>
                     </div>
-                    <a href="https://wakatime.com/@4233684e-fddd-4115-88f8-2bba89039fa8" className={"mt-4 ml-6"}>
-                        <img src="https://wakatime.com/badge/user/4233684e-fddd-4115-88f8-2bba89039fa8.svg"
-                             alt="wakatime badge"/>
+                    <a className={"mt-4 ml-6"} href="https://wakatime.com/@4233684e-fddd-4115-88f8-2bba89039fa8">
+                        <img alt="wakatime badge"
+                             src="https://wakatime.com/badge/user/4233684e-fddd-4115-88f8-2bba89039fa8.svg"/>
                     </a>
                     <Image
                         unoptimized
                         alt="hieutndev's WakaTime stats"
-                        className={"w-1/2"}
+                        className={"lg:w-1/2 w-full"}
                         height="1200"
                         src="https://github-readme-stats.vercel.app/api/wakatime?username=hieutndev&layout=compact&hide_border=true&theme=shadow_blue&langs_count=10&hide_title=true"
                         width="1200"
@@ -39,7 +39,7 @@ export default function ActivitiesSection() {
                 <div className="flex flex-col">
                     <div
                         className={
-                            "before:-ms-1.5 before:content-[''] before:bg-primary before:size-3 before:rounded-full flex items-center gap-4"
+                            "before:-ms-1.5 before:content-[''] before:bg-gray-300 before:size-3 before:rounded-full flex items-center gap-4"
                         }
                     >
                         <h3 className={"text-xl font-bold tracking-wide"}>Github Activity Graph</h3>

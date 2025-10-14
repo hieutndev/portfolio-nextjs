@@ -26,7 +26,7 @@ export default async function EducationSection() {
 	return (
 		<Container orientation={"vertical"}>
 			<SectionHeader iconAlt={"My Education"} iconSrc={"/assets/gif/education.gif"} title={"My Education"} />
-			<div className={"w-full pl-20"}>
+			<div className={"w-full lg:pl-20 pl-6"}>
 				<Timeline items={
 					listEducation.length > 0 ? listEducation.map((item) => ({
 						date: item.time_end ? `${new Date(item.time_start).getFullYear()} - ${new Date(item.time_end).getFullYear()}` : `${new Date(item.time_start).getFullYear()} - Present`,
