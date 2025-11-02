@@ -12,7 +12,7 @@ interface ProjectBlogFooterProps {
 
 export default function ProjectBlogFooter({ project }: ProjectBlogFooterProps) {
     return (
-        <Container className="!p-4 items-center" orientation="vertical">
+        <Container className="!p-4 mb-16 items-center" orientation="vertical">
             <div className="flex flex-col sm:flex-row gap-4 w-full justify-center items-center">
                 {project.github_link && (
                     <Button 
