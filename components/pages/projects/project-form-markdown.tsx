@@ -554,7 +554,7 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
               placeholder={"URL-friendly version (auto-generated)"}
               type={"text"}
               value={projectDetails.slug}
-              variant={"bordered"}
+              variant={"faded"}
             />
             <Select
               isLoading={fetchingProjectGroups}
