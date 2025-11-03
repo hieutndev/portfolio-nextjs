@@ -46,7 +46,8 @@ export default function ProjectBlogHeader({ project }: ProjectBlogHeaderProps) {
       <Image
         isBlurred
         alt={project.project_fullname}
-        className={"rounded-none border-0"}
+        className={"min-h-[540px] rounded-none border-0"}
+        radius={"none"}
         shadow={"sm"}
         src={project.project_thumbnail}
         width={1920}

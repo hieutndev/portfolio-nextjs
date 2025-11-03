@@ -13,28 +13,9 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
 	const { projectId } = await params;
 
 	return (
-		<Container
-			shadow
-			className={"border border-default-200 rounded-2xl h-max"}
-			orientation={"vertical"}
-		>
-			<AdminHeader
-				backButton={{
-					color: "default",
-					size: "md",
-					variant: "solid",
-					startContent: ICON_CONFIG.BACK,
-					text: "Back",
-					href: ROUTE_PATH.ADMIN.PROJECT.INDEX,
-				}}
-				breadcrumbs={["Projects", "Update Project Details"]}
-				title={"Update Project Details"}
-			/>
-
-			<ProjectFormMarkDownComponent
-				mode="edit"
-				projectId={projectId}
-			/>
-		</Container>
+		<ProjectFormMarkDownComponent
+			mode="edit"
+			projectId={projectId}
+		/>
 	);
 }

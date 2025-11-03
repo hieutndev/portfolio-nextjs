@@ -34,6 +34,7 @@ import {
 } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
 import { useState, useEffect } from 'react'
+import { sanitizeMarkdown } from '@/utils/mdx'
 
 // Only import this to the next file
 export default function InitializedMDXEditor({
@@ -47,30 +48,21 @@ export default function InitializedMDXEditor({
   imageUploadHandler?: (file: File) => Promise<string>;
 } & MDXEditorProps) {
   const [editorMarkdown, setEditorMarkdown] = useState(markdown)
-
-  // Sanitize markdown to handle problematic code blocks
-  const sanitizeMarkdown = (content: string) => {
-    if (!content) return ''
-    
-    try {
-      // Fix code blocks without language specification
-      const sanitized = content.replace(/```\s*\n/g, '```txt\n')
-
-      return sanitized
-    } catch (error) {
-      console.warn('Error sanitizing markdown:', error)
-
-      return content
-    }
-  }
+  const [originalMarkdown, setOriginalMarkdown] = useState(markdown)
+  const [isInitialized, setIsInitialized] = useState(false)
 
   useEffect(() => {
     if (markdown !== editorMarkdown) {
       const sanitized = sanitizeMarkdown(markdown)
 
       setEditorMarkdown(sanitized)
+      // Set original markdown on initial load
+      if (!isInitialized) {
+        setOriginalMarkdown(sanitized)
+        setIsInitialized(true)
+      }
     }
-  }, [markdown])
+  }, [markdown, isInitialized])
 
   const handleChange = (newContent: string) => {
     setEditorMarkdown(newContent)
@@ -116,7 +108,7 @@ export default function InitializedMDXEditor({
           tablePlugin(),
 
           // Code block functionality
-          codeBlockPlugin({ 
+          codeBlockPlugin({
             defaultCodeBlockLanguage: 'txt',
             codeBlockEditorDescriptors: [
               {
@@ -129,7 +121,7 @@ export default function InitializedMDXEditor({
           codeMirrorPlugin({
             codeBlockLanguages: {
               '': 'Plain Text',
-              'txt': 'Plain Text', 
+              'txt': 'Plain Text',
               'text': 'Plain Text',
               'js': 'JavaScript',
               'javascript': 'JavaScript',
@@ -164,7 +156,7 @@ export default function InitializedMDXEditor({
           }),
 
           // Source mode toggle
-          diffSourcePlugin({ viewMode: 'rich-text', diffMarkdown: '' }),
+          diffSourcePlugin({ viewMode: 'source', diffMarkdown: originalMarkdown, readOnlyDiff: true }),
 
           // Front matter support
           frontmatterPlugin(),

@@ -29,6 +29,13 @@ const ROUTE_PATH = {
             DETAILS: (projectId: string | number) => `/admin/projects/${projectId}`,
             EDIT: (projectId: string | number) => `/admin/projects/${projectId}/update`,
         },
+        BLOG: {
+            INDEX: "/admin/blogs",
+            NEW: "/admin/blogs/new",
+            NEW_CATEGORY: "/admin/blogs/new-category",
+            DETAILS: (blogId: string | number) => `/admin/blogs/${blogId}`,
+            EDIT: (blogId: string | number) => `/admin/blogs/${blogId}/update`,
+        },
         APP: {
             INDEX: "/admin/apps",
         },

@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Rubik+Spray+Paint&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
 @import "highlight.js/styles/github.css";
 
 @font-face {
@@ -9,7 +10,33 @@
   font-style: display;
 }
 
+@font-face {
+  font-family: "ubuntu";
+  src: url("/fonts/ubuntu/Ubuntu-R.ttf") format("truetype");
+  font-weight: 400;
+  font-style: display;
+}
 
+@font-face {
+  font-family: "ubuntu";
+  src: url("/fonts/ubuntu/Ubuntu-B.ttf") format("truetype");
+  font-weight: 600;
+  font-style: display;
+}
+
+@font-face {
+  font-family: "ubuntu";
+  src: url("/fonts/ubuntu/Ubuntu-Th.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "ubuntu";
+  src: url("/fonts/ubuntu/Ubuntu-RI.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+}
 
 @tailwind base;
 @tailwind components;
@@ -67,9 +94,20 @@ body {
   font-variation-settings: "slnt" 0;
 }
 
-
 .font-ari-w9500 {
   font-family: "ari_w9500", sans-serif;
+}
+
+.font-ubuntu {
+  font-family: "ubuntu", sans-serif;
+}
+
+.font-noto-sans {
+  font-family: "Noto Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
 }
 
 @layer base {
@@ -102,7 +140,6 @@ body {
   .mdxeditor {
     @apply font-sans;
   }
-
 
   .mdxeditor-toolbar {
     @apply border-b border-gray-200 bg-gray-50 p-2;
@@ -301,14 +338,14 @@ body {
   /* Code syntax highlighting improvements */
   .mdxeditor .prose pre {
     @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4 border;
-    font-family: "Fira Code", "Monaco", "Cascadia Code", "Roboto Mono",
-      monospace;
+    font-family:
+      "Fira Code", "Monaco", "Cascadia Code", "Roboto Mono", monospace;
   }
 
   .mdxeditor .prose code {
     @apply bg-gray-100 text-red-600 px-1.5 py-0.5 rounded text-sm;
-    font-family: "Fira Code", "Monaco", "Cascadia Code", "Roboto Mono",
-      monospace;
+    font-family:
+      "Fira Code", "Monaco", "Cascadia Code", "Roboto Mono", monospace;
   }
 
   /* Better blockquote styling */

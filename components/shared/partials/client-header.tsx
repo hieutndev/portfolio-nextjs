@@ -31,10 +31,10 @@ const ClientHeader = () => {
     // icon ♾️🗃️📂📁💻
 
 	const headerConfig = [
-        // {
-        //     path: ROUTE_PATH.CLIENT.BLOGS.INDEX,
-        //     label: "📰 Blogs",
-        // },
+		{
+			path: ROUTE_PATH.CLIENT.BLOGS.INDEX,
+			label: "📰 Blogs",
+		},
 		{
 			path: ROUTE_PATH.CLIENT.PROJECTS.INDEX,
 			label: "🗂️ Projects",

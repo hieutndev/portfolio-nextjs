@@ -1,5 +1,6 @@
-import { TMessageCode } from "@/configs/response-message";
 import { ErrorObject } from "ajv";
+
+import { TMessageCode } from "@/configs/response-message";
 
 export type TSizeBase =
   | "sm"

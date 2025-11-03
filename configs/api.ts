@@ -1,4 +1,5 @@
 import { TApp } from "@/types/application";
+import { TBlog, TBlogCategory } from "@/types/blog";
 import { TCertification } from "@/types/certification";
 import { TEducation } from "@/types/education";
 import { TEmployment } from "@/types/employment";
@@ -93,6 +94,22 @@ const API_ROUTE = {
   SETTINGS: {
     GET_SETTINGS : "/settings",
     UPDATE_SETTINGS : "/settings",
+  },
+  BLOG: {
+    GET_ALL: "/blogs",
+    GET_TOP_VIEWED: "/blogs/top-viewed",
+    GET_ONE: (blogId: TBlog["id"] | string) => `/blogs/${blogId}`,
+    NEW: "/blogs",
+    UPDATE_BLOG: (blogId: TBlog["id"] | string) => `/blogs/${blogId}`,
+    DELETE_BLOG: (blogId: TBlog["id"] | string) => `/blogs/${blogId}`,
+    SOFT_DELETE_BLOG: (blogId: TBlog["id"] | string) => `/blogs/${blogId}/delete`,
+    RECOVER_BLOG: (blogId: TBlog["id"] | string) => `/blogs/${blogId}/recover`,
+    GET_ALL_CATEGORIES: "/blogs/categories",
+    NEW_CATEGORY: "/blogs/categories",
+    UPDATE_CATEGORY: (categoryId: TBlogCategory["category_id"]) => `/blogs/categories/${categoryId}`,
+    DELETE_CATEGORY: (categoryId: TBlogCategory["category_id"]) => `/blogs/categories/${categoryId}`,
+    SOFT_DELETE_CATEGORY: (categoryId: TBlogCategory["category_id"]) => `/blogs/categories/${categoryId}/delete`,
+    RECOVER_CATEGORY: (categoryId: TBlogCategory["category_id"]) => `/blogs/categories/${categoryId}/recover`,
   }
 };
 

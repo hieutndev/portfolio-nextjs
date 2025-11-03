@@ -45,6 +45,11 @@ export const SITE_CONFIG = {
             icon: ICON_CONFIG.PROJECT
         },
         {
+            label: "Blogs",
+            href: "/admin/blogs",
+            icon: ICON_CONFIG.BLOG
+        },
+        {
             label: "Applications",
             href: "/admin/applications",
             icon: ICON_CONFIG.APP
@@ -59,4 +64,3 @@ export const SITE_CONFIG = {
 };
 
 export type TSiteConfig = typeof SITE_CONFIG;
-

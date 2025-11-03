@@ -1,7 +1,9 @@
-import Container from "@/components/shared/container/container";
-import ClientHeader from "@/components/shared/partials/client-header";
+"use client";
 
 import packageJson from "../../../package.json";
+
+import Container from "@/components/shared/container/container";
+import ClientHeader from "@/components/shared/partials/client-header";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
 	return (

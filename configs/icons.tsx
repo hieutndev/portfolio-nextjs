@@ -18,7 +18,8 @@ import {
   FaUserLarge,
   FaUsers,
   FaUser,
-  FaWandMagicSparkles
+  FaWandMagicSparkles,
+  FaBlog
 } from "react-icons/fa6";
 import { MdDelete, MdDeleteForever, MdEdit, MdSupervisorAccount } from "react-icons/md";
 import { BsShieldLockFill } from "react-icons/bs";
@@ -38,7 +39,7 @@ import {
   FcTemplate,
   FcWorkflow,
 } from "react-icons/fc";
-import { LuGlobe, LuLogIn, LuMousePointerClick, LuTimer, LuEye, LuUserPlus, LuUsers, LuUserRoundCog } from "react-icons/lu";
+import { LuGlobe, LuLogIn, LuMousePointerClick, LuTimer, LuEye, LuUserPlus, LuUsers, LuUserRoundCog, LuShare2 } from "react-icons/lu";
 import { TbPasswordUser } from "react-icons/tb";
 
 const ICON_CONFIG = {
@@ -91,9 +92,11 @@ const ICON_CONFIG = {
   PASSWORD: <TbPasswordUser />,
   VISITORS: <LuUsers />,
   NEW_VISITORS: <LuUserPlus />,
-  USER_SESSIONS: <LuUserRoundCog  />,
+  USER_SESSIONS: <LuUserRoundCog />,
   GENERATE: <FaWandMagicSparkles />,
-  SETTING: <FcSupport />
+  SETTING: <FcSupport />,
+  BLOG: <FaBlog />,
+  SHARE: <LuShare2 />
 
 };
 
