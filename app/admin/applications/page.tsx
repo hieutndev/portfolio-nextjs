@@ -10,16 +10,12 @@ import {
   TableColumn,
   TableRow,
   TableCell,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
   useDisclosure,
   Spinner,
   Switch,
 } from "@heroui/react";
-
 import { useFetch } from "hieutndev-toolkit";
+
 import AdminHeader from "@/components/shared/partials/admin-header";
 import ApplicationForm from "@/components/pages/applications/application-form";
 import API_ROUTE from "@/configs/api";

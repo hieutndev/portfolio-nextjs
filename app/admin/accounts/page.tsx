@@ -14,7 +14,7 @@ import {
   addToast,
   useDisclosure,
 } from "@heroui/react";
-import { useFetch, useWindowSize } from "hieutndev-toolkit";
+import { useFetch } from "hieutndev-toolkit";
 
 import AdminHeader from "@/components/shared/partials/admin-header";
 import API_ROUTE from "@/configs/api";
@@ -30,7 +30,6 @@ import CustomPagination from "@/components/shared/custom-pagination/custom-pagin
 import CustomModal from "@/components/shared/custom-modal/custom-modal";
 
 export default function AccountManagementPage() {
-  const { width } = useWindowSize();
 
   const [accounts, setAccounts] = useState<TAccount[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<TAccount | null>(null);

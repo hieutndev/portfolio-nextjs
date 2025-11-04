@@ -1,10 +1,9 @@
 "use client";
 
-import { Button, Chip } from "@heroui/react";
+import { Chip } from "@heroui/react";
 
 import { TBlogResponse } from "@/types/blog";
 import Container from "@/components/shared/container/container";
-import ICON_CONFIG from "@/configs/icons";
 
 interface BlogFooterProps {
     blog: TBlogResponse;

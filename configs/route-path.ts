@@ -49,7 +49,7 @@ const ROUTE_PATH = {
         },
         BLOGS: {
             INDEX: "/blogs",
-            DETAILS: (blogId: string | number) => `/blogs/${blogId}`,
+            DETAILS: (blogId: string | number, isPreview: boolean = false) => `/blogs/${blogId}${isPreview ? '?preview=true' : ''}`,
         }
     },
     AUTH: {

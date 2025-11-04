@@ -1,10 +1,8 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { forwardRef, useRef } from "react";
-import { type MDXEditorMethods, type MDXEditorProps } from "@mdxeditor/editor";
 import {
   addToast,
+  Button,
   DateRangePicker,
   Divider,
   Input,
@@ -17,63 +15,31 @@ import {
   useDisclosure,
   Image,
 } from "@heroui/react";
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { DateValue, parseDate } from "@internationalized/date";
 import moment from "moment";
+import { useFetch, useScroll } from "hieutndev-toolkit";
 
 import ProjectImageComponent from "./project-image";
 
 import CustomForm from "@/components/shared/forms/custom-form";
+import MDXEditorClient from "@/components/shared/mdx-editor/mdx-editor-client";
 import API_ROUTE from "@/configs/api";
 import { MAP_MESSAGE } from "@/configs/response-message";
 import ROUTE_PATH from "@/configs/route-path";
-import { useFetch } from "hieutndev-toolkit";
 import { useS3Upload } from "@/hooks/useS3Upload";
 import { IAPIResponse } from "@/types/global";
+import { useAdminScroll } from "@/components/providers/admin-scroll-provider";
 import {
   TProjectGroup,
   TProjectImage,
   TProjectResponse,
-  TNewProject,
-  TUpdateProject,
 } from "@/types/project";
 import { formatDate } from "@/utils/date";
 import { generateSlug, isValidSlug } from "@/utils/slug";
 import { SAMPLE_MARKDOWN } from "@/utils/sample-data/markdown-editor";
-import InitMDXEditor from "@/components/shared/mdx-editor/mdx-init-html";
 import { sanitizeMarkdown } from "@/utils/mdx";
-
-const Editor = dynamic(() => import("@/components/shared/mdx-editor/mdx-editor-initialized"), {
-  ssr: false,
-  loading: () => <InitMDXEditor />
-});
-
-const ForwardRefEditor = forwardRef<
-  MDXEditorMethods,
-  MDXEditorProps & { onEditorReady?: () => void; imageUploadHandler?: (file: File) => Promise<string>; }
->((props, ref) => {
-
-  const { onEditorReady, imageUploadHandler, ...editorProps } = props;
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onEditorReady?.();
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, [onEditorReady]);
-
-  return (
-    <Editor
-      {...editorProps}
-      editorRef={ref}
-      imageUploadHandler={imageUploadHandler}
-    />
-  );
-});
-
-ForwardRefEditor.displayName = "ForwardRefEditor";
 
 interface ProjectFormMarkDownProps {
   mode: "create" | "edit";
@@ -83,25 +49,23 @@ interface ProjectFormMarkDownProps {
 export default function ProjectFormMarkDownComponent({ mode, projectId }: ProjectFormMarkDownProps) {
 
   const router = useRouter();
-  const mdxEditorRef = useRef<MDXEditorMethods>(null);
+
+  // Split state to prevent unnecessary re-renders
+  const [projectFullname, setProjectFullname] = useState("");
+  const [projectShortname, setProjectShortname] = useState("");
+  const [slug, setSlug] = useState("");
+  const [shortDescription, setShortDescription] = useState("");
+  const [githubLink, setGithubLink] = useState("");
+  const [demoLink, setDemoLink] = useState("");
+  const [groupId, setGroupId] = useState<number | null>(null);
+  const [projectThumbnail, setProjectThumbnail] = useState<FileList | null>(null);
+  const [projectImages, setProjectImages] = useState<FileList | null>(null);
+
+  // Editor state - kept separate and stable
   const [initArticle, setInitArticle] = useState("");
-  const [convertText, setConvertText] = useState<string>("");
-  const [isEditorReady, setIsEditorReady] = useState(false);
-  const [pendingContent, setPendingContent] = useState<string>("");
-  const [projectDetails, setProjectDetails] = useState<TNewProject | TUpdateProject>({
-    project_fullname: "",
-    project_shortname: "",
-    slug: "",
-    start_date: "",
-    end_date: "",
-    project_thumbnail: null,
-    short_description: "",
-    article_body: "",
-    group_id: null,
-    github_link: "",
-    demo_link: "",
-    project_images: null,
-  });
+  const [initialMarkdown, setInitialMarkdown] = useState<string>("");
+  const convertTextRef = useRef<string>("");
+  const hasLoadedContentRef = useRef(false);
 
   const [listProjectGroups, setListProjectGroups] = useState<TProjectGroup[]>([]);
   const [currentThumbnail, setCurrentThumbnail] = useState<string>("");
@@ -110,6 +74,12 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
 
   const { isOpen: isImageModalOpen, onOpen: onImageModalOpen, onClose: onImageModalClose } = useDisclosure();
   const [selectedImage, setSelectedImage] = useState<{ url: string; name: string; type: "thumbnail" | "image"; } | null>(null);
+
+  /* HANDLE PARSE DATE */
+  const [datePicked, setDatePicked] = useState<RangeValue<DateValue> | null>({
+    start: parseDate(moment().format("YYYY-MM-DD")),
+    end: parseDate(moment().add(1, "days").format("YYYY-MM-DD")),
+  });
 
   /* HANDLE FETCH PROJECT GROUPS */
   const { data: fetchProjectGroupsResult, error: fetchProjectGroupsError, loading: fetchingProjectGroups, fetch: fetchProjectGroups, } = useFetch<IAPIResponse<TProjectGroup[]>>(API_ROUTE.PROJECT.GET_ALL_GROUP);
@@ -156,41 +126,39 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
   }, [mode, projectId]);
 
   useEffect(() => {
-    if (mode === "edit" && fetchProjectDetailResult && fetchProjectDetailResult.results) {
+    if (mode === "edit" && fetchProjectDetailResult && fetchProjectDetailResult.results && !hasLoadedContentRef.current) {
       const projectData = fetchProjectDetailResult.results;
 
-      setProjectDetails({
-        ...projectData,
-        start_date: formatDate(projectData.start_date, "onlyDateReverse"),
-        end_date: formatDate(projectData.end_date, "onlyDateReverse"),
-        project_thumbnail: null,
-        project_images: null,
-      });
-
+      // Update individual states instead of one large object
+      setProjectFullname(projectData.project_fullname);
+      setProjectShortname(projectData.project_shortname);
+      setSlug(projectData.slug);
+      setShortDescription(projectData.short_description);
+      setGithubLink(projectData.github_link || "");
+      setDemoLink(projectData.demo_link || "");
+      setGroupId(projectData.group_id);
       setCurrentThumbnail(projectData.project_thumbnail);
       setListCurrentImages(projectData.project_images);
 
       const articleContent = sanitizeMarkdown(projectData.article_body || "");
 
-      setPendingContent(articleContent);
+      setInitialMarkdown(articleContent);
       setInitArticle(articleContent);
-
-      if (isEditorReady) {
-        setConvertText(articleContent);
-      }
+      convertTextRef.current = articleContent;
 
       setDatePicked({
         start: parseDate(formatDate(projectData.start_date, "onlyDateReverse")),
         end: parseDate(formatDate(projectData.end_date, "onlyDateReverse")),
       });
-    } else if (mode === "create") {
+
+      hasLoadedContentRef.current = true;
+    } else if (mode === "create" && !hasLoadedContentRef.current) {
       // For completely new projects, use sample markdown
       const content = sanitizeMarkdown(SAMPLE_MARKDOWN);
 
-      setPendingContent(content);
-      if (isEditorReady) {
-        setConvertText(content);
-      }
+      setInitialMarkdown(content);
+      convertTextRef.current = content;
+      hasLoadedContentRef.current = true;
     }
 
     if (fetchProjectDetailError) {
@@ -203,7 +171,7 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
         })
       }
     }
-  }, [mode, fetchProjectDetailResult, fetchProjectDetailError, isEditorReady]);
+  }, [mode, fetchProjectDetailResult, fetchProjectDetailError]);
 
   /* HANDLE SUBMIT */
   const [formData, setFormData] = useState<FormData | null>(null);
@@ -262,14 +230,9 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
     }
   }, [formData]);
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     // Validate required fields
-    if (
-      !projectDetails.project_fullname
-      || !projectDetails.project_shortname
-      || !projectDetails.slug
-      || !projectDetails.short_description
-    ) {
+    if (!projectFullname || !projectShortname || !slug || !shortDescription) {
       addToast({
         title: "Error",
         description: "Please fill in all required fields",
@@ -280,7 +243,7 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
     }
 
     // Validate slug format
-    if (!isValidSlug(projectDetails.slug)) {
+    if (!isValidSlug(slug)) {
       addToast({
         title: "Error",
         description: "Please provide a valid slug (lowercase letters, numbers, and hyphens only)",
@@ -303,7 +266,7 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
     const submitFormData = new FormData();
 
     // Handle file uploads
-    if (mode === "create" && !projectDetails.project_thumbnail) {
+    if (mode === "create" && !projectThumbnail) {
       addToast({
         title: "Error",
         description: "Please upload a project thumbnail",
@@ -311,8 +274,8 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
       });
 
       return;
-    } else if (projectDetails.project_thumbnail && projectDetails.project_thumbnail.length > 0) {
-      submitFormData.append("project_thumbnail", projectDetails.project_thumbnail[0]);
+    } else if (projectThumbnail && projectThumbnail.length > 0) {
+      submitFormData.append("project_thumbnail", projectThumbnail[0]);
 
       if (mode === "edit") {
         submitFormData.append("is_change_thumbnail", "true");
@@ -321,25 +284,22 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
       submitFormData.append("is_change_thumbnail", "false");
     }
 
-    if (
-      projectDetails.project_images &&
-      projectDetails.project_images.length > 0
-    ) {
-      Array.from(projectDetails.project_images).forEach((file) => {
+    if (projectImages && projectImages.length > 0) {
+      Array.from(projectImages).forEach((file) => {
         submitFormData.append(`project_images`, file);
       });
     }
 
 
     // Append basic project information
-    submitFormData.append("project_fullname", projectDetails.project_fullname);
-    submitFormData.append("project_shortname", projectDetails.project_shortname);
-    submitFormData.append("slug", projectDetails.slug);
-    submitFormData.append("short_description", projectDetails.short_description);
-    submitFormData.append("github_link", projectDetails.github_link || "");
-    submitFormData.append("demo_link", projectDetails.demo_link || "");
-    submitFormData.append("article_body", convertText);
-    submitFormData.append("group_id", projectDetails.group_id?.toString() || "null");
+    submitFormData.append("project_fullname", projectFullname);
+    submitFormData.append("project_shortname", projectShortname);
+    submitFormData.append("slug", slug);
+    submitFormData.append("short_description", shortDescription);
+    submitFormData.append("github_link", githubLink || "");
+    submitFormData.append("demo_link", demoLink || "");
+    submitFormData.append("article_body", convertTextRef.current);
+    submitFormData.append("group_id", groupId?.toString() || "null");
 
     // Handle dates from date picker
     if (datePicked?.start && datePicked?.end) {
@@ -348,18 +308,12 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
     }
 
     if (mode === "edit") {
-      submitFormData.append("is_change_article", projectDetails.article_body !== initArticle ? "true" : "false");
+      submitFormData.append("is_change_article", convertTextRef.current !== initArticle ? "true" : "false");
       submitFormData.append("remove_images", JSON.stringify(listRemoveImages));
     }
 
     setFormData(submitFormData);
-  };
-
-  /* HANDLE PARSE DATE */
-  const [datePicked, setDatePicked] = useState<RangeValue<DateValue> | null>({
-    start: parseDate(moment().format("YYYY-MM-DD")),
-    end: parseDate(moment().add(1, "days").format("YYYY-MM-DD")),
-  });
+  }, [projectFullname, projectShortname, slug, shortDescription, githubLink, demoLink, groupId, projectThumbnail, projectImages, datePicked, mode, initArticle, listRemoveImages]);
 
   /* HANDLE REMOVE IMAGE */
   const handleAddRemoveImage = (imageName: string) => {
@@ -380,137 +334,116 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
     onImageModalClose();
   };
 
-  useEffect(() => {
-    if (isEditorReady && pendingContent) {
-      console.log("Setting editor content:", {
-        pendingContent,
-        convertText,
-        isEditorReady,
-      });
-      try {
-        const sanitizedContent = sanitizeMarkdown(pendingContent);
-
-        setConvertText(sanitizedContent);
-        setPendingContent(""); // Clear pending content after setting
-      } catch (error) {
-        console.error("Error setting editor content:", error);
-
-        setConvertText("");
-        setPendingContent("");
-      }
-    }
-  }, [isEditorReady, pendingContent]);
-
-  useEffect(() => {
-    if (mode === "edit" && isEditorReady && !convertText && initArticle) {
-      console.log("Fallback: Setting content from initArticle:", initArticle);
-      const timer = setTimeout(() => {
-        try {
-          const sanitizedContent = sanitizeMarkdown(initArticle);
-
-          setConvertText(sanitizedContent);
-        } catch (error) {
-          console.error("Error in fallback content setting:", error);
-          setConvertText("");
-        }
-      }, 500);
-
-      return () => clearTimeout(timer);
-    }
-  }, [mode, isEditorReady, convertText, initArticle]);
-
-  const { uploadImage: handleUploadImage } = useS3Upload({
+  const s3UploadOptions = useMemo(() => ({
     showToasts: true,
-    onUploadStart: (file) => {
-      console.log("Starting upload for:", file.name);
-    },
-    onUploadSuccess: (imageUrl, file) => {
-      console.log("Upload successful:", { imageUrl, fileName: file.name });
-    },
-    onUploadError: (error, file) => {
-      console.error("Upload failed:", { error, fileName: file.name });
-    },
-  });
+  }), []);
+
+  const { uploadImage: handleUploadImage } = useS3Upload(s3UploadOptions);
 
   const handleProjectFullNameChange = useCallback((value: string) => {
-    setProjectDetails((prev) => ({ ...prev, project_fullname: value }));
+    setProjectFullname(value);
   }, []);
 
   const handleProjectShortNameChange = useCallback((value: string) => {
-    setProjectDetails((prev) => ({ ...prev, project_shortname: value }));
+    setProjectShortname(value);
   }, []);
 
   const handleDescriptionChange = useCallback((value: string) => {
-    setProjectDetails((prev) => ({ ...prev, short_description: value }));
+    setShortDescription(value);
   }, []);
 
   const handleGithubLinkChange = useCallback((value: string) => {
-    setProjectDetails((prev) => ({ ...prev, github_link: value }));
+    setGithubLink(value);
   }, []);
 
   const handleDemoLinkChange = useCallback((value: string) => {
-    setProjectDetails((prev) => ({ ...prev, demo_link: value }));
+    setDemoLink(value);
   }, []);
 
   const handleGroupSelection = useCallback((keys: any) => {
     const selectedKey = Array.from(keys)[0] as string;
 
-    setProjectDetails((prev) => ({
-      ...prev,
-      group_id: selectedKey ? parseInt(selectedKey) : null,
-    }));
+    setGroupId(selectedKey ? parseInt(selectedKey) : null);
   }, []);
 
   // Effect to auto-generate slug from project name with debouncing
   useEffect(() => {
-    if (projectDetails.project_fullname) {
+    if (projectFullname) {
       const debounceTimer = setTimeout(() => {
-        const generatedSlug = generateSlug(projectDetails.project_fullname);
+        const generatedSlug = generateSlug(projectFullname);
 
-        setProjectDetails((prev) => ({
-          ...prev,
-          slug: generatedSlug,
-        }));
+        setSlug(generatedSlug);
       }, 300); // 300ms debounce
 
       return () => clearTimeout(debounceTimer);
     }
-  }, [projectDetails.project_fullname]);
-
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      setProjectDetails((prev) => ({ ...prev, article_body: convertText }));
-    }, 500); // 500ms debounce for markdown content
-
-    return () => clearTimeout(debounceTimer);
-  }, [convertText]);
+  }, [projectFullname]);
 
   const selectedGroupKeys = useMemo(
-    () => (projectDetails.group_id ? [projectDetails.group_id.toString()] : []),
-    [projectDetails.group_id]
+    () => (groupId ? [groupId.toString()] : []),
+    [groupId]
   );
 
-  // Memoized editor to prevent unnecessary re-renders
-  const MemoizedEditor = useMemo(
-    () => (
-      <ForwardRefEditor
-        key={`mdx-editor-${mode}-${projectId || "new"}-${convertText ? "with-content" : "empty"}`}
-        ref={mdxEditorRef}
+  // Stable onChange handler to prevent recreating on every render
+  const handleEditorChange = useCallback((newContent: string) => {
+    convertTextRef.current = newContent;
+  }, []);
+
+  // Stable onReady handler
+  const handleEditorReady = useCallback(() => {
+    // Editor is ready - no state needed since we use initialMarkdown
+  }, []);
+
+  // Memoized editor section - isolated from parent re-renders
+  const editorSection = useMemo(() => {
+    // Only render editor after content is loaded
+    if (!hasLoadedContentRef.current) {
+      return (
+        <div className="h-[400px] border border-default-200 rounded-lg flex items-center justify-center">
+          <div className="text-default-500">Loading editor...</div>
+        </div>
+      );
+    }
+
+    return (
+      <MDXEditorClient
         className="min-h-[400px] w-full"
-        imageUploadHandler={handleUploadImage}
-        markdown={convertText}
+        initialMarkdown={initialMarkdown}
         placeholder="Write your project article here using Markdown..."
-        onChange={setConvertText}
-        onEditorReady={() => setIsEditorReady(true)}
+        uploadImage={handleUploadImage}
+        onChange={handleEditorChange}
+        onReady={handleEditorReady}
       />
-    ),
-    [mode, projectId, convertText, handleUploadImage]
-  );
+    );
+  }, [initialMarkdown, handleEditorChange, handleEditorReady, handleUploadImage]);
 
   const isLoading = submitting || (mode === "edit" && fetchingProjectDetail);
 
+  /* STICKY SUBMIT BUTTON */
+  const { scrollContainerRef } = useAdminScroll();
+  const { scrollPosition } = useScroll({
+    target: scrollContainerRef?.current || undefined
+  });
+  const submitButtonRef = useRef<HTMLDivElement>(null);
+  const [isSubmitButtonVisible, setIsSubmitButtonVisible] = useState(true);
+
+  useEffect(() => {
+    if (submitButtonRef.current && scrollContainerRef?.current) {
+      const buttonRect = submitButtonRef.current.getBoundingClientRect();
+      const containerRect = scrollContainerRef.current.getBoundingClientRect();
+
+      // Button is visible if it's within the scroll container's viewport
+      const isVisible =
+        buttonRect.top < containerRect.bottom &&
+        buttonRect.bottom > containerRect.top;
+
+      setIsSubmitButtonVisible(isVisible);
+    }
+  }, [scrollPosition, scrollContainerRef]);
+
   return (
-    <div>
+    <div className="relative">
+      <div ref={submitButtonRef}>
       <CustomForm
         className={"w-full h-max flex flex-col gap-4"}
         formId={`${mode}ProjectForm`}
@@ -530,7 +463,7 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
               name={"project_fullname"}
               placeholder={"Enter project name..."}
               type={"text"}
-              value={projectDetails.project_fullname}
+              value={projectFullname}
               variant={"bordered"}
               onValueChange={handleProjectFullNameChange}
             />
@@ -541,7 +474,7 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
               name={"project_shortname"}
               placeholder={"Enter short name of project"}
               type={"text"}
-              value={projectDetails.project_shortname}
+              value={projectShortname}
               variant={"bordered"}
               onValueChange={handleProjectShortNameChange}
             />
@@ -553,7 +486,7 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
               name={"slug"}
               placeholder={"URL-friendly version (auto-generated)"}
               type={"text"}
-              value={projectDetails.slug}
+              value={slug}
               variant={"faded"}
             />
             <Select
@@ -580,7 +513,7 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
                     ? "Enter a brief description of your project..."
                     : ""
                 }
-                value={projectDetails.short_description}
+                value={shortDescription}
                 variant={"bordered"}
                 onValueChange={handleDescriptionChange}
               />
@@ -600,7 +533,7 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
               name={"github_link"}
               placeholder={"Enter Github link"}
               type={"text"}
-              value={projectDetails.github_link || ""}
+              value={githubLink || ""}
               variant={"bordered"}
               onValueChange={handleGithubLinkChange}
             />
@@ -610,7 +543,7 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
               name={"demo_link"}
               placeholder={"Enter Demo link"}
               type={"text"}
-              value={projectDetails.demo_link || ""}
+              value={demoLink || ""}
               variant={"bordered"}
               onValueChange={handleDemoLinkChange}
             />
@@ -625,13 +558,11 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
                 type={"file"}
                 variant={"bordered"}
                 onChange={(e) => {
-                  setProjectDetails((prev) => ({
-                    ...prev,
-                    project_thumbnail:
-                      e.target.files && e.target.files.length > 0
-                        ? e.target.files
-                        : null,
-                  }));
+                  setProjectThumbnail(
+                    e.target.files && e.target.files.length > 0
+                      ? e.target.files
+                      : null
+                  );
                 }}
               />
               <Input
@@ -650,13 +581,11 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
                 type={"file"}
                 variant={"bordered"}
                 onChange={(e) => {
-                  setProjectDetails((prev) => ({
-                    ...prev,
-                    project_images:
-                      e.target.files && e.target.files.length > 0
-                        ? e.target.files
-                        : null,
-                  }));
+                  setProjectImages(
+                    e.target.files && e.target.files.length > 0
+                      ? e.target.files
+                      : null
+                  );
                 }}
               />
             </div>
@@ -722,7 +651,7 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
               Article Content
             </p>
             <div className="border border-default-200 rounded-lg overflow-hidden bg-white shadow-sm">
-              {MemoizedEditor}
+              {editorSection}
             </div>
             <p className="text-xs text-gray-500 mt-1">
               Use Markdown syntax to format your content. You can switch to
@@ -758,6 +687,25 @@ export default function ProjectFormMarkDownComponent({ mode, projectId }: Projec
           )}
         </ModalContent>
       </Modal>
+
+      {/* Sticky Submit Button */}
+      {!isSubmitButtonVisible && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-default-200 shadow-lg">
+          <div className="container mx-auto px-4 py-3">
+            <Button
+              fullWidth
+              color={"primary"}
+              isDisabled={isLoading}
+              isLoading={isLoading}
+              size={"md"}
+              type={"button"}
+              onPress={handleSubmit}>
+              {isLoading ? "Submitting..." : "Submit"}
+            </Button>
+          </div>
+        </div>
+      )}
+      </div>
     </div>
   );
 }

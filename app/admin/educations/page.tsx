@@ -10,16 +10,12 @@ import {
 	TableColumn,
 	TableRow,
 	TableCell,
-	Modal,
-	ModalContent,
-	ModalHeader,
-	ModalBody,
 	useDisclosure,
 	Spinner,
 	Chip,
 } from "@heroui/react";
-
 import { useFetch } from "hieutndev-toolkit";
+
 import AdminHeader from "@/components/shared/partials/admin-header";
 import EducationForm from "@/components/pages/educations/education-form";
 import API_ROUTE from "@/configs/api";
@@ -301,7 +297,7 @@ export default function EducationManagementPage() {
 
 
 
-			<CustomModal title={modalMode === "create" ? "Add New Education" : "Edit Education"} isOpen={isOpen} onOpenChange={onOpenChange}>
+			<CustomModal isOpen={isOpen} title={modalMode === "create" ? "Add New Education" : "Edit Education"} onOpenChange={onOpenChange}>
 				<EducationForm
 					educationId={selectedEducation?.id ? Number(selectedEducation.id) : undefined}
 					mode={modalMode}

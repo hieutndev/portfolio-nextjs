@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { Input, addToast, Select, SelectItem } from "@heroui/react";
+import { useFetch } from "hieutndev-toolkit";
 
 import CustomForm from "@/components/shared/forms/custom-form";
-import { useFetch } from "hieutndev-toolkit";
 import API_ROUTE from "@/configs/api";
 import { TNewAccount } from "@/types/account";
 import { MAP_MESSAGE } from "@/configs/response-message";

@@ -168,7 +168,7 @@ export default function BlogManagement() {
 
 		switch (tableAction) {
 			case "view":
-				window.open(ROUTE_PATH.CLIENT.BLOGS.DETAILS(fetchBlogResult?.results?.find(item => item.id == selectedId)?.slug ?? -1));
+				window.open(ROUTE_PATH.CLIENT.BLOGS.DETAILS(fetchBlogResult?.results?.find(item => item.id == selectedId)?.slug ?? -1, true));
 				break;
 			case "edit":
 				router.push(ROUTE_PATH.ADMIN.BLOG.EDIT(fetchBlogResult?.results?.find(item => item.id == selectedId)?.slug ?? -1));
@@ -231,7 +231,7 @@ export default function BlogManagement() {
 							<TableCell>{blog.id}</TableCell>
 							<TableCell>{blog.title}</TableCell>
 							<TableCell>
-								{blog.categories?.map(cat => cat.category_title).join(', ') || 'No categories'}
+								{blog.category_title || 'No categories'}
 							</TableCell>
 							<TableCell>
 								<span className={`px-2 py-1 rounded-full text-xs font-medium ${blog.published_status === 'published' ? 'bg-green-100 text-green-800' :

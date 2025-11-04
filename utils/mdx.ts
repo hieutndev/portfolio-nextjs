@@ -6,14 +6,12 @@ export const sanitizeMarkdown = (content: string): string => {
     // Fix common markdown parsing issues
     let sanitized = content;
 
-    // Fix code blocks without language specification
-    sanitized = sanitized.replace(/```(\s*\n)/g, "```txt$1");
-
-    // Fix malformed code blocks
+    // Fix malformed code blocks and ensure all have a language specification
+    // This regex matches code blocks and adds 'txt' as default language if none specified
     sanitized = sanitized.replace(
       /```(\w*)\s*\n([\s\S]*?)```/g,
       (match, lang, code) => {
-        const cleanLang = lang || "txt";
+        const cleanLang = lang.trim() || "txt";
 
         return `\`\`\`${cleanLang}\n${code}\`\`\``;
       }

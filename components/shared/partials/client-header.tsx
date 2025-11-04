@@ -16,7 +16,7 @@ import { BREAK_POINT } from "@/configs/break-point";
 
 const ClientHeader = () => {
 	const { scrollPosition } = useScroll();
-
+	
 	const router = useRouter();
 
 	const { deleteCookie, hasCookie } = useReactiveCookiesNext();
@@ -28,7 +28,7 @@ const ClientHeader = () => {
 		router.push(ROUTE_PATH.AUTH.SIGN_IN);
 	};
 
-    // icon ♾️🗃️📂📁💻
+	// icon ♾️🗃️📂📁💻
 
 	const headerConfig = [
 		{
@@ -43,7 +43,7 @@ const ClientHeader = () => {
 			path: ROUTE_PATH.CLIENT.MY_APPS,
 			label: "🧑‍💻 My apps",
 		},
-		
+
 	];
 
 	const [isOpenMiniHeader, setIsOpenMiniHeader] = useState<boolean>(false);

@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import { Input, addToast, DatePicker, Checkbox } from "@heroui/react";
 import { parseDate } from "@internationalized/date";
 import moment from "moment";
+import { useFetch } from "hieutndev-toolkit";
 
 import CustomForm from "@/components/shared/forms/custom-form";
-import { useFetch } from "hieutndev-toolkit";
 import API_ROUTE from "@/configs/api";
 import { TEducation, TNewEducation, TUpdateEducation } from "@/types/education";
 import { IAPIResponse } from "@/types/global";

@@ -14,15 +14,14 @@ import {
 	Input,
 } from "@heroui/react";
 import { useState, useEffect } from "react";
+import { useFetch } from "hieutndev-toolkit";
 
 import { MAP_MESSAGE } from "../../../configs/response-message";
 
-import ModalCreateUpdateProjectGroup from "./modal-create-update-project-group";
 
 import TableCellAction from "@/components/shared/tables/table-cell-action";
 import API_ROUTE from "@/configs/api";
 import ICON_CONFIG from "@/configs/icons";
-import { useFetch } from "hieutndev-toolkit";
 import { IAPIResponse } from "@/types/global";
 import { TProjectGroup } from "@/types/project";
 import { TTableAction } from "@/types/table";

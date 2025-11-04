@@ -98,7 +98,7 @@ const API_ROUTE = {
   BLOG: {
     GET_ALL: "/blogs",
     GET_TOP_VIEWED: "/blogs/top-viewed",
-    GET_ONE: (blogId: TBlog["id"] | string) => `/blogs/${blogId}`,
+    GET_ONE: (blogId: TBlog["id"] | string, isPreview: boolean = false) => `/blogs/${blogId}${isPreview ? '?preview=true' : ''}`,
     NEW: "/blogs",
     UPDATE_BLOG: (blogId: TBlog["id"] | string) => `/blogs/${blogId}`,
     DELETE_BLOG: (blogId: TBlog["id"] | string) => `/blogs/${blogId}`,

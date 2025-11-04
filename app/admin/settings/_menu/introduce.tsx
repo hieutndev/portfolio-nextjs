@@ -4,11 +4,10 @@ import { MDXEditorMethods, MDXEditorProps } from "@mdxeditor/editor";
 import dynamic from "next/dynamic";
 import { forwardRef, useEffect, useState } from "react";
 import { Accordion, AccordionItem, addToast, Input, Button } from "@heroui/react";
+import { useFetch } from "hieutndev-toolkit";
 
 import InitMDXEditor from "@/components/shared/mdx-editor/mdx-init-html";
 import CustomForm from "@/components/shared/forms/custom-form";
-import Container from "@/components/shared/container/container";
-import { useFetch } from "hieutndev-toolkit";
 import API_ROUTE from "@/configs/api";
 import { IAPIResponse } from "@/types/global";
 import { TSetting } from "@/types/settings";

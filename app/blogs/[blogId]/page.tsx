@@ -1,6 +1,8 @@
-import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { serverFetch } from "hieutndev-toolkit";
+import { Divider } from "@heroui/react";
+import { redirect, RedirectType } from "next/navigation";
+import { cookies } from "next/headers";
 
 import { TBlogResponse } from "@/types/blog";
 import API_ROUTE from "@/configs/api";
@@ -8,8 +10,7 @@ import { IAPIResponse } from "@/types/global";
 import BlogContent from "@/components/pages/blogs/blog-content";
 import BlogFooter from "@/components/pages/blogs/blog-footer";
 import BlogHeader from "@/components/pages/blogs/blog-header";
-import Container from "@/components/shared/container/container";
-import { Divider } from "@heroui/react";
+import { MAP_MESSAGE } from "@/configs/response-message";
 
 interface BlogPageProps {
     params: Promise<{ blogId: string }>;
@@ -52,31 +53,29 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
 export default async function BlogPage({ params }: BlogPageProps) {
     const { blogId } = await params;
 
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get('access_token')?.value || null;
+
     // Fetch blog data on the server (handles both ID and slug)
     const response = await serverFetch<IAPIResponse<TBlogResponse>>(
         API_ROUTE.BLOG.GET_ONE(blogId),
         {
-            // Revalidate every hour to keep data fresh
-            revalidate: 3600,
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+            cache: "no-cache",
         }
     );
 
-    // Handle error cases
     if (response.status !== "success" || !response.results) {
-        if (response.status === "error" && response.errors?.includes("404")) {
-            notFound();
+        if (response.message === "EXPIRED_REFRESH_TOKEN" && accessToken) {
+            redirect('/sign-in', RedirectType.replace)
+        } else {
+            redirect('/not-found', RedirectType.replace)
         }
-
-        return (
-            <Container className="!p-4 items-center" orientation="vertical">
-                <div>Error loading blog post: {response.errors || 'Blog post not found'}</div>
-            </Container>
-        );
     }
 
     const blog = response.results;
-
-    console.log("🚀 ~ BlogPage ~ blog:", blog)
 
     return (
         <div className="w-full flex flex-col gap-8">

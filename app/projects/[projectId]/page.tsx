@@ -8,7 +8,6 @@ import ProjectBlogHeader from "@/components/pages/projects/project-blog-header";
 import ProjectBlogContent from "@/components/pages/projects/project-blog-content";
 import ProjectBlogFooter from "@/components/pages/projects/project-blog-footer";
 import Container from "@/components/shared/container/container";
-
 import { IAPIResponse } from "@/types/global";
 
 interface ProjectBlogPageProps {

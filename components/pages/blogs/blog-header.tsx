@@ -76,10 +76,10 @@ export default function BlogHeader({ blog }: BlogHeaderProps) {
                     isBlurred
                     alt={blog.title}
                     className={"min-h-[540px] rounded-none border-0"}
+                    radius={"none"}
                     shadow={"sm"}
                     src={blog.featured_image}
                     width={1920}
-                    radius={"none"}
                 />
             )}
         </Container>

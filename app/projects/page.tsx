@@ -32,7 +32,7 @@ export default function ProjectsPage() {
     return (
         <Container className={"min-h-screen w-full"} orientation={"vertical"}>
             <h1 className={"text-4xl font-extrabold"}>All Projects</h1>
-            <div className={"w-full grid grid-cols-12 gap-6"}>
+            <div className={"w-full grid grid-cols-12 gap-4"}>
 
                 {fetchProjectsResult && fetchProjectsResult.results && fetchProjectsResult.results.map((project, index) => {
 
@@ -51,7 +51,7 @@ export default function ProjectsPage() {
                                         src={project.project_thumbnail}
                                     />
                                 </div>
-                                <div className={"col-span-12 lg:col-span-9 flex flex-col gap-2 p-2"}>
+                                <div className={"col-span-12 lg:col-span-9 flex flex-col gap-2 p-4"}>
                                     <h3 className={"text-left text-xl font-semibold"}>{project.project_fullname}</h3>
                                     <p className={"text-left"}>{sliceText(project.short_description, 75)}</p>
                                 </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import { Button, ButtonProps } from "@heroui/button";
 
 import ICON_CONFIG from "@/configs/icons";
@@ -40,7 +40,14 @@ export default function CustomForm({
   useCtrlSKey = false,
   children,
 }: CustomFormProps) {
-  const handleKeyDown = (event: KeyboardEvent) => {
+
+  const onSubmitRef = useRef(onSubmit);
+
+  useEffect(() => {
+    onSubmitRef.current = onSubmit;
+  }, [onSubmit]);
+
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
     if (
       useEnterKey &&
       event.key === "Enter" &&
@@ -63,7 +70,7 @@ export default function CustomForm({
       )
     ) {
       event.preventDefault();
-      onSubmit?.();
+      onSubmitRef.current?.();
     }
 
     if (
@@ -72,9 +79,9 @@ export default function CustomForm({
       event.key.toLowerCase() === "s"
     ) {
       event.preventDefault();
-      onSubmit?.();
+      onSubmitRef.current?.();
     }
-  };
+  }, [useEnterKey, useCtrlSKey]);
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
@@ -82,7 +89,7 @@ export default function CustomForm({
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onSubmit]);
+  }, [handleKeyDown]);
 
   return (
     <div className={className} id={formId}>

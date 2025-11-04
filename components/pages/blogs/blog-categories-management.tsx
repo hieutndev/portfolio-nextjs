@@ -19,16 +19,15 @@ import {
 	useDisclosure,
 } from "@heroui/react";
 import { useState, useEffect } from "react";
+import { useFetch } from "hieutndev-toolkit";
 
 import TableCellAction from "@/components/shared/tables/table-cell-action";
 import API_ROUTE from "@/configs/api";
 import ICON_CONFIG from "@/configs/icons";
 import { MAP_MESSAGE } from "@/configs/response-message";
-import { useFetch } from "hieutndev-toolkit";
 import { IAPIResponse } from "@/types/global";
 import { TBlogCategory, TNewCategory } from "@/types/blog";
 import { TTableAction } from "@/types/table";
-import { formatDate } from "@/utils/date";
 import { generateSlug } from "@/utils/slug";
 
 export default function BlogCategoriesManagement() {
@@ -175,6 +174,7 @@ export default function BlogCategoriesManagement() {
 				description: "Please fill in all required fields",
 				color: "danger",
 			});
+
 			return;
 		}
 
@@ -224,6 +224,7 @@ export default function BlogCategoriesManagement() {
 		switch (tableAction) {
 			case "edit":
 				const categoryToEdit = listCategories.find(item => item.category_id === selectedId);
+
 				if (categoryToEdit) {
 					handleEditCategory(categoryToEdit);
 				}
@@ -321,7 +322,7 @@ export default function BlogCategoriesManagement() {
 								<Button color="danger" variant="light" onPress={onClose}>
 									Cancel
 								</Button>
-								<Button color="primary" onPress={handleSubmit} isLoading={savingCategory}>
+								<Button color="primary" isLoading={savingCategory} onPress={handleSubmit}>
 									{isEditing ? "Update" : "Create"}
 								</Button>
 							</ModalFooter>

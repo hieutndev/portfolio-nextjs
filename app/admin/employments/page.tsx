@@ -12,17 +12,13 @@ import {
 	TableCell,
 	Chip,
 	Spinner,
-	Modal,
-	ModalContent,
-	ModalHeader,
 	useDisclosure,
-	ModalBody,
 } from "@heroui/react";
+import { useFetch } from "hieutndev-toolkit";
 
 import Container from "@/components/shared/container/container";
 import AdminHeader from "@/components/shared/partials/admin-header";
 import ICON_CONFIG from "@/configs/icons";
-import { useFetch } from "hieutndev-toolkit";
 import { IAPIResponse, TDataAction } from "@/types/global";
 import { TEmployment } from "@/types/employment";
 import API_ROUTE from "@/configs/api";

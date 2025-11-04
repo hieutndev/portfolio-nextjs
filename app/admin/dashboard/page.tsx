@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Card, Select, SelectItem, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
+import { Card, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 
 import { useAnalytics } from '@/hooks/useAnalytics';
 import MetricCard from '@/components/shared/metric-card';

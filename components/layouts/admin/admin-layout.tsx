@@ -1,15 +1,15 @@
 "use client";
 import { useReactiveCookiesNext } from "cookies-next";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useFetch, useWindowSize } from "hieutndev-toolkit";
-import { Spinner } from "@heroui/react";
 import clsx from "clsx";
 
 import AdminSidebar from "@/components/shared/partials/admin-sidebar";
 import API_ROUTE from "@/configs/api";
 import { BREAK_POINT } from "@/configs/break-point";
 import AdminHorizontalNav from "@/components/shared/partials/admin-horizontal-nav";
+import { AdminScrollProvider } from "@/components/providers/admin-scroll-provider";
 
 
 
@@ -18,6 +18,8 @@ export default function AdminLayout({
 }: {
     children: React.ReactNode;
 }) {
+
+
     const pathname = usePathname();
 
     const { getCookie } = useReactiveCookiesNext();
@@ -42,6 +44,7 @@ export default function AdminLayout({
 
     const { width } = useWindowSize();
 
+    const scrollRef = useRef<HTMLDivElement>(null);
 
     return (
         <div className={"w-screen h-screen flex flex-col"}>
@@ -61,23 +64,27 @@ export default function AdminLayout({
                     <AdminSidebar />
                 </div>
                 <div
+                    ref={scrollRef}
                     className={clsx("flex flex-col gap-4 max-h-screen overflow-auto", {
                         "col-span-10": width > BREAK_POINT.XL,
                         "w-full": width <= BREAK_POINT.XL,
                     })}
+                    id={"adminContent"}
                 >
                     {width < BREAK_POINT.LG && <AdminHorizontalNav />}
-                    <div
-                        className={clsx({
-                            "p-8": width >= BREAK_POINT.XL,
-                            "p-4": width < BREAK_POINT.XL && width >= BREAK_POINT.MD,
-                            "p-2": width < BREAK_POINT.MD,
-                        })}
-                    >
-                        {
-                            children
-                        }
-                    </div>
+                    <AdminScrollProvider scrollContainerRef={scrollRef}>
+                        <div
+                            className={clsx({
+                                "p-8": width >= BREAK_POINT.XL,
+                                "p-4": width < BREAK_POINT.XL && width >= BREAK_POINT.MD,
+                                "p-2": width < BREAK_POINT.MD,
+                            })}
+                        >
+                            {
+                                children
+                            }
+                        </div>
+                    </AdminScrollProvider>
                 </div>
             </div>
         </div>

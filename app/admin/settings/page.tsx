@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-import MySkillsComponent from "./_menu/my-skills";
 import ContentComponent from "./_menu/introduce";
 
-import SettingMenu, { settingMenuItems } from "@/components/pages/settings/setting-menu";
+import { settingMenuItems } from "@/components/pages/settings/setting-menu";
 
 export default function SettingsPage() {
 

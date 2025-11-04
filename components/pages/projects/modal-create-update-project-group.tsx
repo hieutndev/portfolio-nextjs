@@ -1,6 +1,5 @@
-import { Modal, ModalContent, ModalHeader, ModalBody, Input } from "@heroui/react";
+import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/react";
 
-import CustomForm from "@/components/shared/forms/custom-form";
 
 interface ModalCreateUpdateProjectGroupProps {
 	title: string;
@@ -31,9 +30,7 @@ export default function ModalCreateUpdateProjectGroup({
 				<ModalHeader>
 					<h6 className={"text-xl"}>{title}</h6>
 				</ModalHeader>
-				<ModalBody>
-					
-				</ModalBody>
+				<ModalBody />
 			</ModalContent>
 		</Modal>
 	);
