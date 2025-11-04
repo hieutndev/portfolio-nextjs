@@ -12,7 +12,7 @@
 	"dependencies": {
 		"@heroui/react": "^2.7.11",
 		"@mdx-js/react": "^3.1.0",
-		"@mdxeditor/editor": "^3.40.1",
+		"@mdxeditor/editor": "^3.48.0",
 		"@writergate/quill-image-uploader-nextjs": "^0.2.8",
 		"clsx": "^2.1.1",
 		"cookies-next": "^6.0.0",
