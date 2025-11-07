@@ -74,6 +74,7 @@ export default function BlogManagement() {
 		loading: fetchingBlog,
 		fetch: fetchBlog,
 	} = useFetch<IAPIResponse<TBlogResponse[]>>(API_ROUTE.BLOG.GET_ALL, {
+		all: 'true',
 		search: searchTerm,
 		page: currentPage,
 		limit: itemsPerPage,

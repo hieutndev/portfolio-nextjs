@@ -3,7 +3,7 @@
 import ICON_CONFIG from "./icons";
 
 export const SITE_CONFIG = {
-    NAME: "hieutndev's",
+    NAME: "hieutndev's | Tran Ngoc Hieu Portfolio",
     DESCRIPTION: "Tran Ngoc Hieu's Portfolio",
     LOGO: {
         ONLY_ICON_WHITE: "/1x1w.png",
