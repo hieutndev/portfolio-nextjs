@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: ProjectBlogPageProps): Promis
     const project = response.results;
 
     return {
-        title: `${project.project_fullname} | Portfolio`,
+        title: `${project.project_fullname} | hieutndev's`,
         description: project.short_description,
         openGraph: {
             title: project.project_fullname,

@@ -3,8 +3,8 @@
 import ICON_CONFIG from "./icons";
 
 export const SITE_CONFIG = {
-    NAME: "hieutndev's | Tran Ngoc Hieu Portfolio",
-    DESCRIPTION: "Tran Ngoc Hieu's Portfolio",
+    NAME: "Tran Ngoc Hieu | hieutndev's",
+    DESCRIPTION: "Explore Tran Ngoc Hieu's professional portfolio. View detailed completed projects, work experience, and a modern web development skill set.",
     LOGO: {
         ONLY_ICON_WHITE: "/1x1w.png",
         ONLY_ICON_BLACK: "/1x1b.png",

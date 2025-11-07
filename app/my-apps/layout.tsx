@@ -1,5 +1,17 @@
 import Container from "@/components/shared/container/container";
 
+
+export const metadata = {
+  title: "Applications | hieutndev's",
+  description: "Applications built with curiosity, passion, and a lot of coffee",
+  openGraph: {
+    title: "Applications | hieutndev's",
+    description: "Applications built with curiosity, passion, and a lot of coffee",
+    images: ["/black_icon_board.png"],
+  },
+};
+
+
 export default function MyAppsLayout({
   children,
 }: {

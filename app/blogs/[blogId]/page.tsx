@@ -10,7 +10,6 @@ import { IAPIResponse } from "@/types/global";
 import BlogContent from "@/components/pages/blogs/blog-content";
 import BlogFooter from "@/components/pages/blogs/blog-footer";
 import BlogHeader from "@/components/pages/blogs/blog-header";
-import { MAP_MESSAGE } from "@/configs/response-message";
 
 interface BlogPageProps {
     params: Promise<{ blogId: string }>;
@@ -38,7 +37,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
     const blog = response.results;
 
     return {
-        title: `${blog.title} | Blog`,
+        title: `${blog.title} | hieutndev's`,
         description: blog.excerpt,
         openGraph: {
             title: blog.title,

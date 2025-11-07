@@ -10,18 +10,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'daily',
             priority: 1,
         },
-        {
-            url: `${siteUrl}/sign-up`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.8,
-        },
-        {
-            url: `${siteUrl}/sign-in`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.8,
-        },
+        // {
+        //     url: `${siteUrl}/sign-up`,
+        //     lastModified: new Date(),
+        //     changeFrequency: 'monthly',
+        //     priority: 0.8,
+        // },
+        // {
+        //     url: `${siteUrl}/sign-in`,
+        //     lastModified: new Date(),
+        //     changeFrequency: 'monthly',
+        //     priority: 0.8,
+        // },
         {
             url: `${siteUrl}/my-apps`,
             lastModified: new Date(),
@@ -30,6 +30,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
         },
         {
             url: `${siteUrl}/projects`,
+            lastModified: new Date(),
+            changeFrequency: 'daily',
+            priority: 1,
+        },
+        {
+            url: `${siteUrl}/blogs`,
             lastModified: new Date(),
             changeFrequency: 'daily',
             priority: 1,
